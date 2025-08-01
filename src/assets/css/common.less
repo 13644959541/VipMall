@@ -1,0 +1,153 @@
+@import './tailwind.css';
+
+body {
+  margin: 0;
+  padding: 0;
+  width: 100vw;
+  overflow: hidden;
+}
+
+html,
+body {
+  -webkit-overflow-scroll: touch;
+  line-height: normal;
+  background-color: @background-color;
+}
+
+i {
+  font-family: 'white-icon';
+  font-style: normal !important;
+}
+
+.v_line {
+  background: @line-color;
+  width: 1;
+  height: 100%;
+}
+
+.h_line {
+  background: @line-color;
+  height: 1;
+  width: 100%;
+}
+
+.tabbar {
+  position: fixed;
+  bottom: 0;
+  background: white;
+  left: 0;
+  width: 100vw;
+  height: calc(90px + constant(safe-area-inset-bottom));
+  height: calc(90px + env(safe-area-inset-bottom));
+  padding-bottom: constant(safe-area-inset-bottom);
+  padding-bottom: env(safe-area-inset-bottom);
+  box-sizing: border-box;
+  z-index: 1;
+}
+
+.fullPage {
+  height: calc(@height-primary);
+  width: 100vw;
+  padding-bottom: calc(constant(safe-area-inset-bottom));
+  padding-bottom: calc(env(safe-area-inset-bottom));
+  box-sizing: border-box;
+  position: absolute;
+  left: 0;
+  top: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+
+  >div:first-child {
+    height: 100%;
+    width: 100%;
+  }
+
+  @media (min-width: 768px) {
+    position: static;
+    height: auto;
+    width: auto;
+    padding-bottom: 0;
+    overflow: visible;
+  }
+}
+
+.fullBody {
+  height: 100%;
+  width: 100%;
+}
+
+.page_loading_body {
+  position: fixed;
+  left: 0;
+  top: 0;
+  height: calc(@height-primary);
+  width: 100vw;
+  background: @background-color;
+  z-index: 1;
+}
+
+/* Pad适配 (768px~1024px) */
+@media (min-width: 768px) {
+  html {
+    font-size: calc(100vw / 7.68); /* 基于vw动态计算 */
+    max-width: 1024px;
+    margin: 0 auto;
+  }
+
+  /* 通用Pad样式优化 */
+  .component {
+    padding: 0.4rem;
+    font-size: 0.36rem;
+  }
+
+  /* 横屏专属优化 */
+  @media (orientation: landscape) {
+    html {
+      font-size: calc(100vw / 10.24); /* 横屏更小字号 */
+    }
+    .tabbar {
+      width: 120px;
+      height: 100vh;
+      top: 0;
+      padding-bottom: 0;
+    }
+  }
+
+  /* 表单元素放大 */
+  input, textarea, select {
+    font-size: 0.4rem !important;
+    padding: 0.3rem;
+  }
+
+  /* 按钮点击区域扩大 */
+  button, .btn {
+    min-width: 2rem;
+    min-height: 1rem;
+    padding: 0.3rem 0.6rem;
+  }
+
+  /* 导航栏优化 */
+  .nav-item {
+    margin: 0 0.4rem;
+    padding: 0.3rem 0;
+  }
+
+  /* 优化Pad端tabbar */
+  .tabbar {
+    height: calc(120px + constant(safe-area-inset-bottom));
+    height: calc(120px + env(safe-area-inset-bottom));
+  }
+
+  /* 全屏页面调整 */
+  .fullPage {
+    max-width: 1024px;
+    margin: 0 auto;
+  }
+
+  /* 卡片样式优化 */
+  .card {
+    border-radius: 0.2rem;
+    margin: 0.4rem;
+    box-shadow: 0 0.1rem 0.3rem rgba(0,0,0,0.1);
+  }
+}
