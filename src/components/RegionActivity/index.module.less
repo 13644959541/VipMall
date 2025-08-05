@@ -1,0 +1,38 @@
+.container {
+  position: relative;
+  margin-top: 10px;
+  padding: 12px;
+  width: 100%;
+  display: block;
+}
+
+.title {
+  position: absolute;
+  top: 1px;
+  left: 12px;
+  color: #000;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.images {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 20px; /* 给标题留出空间 */
+}
+
+.image {
+  flex: 1 0 calc(50% - 10px); /* 默认2个图片时各占一半 */
+  min-width: 120px;
+  border-radius: 8px;
+  object-fit: cover;
+  height: 120px;
+}
+
+/* 当有3个图片时的特殊样式 */
+.images:has(img:nth-child(3)) {
+  .image {
+    flex: 1 0 calc(33.33% - 10px);
+  }
+}

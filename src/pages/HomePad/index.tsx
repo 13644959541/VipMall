@@ -2,6 +2,8 @@ import React, { memo } from 'react'
 import { Tabs, Swiper } from 'antd-mobile'
 import styles from './index.module.less'
 import { SwiperRef } from 'antd-mobile/es/components/swiper'
+import Carousel from '../../components/Carousel'
+import RegionActivity from '../../components/RegionActivity'
 const tabItems = [
   { key: 'first', title: '首页' },
   { key: 'second', title: '代金卷专区' },
@@ -40,11 +42,17 @@ const HomePad = () => {
       >
         {tabItems.map((item, index) => (
           <Swiper.Item key={item.key}>
-            <div className={styles.content} style={{ color: 'red' }}>
-              {index === 0 && 'Pad首页内容'}
-              {index === 1 && 'Pad代金卷专区'}
+            <div className={styles.content}>
+              {index === 0 && (
+                <div className={styles.contentWrapper}>
+                  <Carousel />
+                  <RegionActivity />
+                  
+                </div>
+              )}
+              {/* {index === 1 && 'Pad代金卷专区'}
               {index === 2 && 'Pad菜品卷专区'}
-              {index === 3 && 'Pad周边礼品'}
+              {index === 3 && 'Pad周边礼品'} */}
             </div>
           </Swiper.Item>
         ))}
