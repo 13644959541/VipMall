@@ -9,18 +9,22 @@ const useSwitch = () => {
     mode: White.SwitchType | undefined;
     path?: string;
     isTab?: boolean;
-  }>();
+  }>({
+    mode: undefined,
+    path: '',
+    isTab: false
+  });
   const location = useLocation();
-  const className = useRef('');
+  const className = useRef<string>('');
   const routeSceneMode = routes.find((v) =>
-    matchPath(v.path, location.pathname),
+    matchPath({path: v.path, end: true}, location.pathname),
   )?.sceneMode;
   const [activeIndex, oldIndex] = TabBarList.reduce(
     (pre, { path }, index) => {
-      if (matchPath(path, location.pathname)) {
+      if (matchPath({path, end: true}, location.pathname)) {
         pre[0] = index;
       }
-      if (matchPath(path, oldMode.current?.path || '')) {
+      if (matchPath({path, end: true}, oldMode.current?.path || '')) {
         pre[1] = index;
       }
       return pre;

@@ -4,11 +4,11 @@ import pxtorem from 'postcss-pxtorem';
 
 
 const px2rem = pxtorem({
-  rootValue: 75, // 保持手机端基准
+  rootValue: 75,
   unitPrecision: 5,
-  propList: ['*', '!font*'], // 排除字体大小
-  mediaQuery: true, // 启用媒体查询转换
-  exclude: /node_modules/,
+  propList: ['*', '!font*'],
+  mediaQuery: true,
+  exclude: /node_modules|\.(jsx?|tsx?)$/,
 });
 
 

@@ -11,8 +11,22 @@ const config: Config = {
     "*.{js,ts,jsx,tsx,mdx}"
   ],
   theme: {
-  	extend: {
-  		colors: {
+    extend: {
+      fontFamily: {
+        sans: [
+          '"SF Pro Text"', 
+          '"SF Pro Display"',
+          '"PingFang SC"',
+          '"Microsoft YaHei"',
+          'sans-serif'
+        ],
+        mono: [
+          '"SF Mono"',
+          '"PingFang SC"',
+          'monospace'
+        ]
+      },
+      colors: {
   			background: 'hsl(var(--background))',
   			foreground: 'hsl(var(--foreground))',
   			card: {

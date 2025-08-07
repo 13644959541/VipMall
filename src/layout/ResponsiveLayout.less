@@ -2,6 +2,10 @@
   display: flex;
   flex-direction: column;
   height: 100vh;
+  margin: 0;
+  padding: 0;
+  width: 100vw;
+  overflow: hidden;
 
   // 全局控制tab-bar显示
   .responsive-layout .tab-bar {
@@ -10,55 +14,46 @@
     }
   }
 
-  // 手机布局 (<768px)
-  @media (max-width: 767px) {
-    .pad-only {
-      display: none !important;
-    }
-    .mobile-only {
-      display: block;
-    }
-  }
-
-  // Pad布局 (≥768px)
-  @media (min-width: 768px) {
-    flex-direction: row;  // 改为从左到右布局
-    
-    .mobile-only {
-      display: none !important;
-    }
-    .pad-only {
-      display: block;
-    }
-
-    .main-content {
-      flex: 1;
-      display: flex;
-    }
-    
   .header-container {
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
-    height: 60px;
+    height: 100px;
     z-index: 1000;
     background: #fff;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    overflow: hidden;
   }
 
+
+  // .desktop-layout {
+  //   display: flex;
+  //   width: 100%;
+  //   height: calc(100vh - 60px);
+  //   margin-top: 60px;
+  //   margin-left: -10px;
+  // }
   .desktop-layout {
     display: flex;
     width: 100%;
+    min-width: 100vw;
     height: calc(100vh - 60px);
     margin-top: 60px;
+    margin-left: 0;
+    padding-left: 0;
+    overflow: hidden;
+    position: fixed;
+    left: 0;
+    background: #fff;
   }
 
+
   .sidebar {
-    width: 150px;
     height: 100%;
     background: #fff;
-    border-right: 1px solid #fff;
+    border-right: 1px solid #f0f0f0;
     position: fixed;
     left: 0;
     top: 60px;
@@ -66,13 +61,13 @@
     z-index: 900;
   }
 
-  .content-wrapper {
-    flex: 1;
-    margin-left: 150px;
-    padding-top: 60px;
-    height: 100vh;
-    overflow: hidden;
-  }
+  // .content-wrapper {
+  //   flex: 1;
+  //   margin-left: 150px;
+  //   padding-top: 60px;
+  //   height: 100vh;
+  //   overflow: hidden;
+  // }
 
   .main-content {
     height: calc(100vh - 60px);
@@ -86,5 +81,38 @@
     flex-direction: column;
     height: 100vh;
   }
+
+  // 手机布局 (<768px)
+  @media (max-width: 767px) {
+    .pad-only {
+      display: none !important;
+    }
+
+    .mobile-only {
+      display: block;
+    }
+  }
+
+  // Pad布局 (≥768px)
+  @media (min-width: 768px) {
+    flex-direction: row;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+
+    .mobile-only {
+      display: none !important;
+    }
+
+    .pad-only {
+      display: block;
+    }
+
+    .desktop-layout {
+      width: 100%;
+      min-width: 100%;
+      margin-left: 0;
+      margin-top: 80px;
+    }
   }
 }

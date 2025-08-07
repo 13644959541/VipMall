@@ -4,11 +4,18 @@ const HomeMobile = lazy(() => import('@/pages/HomeMobile'))
 const HomePad = lazy(() => import('@/pages/HomePad'))
 
 const HomeWrapper = () => {
-  const [isMobile, setIsMobile] = useState(window.innerWidth < 768)
+  const [deviceType, setDeviceType] = useState(
+    window.innerWidth < 768 ? 'mobile' : 
+    window.innerWidth <= 1024 ? 'pad' : 'desktop'
+  )
 
   useEffect(() => {
     const handleResize = () => {
-      setIsMobile(window.innerWidth < 768)
+      const width = window.innerWidth
+      setDeviceType(
+        width < 768 ? 'mobile' : 
+        width <= 1024 ? 'pad' : 'desktop'
+      )
     }
 
     window.addEventListener('resize', handleResize)
@@ -17,7 +24,7 @@ const HomeWrapper = () => {
 
   return (
     <Suspense fallback={null}>
-      {isMobile ? <HomeMobile /> : <HomePad />}
+      {deviceType === 'mobile' ? <HomeMobile /> : <HomePad />}
     </Suspense>
   )
 }

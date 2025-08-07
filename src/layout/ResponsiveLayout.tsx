@@ -9,12 +9,13 @@ interface ResponsiveLayoutProps {
 }
 
 export default function ResponsiveLayout({ children }: ResponsiveLayoutProps) {
-  const [isDesktop, setIsDesktop] = useState(window.innerWidth >= 768);
+  const [isPad, setIsPad] = useState(window.innerWidth >= 768 );
 
   useEffect(() => {
     const handleResize = () => {
-      const newIsDesktop = window.innerWidth >= 768;
-      setIsDesktop(newIsDesktop);
+      const newIsPad = window.innerWidth >= 768 
+      console.log('Window resized - isPad:', newIsPad, 'Width:', window.innerWidth);
+      setIsPad(newIsPad);
     };
 
     // 初始执行一次
@@ -25,16 +26,14 @@ export default function ResponsiveLayout({ children }: ResponsiveLayoutProps) {
 
   return (
     <div className="responsive-layout">
-      {isDesktop ? (
+      {isPad ? (
         <>
           <div className="header-container">
             <Header />
           </div>
           <div className="desktop-layout">
-            <Sidebar key="desktop-sidebar" />
-            <div className="content-wrapper">
+            <Sidebar key="desktop-sidebar" className="w-[33%] bg-white shadow-md border-r border-gray-200" />
               <main className="main-content">{children}</main>
-            </div>
           </div>
         </>
       ) : (

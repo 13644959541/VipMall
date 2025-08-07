@@ -1,4 +1,5 @@
 import { memo } from 'react';
+import { NativeBridge } from '@/utils/bridge';
 import styles from './index.module.less';
 import image from '@/assets/images/search_tab.png';
 import { Button, Space } from 'antd-mobile';
@@ -28,6 +29,12 @@ const Detail = () => {
           className={styles.image}
         />
       </div> */}
+      <Button 
+        color="primary"
+        onClick={() => NativeBridge.closeWebView()}
+      >
+        返回APP
+      </Button>
       详情
     </div>
   );

@@ -8,14 +8,11 @@ const Index = lazy(() => import(/* chunkName: Index */ "@/pages/Index"))
 const Other = lazy(() => import(/* chunkName: Other */ "@/pages/Other"))
 const Other1 = lazy(() => import(/* chunkName: Other1 */ "@/pages/Other1"))
 const NoFound = lazy(() => import(/* chunkName: NoFound */ "../components/NoFound"))
-// 导入新的 Waitlist 和 FoodOrdering 组件
-const Waitlist = lazy(() => import(/* chunkName: Waitlist */ "@/pages/Waitlist"))
-const FoodOrdering = lazy(() => import(/* chunkName: FoodOrdering */ "@/pages/FoodOrdering"))
 
 const TabBarList: Array<White.RouteTabBar> = [
   {
     path: "/",
-    component: Home, // 保持 HomeWrapper 作为 TabBar 的首页，但根路径会指向 Waitlist
+    component: Home, 
     icon: "white-home1",
     sceneMode: "scroll",
     title: "商城兑换",
@@ -33,14 +30,7 @@ const TabBarList: Array<White.RouteTabBar> = [
     icon: "white-order",
     sceneMode: "scroll",
     title: "购物车",
-  },
-  {
-    path: '/food-ordering',
-    component: Search,
-    icon: 'white-account',
-    sceneMode: 'scroll',
-    title: '食品订购',
-  },
+  }
 ]
 
 const routes: White.RouteConfig[] = [
@@ -48,14 +38,6 @@ const routes: White.RouteConfig[] = [
     path: "/",
     component: Index,
     tabBars: TabBarList,
-  },
-  {
-    path: "/waitlist",
-    component: Waitlist,
-  },
-  {
-    path: "/food-ordering",
-    component: FoodOrdering,
   },
   {
     path: "/other",
@@ -77,4 +59,4 @@ const routes: White.RouteConfig[] = [
 ]
 
 export { TabBarList }
-export default [...routes]
+ export default [...routes]

@@ -1,21 +1,41 @@
 import { Swiper } from 'antd-mobile'
-import homeImage1 from '../../../public/pad/01.首页-2活动位.jpg'
-import homeImage2 from '../../../public/pad/02.首页-3活动位.jpg'
+import { Image as AntdImage } from 'antd-mobile'
 import styles from './index.module.less'
 
-const Carousel = () => {
+interface CarouselItem {
+  image: string
+  alt: string
+  fallback?: React.ReactNode
+  style?: React.CSSProperties
+}
+
+interface CarouselProps {
+  items: CarouselItem[]
+  height?: number
+  className?: string
+}
+
+const Carousel = ({ items, height, className = '' }: CarouselProps) => {
   return (
     <Swiper
       autoplay
       loop
-      className={styles.carousel}
+      className={`${className}`}
+      style={{ overflow: 'visible' }}
     >
-      <Swiper.Item>
-        <img src={homeImage1} className={styles.image} />
-      </Swiper.Item>
-      <Swiper.Item>
-        <img src={homeImage2} className={styles.image} />
-      </Swiper.Item>
+      {items.map((item, index) => (
+        <Swiper.Item key={index}>
+          <AntdImage
+            src={item.image}
+            alt={item.alt}
+            width="100%"
+            style={{ borderRadius: '10px'}}
+            height={`${height}px`}
+            fit="cover"
+            fallback={item.fallback}
+          />
+        </Swiper.Item>
+      ))}
     </Swiper>
   )
 }

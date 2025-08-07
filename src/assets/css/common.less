@@ -1,14 +1,37 @@
 @import './tailwind.css';
 
+/* 字体定义 */
+@font-face {
+  font-family: 'SF Pro Text';
+  font-weight: 400;
+  src: local('SF Pro Text'), local('SFProText-Regular');
+}
+
+@font-face {
+  font-family: 'SF Pro Display';
+  font-weight: 400;
+  src: local('SF Pro Display'), local('SFProDisplay-Regular');
+}
+
+@font-face {
+  font-family: 'SF Mono';
+  font-weight: 400;
+  src: local('SF Mono'), local('SFMono-Regular');
+}
+
+/* 基础样式 */
 body {
   margin: 0;
   padding: 0;
+  font-family: theme('fontFamily.sans');
   width: 100vw;
   overflow: hidden;
 }
 
 html,
 body {
+  margin: 0;
+  padding: 0;
   -webkit-overflow-scroll: touch;
   line-height: normal;
   background-color: @background-color;
