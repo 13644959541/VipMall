@@ -32,13 +32,13 @@ export default function ResponsiveLayout({ children }: ResponsiveLayoutProps) {
             <Header />
           </div>
           <div className="desktop-layout">
-            <Sidebar key="desktop-sidebar" className="w-[375px] bg-white shadow-md border-r border-gray-200" />
-              <main className="main-content">{children}</main>
+            <Sidebar key="desktop-sidebar" className=" w-[500px] bg-white shadow-md border-r border-gray-200" />
+            <div className="main-content">{children}</div>
           </div>
         </>
       ) : (
         <div className="mobile-layout">
-          <main className="mobile-content">{children}</main>
+          <div className="mobile-content">{children}</div>
           <TabBarView key="mobile-tabbar" />
         </div>
       )}
