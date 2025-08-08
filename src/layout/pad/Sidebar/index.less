@@ -1,25 +1,32 @@
 .sidebar-container {
   .sidebar {
-    width: 150px;
+    width: 240px;
+    /* 固定宽度 */
     background: #fff;
     border-right: 1px solid #f0f0f0;
-    padding: 20px 0;
-    
+    padding: 20px 16px;
+
     .adm-side-bar {
       width: 100%;
       background: #fff;
+
       .adm-side-bar-item {
-        padding: 12px 20px;
+        width: 100%;
+        min-width: 180px;
+        padding: 14px 16px;
         color: #333;
         background: #fff;
-        margin-bottom: 4px;
-        
+        margin-bottom: 12px;
+        box-sizing: border-box;
+
+
+
         &-active {
           background: #fff;
           color: #1890ff;
           font-weight: 500;
         }
-        
+
         &:hover {
           background: #e6f7ff;
           color: #1890ff;
@@ -29,19 +36,19 @@
   }
 }
 
-/* Pad适配 (768px-1024px) */
-@media (min-width: 768px) and (max-width: 1024px) {
+/* 统一Pad和PC样式 */
+@media (min-width: 768px) {
   .sidebar-container {
     .sidebar {
-      width: 200px;
-      padding: 20px 0;
-      
-      .adm-side-bar {
-        .adm-side-bar-item {
-          padding: 14px 20px;
-          font-size: 14px;
-        }
-      }
+      width: 240px;
+    }
+  }
+
+  a {
+    text-decoration: none !important;
+
+    &:hover {
+      text-decoration: none !important;
     }
   }
 }

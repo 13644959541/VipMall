@@ -1,9 +1,9 @@
-import React, { memo, useState, useRef } from 'react'
-import { Tabs, Swiper, Card, Image as AntdImage, Badge, Checkbox } from 'antd-mobile'
+import React, { memo, useState } from 'react'
+import { Card, Image as AntdImage, Badge, Checkbox } from 'antd-mobile'
 import { Star, ShoppingCart, Clock, Gift } from 'lucide-react'
 import styles from './index.module.less'
-import { SwiperRef } from 'antd-mobile/es/components/swiper'
 import Carousel from '../../components/Carousel'
+import SwipeTabs from '../../components/SwipeTabs'
 
 const tabItems = [
   { key: 'first', title: '首页' },
@@ -18,7 +18,6 @@ import ProductCard from '../../components/ProductCard'
 
 const HomePad = () => {
   const [activeIndex, setActiveIndex] = useState(0)
-  const swiperRef = useRef<SwiperRef>(null)
 
   // 模拟商品数据
   const products = [
@@ -70,7 +69,7 @@ const HomePad = () => {
       points: 2000,
       originalPrice: 68,
     },
-     {
+    {
       id: 7,
       image: '/taro-paste.png',
       name: '商品名称长长长长长长长长长长长长长长长长长长',
@@ -102,48 +101,46 @@ const HomePad = () => {
       points: 2000,
       originalPrice: 68,
     }
-    
+
   ]
-
-  // const [showCarousel, setShowCarousel] = useState(window.innerWidth >= 768 && window.innerWidth <= 1024);
-
-  // useEffect(() => {
-  //   const handleResize = () => {
-  //     setShowCarousel(window.innerWidth < 1024);
-  //   };
-  //   window.addEventListener('resize', handleResize);
-  //   return () => window.removeEventListener('resize', handleResize);
-  // }, []);
+  // 模拟轮播图数据
+  const carouselItems = [
+    {
+      image: "/hot-pot-banner.png",
+      alt: "纯纯纯牛油锅 NEW",
+      fallback: (
+        <div className="w-full h-48 bg-red-500 flex items-center justify-center text-white text-xl font-bold">
+          纯纯纯牛油锅 NEW<br />BEEF TALLOW<br />HOT POT SOUP BASE
+        </div>
+      )
+    },
+    {
+      image: "/hot-pot-promotion.png",
+      alt: "火锅促销",
+      fallback: (
+        <div className="w-full h-48 bg-orange-500 flex items-center justify-center text-white text-xl font-bold">
+          火锅促销活动
+        </div>
+      )
+    },
+    {
+      image: "/panda-promotion.png",
+      alt: "熊猫促销",
+      fallback: (
+        <div className="w-full h-48 bg-green-500 flex items-center justify-center text-white text-xl font-bold">
+          熊猫主题促销
+        </div>
+      )
+    }
+  ]
 
   return (
     <div className={styles['pad-home']}>
-      {/* <Sidebar /> */}
-
       <div className={styles['main-content']}>
-        <Tabs
-          activeKey={tabItems[activeIndex].key}
-          onChange={key => {
-            const index = tabItems.findIndex(item => item.key === key)
-            setActiveIndex(index)
-            swiperRef.current?.swipeTo(index)
-          }}
-          className={styles.tabs}
-        >
-          {tabItems.map(item => (
-            <Tabs.Tab title={item.title} key={item.key} />
-          ))}
-        </Tabs>
-
-        <Swiper
-          direction='horizontal'
-          loop={false}
-          indicator={() => null}
-          ref={swiperRef}
-          defaultIndex={activeIndex}
-          onIndexChange={index => {
-            setActiveIndex(index)
-          }}
-          style={{ flex: 1 }}
+        <SwipeTabs
+          activeIndex={activeIndex}
+          setActiveIndex={setActiveIndex}
+          tabItems={tabItems}
         >
           {tabItems.map((item, index) => (
             <Swiper.Item key={item.key}>
@@ -156,73 +153,11 @@ const HomePad = () => {
                       overscrollBehavior: 'contain'
                     }}
                   >
-                    {/* 主Banner - 使用自定义Carousel组件 */}
-                    { <Carousel 
-                      items={[
-                        {
-                          image: "/hot-pot-banner.png",
-                          alt: "纯纯纯牛油锅 NEW",
-                          fallback: (
-                            <div className="w-full h-48 bg-red-500 flex items-center justify-center text-white text-xl font-bold">
-                              纯纯纯牛油锅 NEW<br />BEEF TALLOW<br />HOT POT SOUP BASE
-                            </div>
-                          )
-                        },
-                        {
-                          image: "/hot-pot-promotion.png",
-                          alt: "火锅促销",
-                          fallback: (
-                            <div className="w-full h-48 bg-orange-500 flex items-center justify-center text-white text-xl font-bold">
-                              火锅促销活动
-                            </div>
-                          )
-                        },
-                        {
-                          image: "/panda-promotion.png",
-                          alt: "熊猫促销",
-                          fallback: (
-                            <div className="w-full h-48 bg-green-500 flex items-center justify-center text-white text-xl font-bold">
-                              熊猫主题促销
-                            </div>
-                          )
-                        }
-                      ]}
+                    {<Carousel
+                      items={carouselItems}
                       height={300}
                       className="mt-2 mb-2"
                     />}
-
-                    {/* 地区活动 */}
-                    {/* <h2 className=" font-bold">地区活动</h2>
-                    <div className="grid grid-cols-2 gap-4 mb-2">
-                      <Card className="overflow-hidden">
-                        <AntdImage
-                          src="/hot-pot-promotion.png"
-                          alt="一起嗨！海底捞"
-                          width="100%"
-                          height="120px"
-                          fit="cover"
-                          fallback={
-                            <div className="w-full h-30 bg-gradient-to-r from-red-500 to-orange-500 flex items-center justify-center text-white font-bold">
-                              一起嗨！<br />海底捞<br />满99立享优惠3元
-                            </div>
-                          }
-                        />
-                      </Card>
-                      <Card className=" overflow-hidden">
-                        <AntdImage
-                          src="/panda-promotion.png"
-                          alt="熊猫人生海底捞火锅"
-                          width="100%"
-                          height="120px"
-                          fit="cover"
-                          fallback={
-                            <div className="w-full h-30 bg-gradient-to-r from-orange-500 to-red-500 flex items-center justify-center text-white font-bold">
-                              熊猫人生<br />海底捞火锅
-                            </div>
-                          }
-                        />
-                      </Card>
-                    </div> */}
 
                     {/* 门店热卖 */}
                     <div className="flex items-center justify-between ">
@@ -264,7 +199,7 @@ const HomePad = () => {
               </div>
             </Swiper.Item>
           ))}
-        </Swiper>
+        </SwipeTabs>
       </div>
     </div>
   )

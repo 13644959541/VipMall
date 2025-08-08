@@ -1,8 +1,8 @@
 import { ReactNode, useState, useEffect } from 'react';
 import './ResponsiveLayout.less';
-import Sidebar from './Sidebar';
-import TabBarView from './TabBarView';
-import Header from './Header';
+import Sidebar from './pad/Sidebar/index';
+import TabBarView from './app/TabBarView/index';
+import Header from './pad/Header/index';
 
 interface ResponsiveLayoutProps {
   children: ReactNode;
@@ -32,7 +32,7 @@ export default function ResponsiveLayout({ children }: ResponsiveLayoutProps) {
             <Header />
           </div>
           <div className="desktop-layout">
-            <Sidebar key="desktop-sidebar" className="w-[33%] bg-white shadow-md border-r border-gray-200" />
+            <Sidebar key="desktop-sidebar" className="w-[375px] bg-white shadow-md border-r border-gray-200" />
               <main className="main-content">{children}</main>
           </div>
         </>

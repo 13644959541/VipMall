@@ -1,5 +1,4 @@
 import AnimatedSwitch from '@/components/AnimatedSwitch';
-import LoadingView from '@/components/LoadingView';
 import useTitle from '@/hooks/useTitle';
 import { White } from '@/typings';
 import { treeToList } from '@/utils';

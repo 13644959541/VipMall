@@ -1,6 +1,6 @@
 import { memo, useCallback, useEffect, useRef, useState } from 'react';
 import { useLocation, matchPath, useNavigate } from 'react-router-dom';
-import routers from '../../routers';
+import routers from '../../../routers';
 import styles from './index.module.less';
 interface TabBarViewProps {
   className?: string;
