@@ -1,24 +1,18 @@
 import React, { memo, useState } from 'react'
-import { Card, Image as AntdImage, Badge, Checkbox } from 'antd-mobile'
-import { Star, ShoppingCart, Clock, Gift } from 'lucide-react'
 import styles from './index.module.less'
-import Carousel from '../../components/Carousel'
 import SwipeTabs from '../../components/SwipeTabs'
+import HomeContent from '@/layout/pad/HomeContent'
+import useTitle from '@/hooks/useTitle'
 
-const tabItems = [
+const HomePad = () => {
+  const [activeIndex, setActiveIndex] = useState(0)
+  // 模拟标签数据
+  const tabItems = [
   { key: 'first', title: '首页' },
   { key: 'second', title: '代金券专区' },
   { key: 'third', title: '菜品券专区' },
   { key: 'fourth', title: '周边礼品' },
-]
-
-import ProductCard from '../../components/ProductCard'
-
-
-
-const HomePad = () => {
-  const [activeIndex, setActiveIndex] = useState(0)
-
+  ]
   // 模拟商品数据
   const products = [
     {
@@ -133,6 +127,7 @@ const HomePad = () => {
       )
     }
   ]
+  useTitle('主页');
 
   return (
     <div className={styles['pad-home']}>
@@ -153,32 +148,12 @@ const HomePad = () => {
                       overscrollBehavior: 'contain'
                     }}
                   >
-                    {<Carousel
-                      items={carouselItems}
-                      height={300}
-                      className="mt-2 mb-2"
-                    />}
-
-                    {/* 门店热卖 */}
-                    <div className="flex items-center justify-between ">
-                      <h2 className="font-bold">门店热卖</h2>
-                      <div className="flex items-center gap-4">
-                        <Checkbox className="text-gray-500">看我可兑</Checkbox>
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-4">
-                      {products.map(product => (
-                        <ProductCard
-                          key={product.id}
-                          image={product.image}
-                          name={product.name}
-                          description={product.description}
-                          points={product.points}
-                          originalPrice={product.originalPrice}
-                        />
-                      ))}
-                    </div>
+                    <HomeContent 
+                      carouselItems={carouselItems}
+                      products={products}
+                      productName="热门推荐"
+                      checkboxName="看我兑换"
+                    />
                   </div>
                 )}
                 {index === 1 && (
