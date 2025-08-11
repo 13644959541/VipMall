@@ -2,7 +2,7 @@ import React, { memo, useState } from 'react'
 import styles from './index.module.less'
 import SwipeTabs from '../../components/SwipeTabs'
 import HomeContent from '@/layout/pad/HomeContent'
-import GiftConent from '@/layout/pad/Gift'
+import GiftContent from '@/layout/pad/Gift'
 import MealContent from '@/layout/pad/Meal'
 import VouchersContent from '@/layout/pad/Vouchers'
 import useTitle from '@/hooks/useTitle'
@@ -162,7 +162,7 @@ const HomePad = () => {
                       overscrollBehavior: 'contain'
                     }}
                   >
-                    <GiftConent 
+                    <GiftContent 
                       carouselItems={carouselItems}
                       products={products}
                       productName="热门推荐"

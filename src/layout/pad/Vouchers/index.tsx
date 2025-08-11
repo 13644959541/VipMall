@@ -22,7 +22,7 @@ interface VouchersContentProps {
   checkboxName: string;
 }
 
-const VouchersContent: React.FC<VouchersContentProps> = ({ carouselItems, products, productName, checkboxName }) => {
+const VouchersContent: React.FC<VouchersContentProps> = ({products, productName, checkboxName }) => {
   return (
     <div className={styles.contentWrapper}
       style={{
@@ -30,8 +30,9 @@ const VouchersContent: React.FC<VouchersContentProps> = ({ carouselItems, produc
         overscrollBehavior: 'contain'
       }}>
 
-      <div className="flex items-center justify-between">
-        <h2 className="font-bold">{productName}</h2>
+      <div className="flex items-center justify-between mr-1">
+        {/* 用ant-mobile生成一个dropdown下拉菜单 */}
+
         <div className="flex items-center gap-4">
           <Checkbox className="text-gray-500">{checkboxName}</Checkbox>
         </div>

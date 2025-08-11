@@ -27,12 +27,13 @@ const Carousel = ({ items, height, className = '' }: CarouselProps) => {
           <AntdImage
             src={item.image}
             alt={item.alt}
-            width="100%"
-            style={{ borderRadius: '10px'}}
+            width="90%"  
+            style={{ borderRadius: '10px', margin: '0 auto' }} // 添加margin实现居中
             height={`${height}px`}
             fit="cover"
             fallback={item.fallback}
           />
+
         </Swiper.Item>
       ))}
     </Swiper>

@@ -18,7 +18,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
   originalPrice,
 }) => {
   return (
-    <Card className="rounded-md shadow-sm bg-white p-1.5">
+    <Card className="rounded-md shadow-sm bg-white p-1.5 m-0.5">
       <div className="flex gap-1.5">
         <div className="w-6 h-6 rounded-sm overflow-hidden flex-shrink-0">
           <AntdImage

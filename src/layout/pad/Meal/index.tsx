@@ -30,7 +30,7 @@ const MealContent: React.FC<MealContentProps> = ({products, productName, checkbo
         overscrollBehavior: 'contain'
       }}>
 
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between mr-1">
         <h2 className="font-bold">{productName}</h2>
         <div className="flex items-center gap-4">
           <Checkbox className="text-gray-500">{checkboxName}</Checkbox>
