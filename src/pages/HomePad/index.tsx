@@ -2,8 +2,10 @@ import React, { memo, useState } from 'react'
 import styles from './index.module.less'
 import SwipeTabs from '../../components/SwipeTabs'
 import HomeContent from '@/layout/pad/HomeContent'
+import GiftConent from '@/layout/pad/Gift'
+import MealContent from '@/layout/pad/Meal'
+import VouchersContent from '@/layout/pad/Vouchers'
 import useTitle from '@/hooks/useTitle'
-
 const HomePad = () => {
   const [activeIndex, setActiveIndex] = useState(0)
   // 模拟标签数据
@@ -143,10 +145,6 @@ const HomePad = () => {
                 {index === 0 && (
                   <div
                     className={styles.contentWrapper}
-                    style={{
-                      WebkitOverflowScrolling: 'touch',
-                      overscrollBehavior: 'contain'
-                    }}
                   >
                     <HomeContent 
                       carouselItems={carouselItems}
@@ -157,18 +155,51 @@ const HomePad = () => {
                   </div>
                 )}
                 {index === 1 && (
-                  <div className="flex items-center justify-center h-full text-gray-500">
-                    代金券专区开发中...
+                   <div
+                    className={styles.contentWrapper}
+                    style={{
+                      WebkitOverflowScrolling: 'touch',
+                      overscrollBehavior: 'contain'
+                    }}
+                  >
+                    <GiftConent 
+                      carouselItems={carouselItems}
+                      products={products}
+                      productName="热门推荐"
+                      checkboxName="看我兑换"
+                    />
                   </div>
                 )}
                 {index === 2 && (
-                  <div className="flex items-center justify-center h-full text-gray-500">
-                    菜品券专区开发中...
+                 <div
+                    className={styles.contentWrapper}
+                    style={{
+                      WebkitOverflowScrolling: 'touch',
+                      overscrollBehavior: 'contain'
+                    }}
+                  >
+                    <MealContent 
+                      carouselItems={carouselItems}
+                      products={products}
+                      productName="热门推荐"
+                      checkboxName="看我兑换"
+                    />
                   </div>
                 )}
                 {index === 3 && (
-                  <div className="flex items-center justify-center h-full text-gray-500">
-                    周边礼品开发中...
+                   <div
+                    className={styles.contentWrapper}
+                    style={{
+                      WebkitOverflowScrolling: 'touch',
+                      overscrollBehavior: 'contain'
+                    }}
+                  >
+                    <VouchersContent 
+                      carouselItems={carouselItems}
+                      products={products}
+                      productName="热门推荐"
+                      checkboxName="看我兑换"
+                    />
                   </div>
                 )}
               </div>

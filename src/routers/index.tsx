@@ -27,4 +27,4 @@ const routes: White.RouteConfig[] = [
 ]
 
 export { TabBarList }
- export default [...routes]
+export default [...routes]

@@ -18,10 +18,9 @@ interface CarouselProps {
 const Carousel = ({ items, height, className = '' }: CarouselProps) => {
   return (
     <Swiper
-      autoplay
-      loop
+     
       className={`${className}`}
-      style={{ overflow: 'visible' }}
+      style={{ overflow: 'visible', width: '100%' }}
     >
       {items.map((item, index) => (
         <Swiper.Item key={index}>
