@@ -162,7 +162,7 @@ const HomePad = () => {
                       overscrollBehavior: 'contain'
                     }}
                   >
-                    <GiftContent 
+                    <VouchersContent
                       carouselItems={carouselItems}
                       products={products}
                       productName="热门推荐"
@@ -194,7 +194,7 @@ const HomePad = () => {
                       overscrollBehavior: 'contain'
                     }}
                   >
-                    <VouchersContent 
+                    <GiftContent  
                       carouselItems={carouselItems}
                       products={products}
                       productName="热门推荐"
