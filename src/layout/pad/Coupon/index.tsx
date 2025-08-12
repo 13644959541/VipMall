@@ -5,7 +5,7 @@ import { Checkbox } from 'antd-mobile';
 import DropdownSort from '@/components/Select';
 import styles from './index.module.less';
 
-interface VouchersContentProps {
+interface CouponContentProps {
   carouselItems: Array<{
     image: string;
     alt: string;
@@ -28,7 +28,7 @@ const sortOptions = [
   { label: "销量从低到高", value: "sales-asc" }, 
   { label: "销量从高到低", value: "sales-desc" }
 ];
-const VouchersContent: React.FC<VouchersContentProps> = ({ products, checkboxName }) => {
+const CouponContent: React.FC<CouponContentProps> = ({ products, checkboxName }) => {
   return (
     <div className={styles.contentWrapper}
       style={{
@@ -42,9 +42,10 @@ const VouchersContent: React.FC<VouchersContentProps> = ({ products, checkboxNam
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-2">
         {products.map(product => (
           <ProductCard
+            type='coupon'
             key={product.id}
             {...product}
           />
@@ -54,4 +55,4 @@ const VouchersContent: React.FC<VouchersContentProps> = ({ products, checkboxNam
   );
 };
 
-export default React.memo(VouchersContent);
+export default React.memo(CouponContent);

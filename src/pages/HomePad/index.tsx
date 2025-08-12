@@ -4,101 +4,97 @@ import SwipeTabs from '../../components/SwipeTabs'
 import HomeContent from '@/layout/pad/HomeContent'
 import GiftContent from '@/layout/pad/Gift'
 import MealContent from '@/layout/pad/Meal'
-import VouchersContent from '@/layout/pad/Vouchers'
+import CouponContent from '@/layout/pad/Coupon'
 import useTitle from '@/hooks/useTitle'
 const HomePad = () => {
   const [activeIndex, setActiveIndex] = useState(0)
   // 模拟标签数据
   const tabItems = [
-  { key: 'first', title: '首页' },
-  { key: 'second', title: '代金券专区' },
-  { key: 'third', title: '菜品券专区' },
-  { key: 'fourth', title: '周边礼品' },
+    { key: 'first', title: '首页' },
+    { key: 'second', title: '代金券专区' },
+    { key: 'third', title: '菜品券专区' },
+    { key: 'fourth', title: '周边礼品' },
   ]
   // 模拟商品数据
   const products = [
     {
       id: 1,
+      type: 'product',
       image: '/taro-paste.png',
-      name: '商品名称长长长长长长长长长长长长长长长长长长',
-      description: '累计兑换 46 份',
-      points: 2000,
-      originalPrice: 68,
+      name: '特色芋泥甜品特色芋泥甜品特色芋泥甜品特色芋泥甜品特色芋泥甜品特色芋泥甜品特色芋泥甜品',
+      description: '累计兑换 89 份',
+      points: 2500,
+      originalPrice: 58,
+      isAvailable: true
     },
     {
       id: 2,
+      type: 'product',
       image: '/taro-paste.png',
-      name: '商品名称超级超级长长长长长长长长长长长长长长长长长长长长长长长...',
-      description: '累计兑换 46 份（受国内疫情影响超级长长长长长长...',
-      points: 2000,
-      originalPrice: 68,
-    },
-    {
-      id: 3,
-      image: '/taro-paste.png',
-      name: '商品名称长长长长长长长长长长长长长长长长长长',
-      description: '累计兑换 46 份',
-      points: 2000,
-      originalPrice: 68,
-    },
-    {
-      id: 4,
-      image: '/taro-paste.png',
-      name: '商品名称长长长长长长长长长长长长长长长长长长',
-      description: '累计兑换 46 份',
-      points: 2000,
-      originalPrice: 68,
-    },
-    {
-      id: 5,
-      image: '/taro-paste.png',
-      name: '商品名称长长长长长长长长长长长长长长长长长长',
-      description: '累计兑换 46 份',
-      points: 2000,
-      originalPrice: 68,
-    },
-    {
-      id: 6,
-      image: '/taro-paste.png',
-      name: '商品名称超级长长长长',
-      description: '累计兑换 46 份',
-      points: 2000,
-      originalPrice: 68,
-    },
-    {
-      id: 7,
-      image: '/taro-paste.png',
-      name: '商品名称长长长长长长长长长长长长长长长长长长',
-      description: '累计兑换 46 份',
-      points: 2000,
-      originalPrice: 68,
-    },
-    {
-      id: 8,
-      image: '/taro-paste.png',
-      name: '商品名称超级超级长长长长长长长长长长长长长长长长长长长长长长长...',
-      description: '累计兑换 46 份（受国内疫情影响超级长长长长长长...',
-      points: 2000,
-      originalPrice: 68,
-    },
-    {
-      id: 9,
-      image: '/taro-paste.png',
-      name: '商品名称长长长长长长长长长长长长长长长长长长',
-      description: '累计兑换 46 份',
-      points: 2000,
-      originalPrice: 68,
-    },
-    {
-      id: 10,
-      image: '/taro-paste.png',
-      name: '商品名称长长长长长长长长长长长长长长长长长长',
-      description: '累计兑换 46 份',
-      points: 2000,
-      originalPrice: 68,
+      name: '特色毛肚',
+      description: '累计兑换 11189 份',
+      points: 2500,
+      originalPrice: 58,
+      isAvailable: true
     }
-
   ]
+  const coupon = [{
+    id: 1,
+    type: 'coupon',
+    image: '/taro-paste.png',
+    name: '100元代金券',
+    description: '累计兑换 156 份',
+    points: 5000,
+    originalPrice: 100,
+    redeemPeriod: '8/12-8/31 可兑换',
+    conflictRule: '不可与其他优惠券同时使用，一桌只可使用一次，具体规则请咨询门店服务员。',
+    isAvailable: true,
+    isRedeemable: true
+  }, {
+    id: 2,
+    type: 'coupon',
+    image: '/taro-paste.png',
+    name: '50元代金券',
+    description: '累计兑换 342 份',
+    points: 2500,
+    originalPrice: 50,
+    conflictRule: '一桌只可使用一次',
+    isAvailable: true
+  },]
+  const meal = [{
+    id: 1,
+    type: 'meal',
+    image: '/taro-paste.png',
+    name: '双人火锅套餐',
+    description: '累计兑换 203 份',
+    points: 8000,
+    originalPrice: 198,
+    redeemPeriod: '10:00-22:00',
+    isAvailable: true,
+    isRedeemable: false
+  },]
+  const gift = [{
+    id: 1,
+    type: 'gift',
+    image: '/taro-paste.png',
+    name: '限量版熊猫玩偶',
+    description: '累计兑换 56 份',
+    points: 12000,
+    originalPrice: 299,
+    remainingStock: 5,
+    isAvailable: true
+  },
+  {
+    id: 2,
+    type: 'gift',
+    image: '/taro-paste.png',
+    name: '火锅底料礼盒',
+    description: '累计兑换 78 份',
+    points: 6000,
+    originalPrice: 168,
+    remainingStock: 12,
+    isAvailable: true
+  }]
   // 模拟轮播图数据
   const carouselItems = [
     {
@@ -129,8 +125,12 @@ const HomePad = () => {
       )
     }
   ]
-  useTitle('主页');
-
+   // 多语言变量
+  const i18n = {
+    productName: "热门推荐",
+    checkboxName: "看我兑换"
+  };
+  //useTitle('主页');
   return (
     <div className={styles['pad-home']}>
       <div className={styles['main-content']}>
@@ -149,8 +149,8 @@ const HomePad = () => {
                     <HomeContent 
                       carouselItems={carouselItems}
                       products={products}
-                      productName="热门推荐"
-                      checkboxName="看我兑换"
+                      productName={i18n.productName}
+                      checkboxName={i18n.checkboxName}
                     />
                   </div>
                 )}
@@ -162,11 +162,11 @@ const HomePad = () => {
                       overscrollBehavior: 'contain'
                     }}
                   >
-                    <VouchersContent
+                    <CouponContent
                       carouselItems={carouselItems}
-                      products={products}
-                      productName="热门推荐"
-                      checkboxName="看我兑换"
+                      products={coupon}
+                      productName={i18n.productName}
+                      checkboxName={i18n.checkboxName}
                     />
                   </div>
                 )}
@@ -180,9 +180,9 @@ const HomePad = () => {
                   >
                     <MealContent 
                       carouselItems={carouselItems}
-                      products={products}
-                      productName="热门推荐"
-                      checkboxName="看我兑换"
+                      products={meal}
+                      productName={i18n.productName}
+                      checkboxName={i18n.checkboxName}
                     />
                   </div>
                 )}
@@ -196,9 +196,9 @@ const HomePad = () => {
                   >
                     <GiftContent  
                       carouselItems={carouselItems}
-                      products={products}
-                      productName="热门推荐"
-                      checkboxName="看我兑换"
+                      products={gift}
+                      productName={i18n.productName}
+                      checkboxName={i18n.checkboxName}
                     />
                   </div>
                 )}

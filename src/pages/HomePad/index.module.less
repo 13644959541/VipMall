@@ -63,7 +63,7 @@
   -ms-overflow-style: none !important; /* IE 10+ */
   touch-action: pan-y !important; /* 启用垂直滑动 */
   overscroll-behavior: contain !important; /* 防止滚动传播 */
-  
+  padding: 10px;
   &::-webkit-scrollbar {
     display: none !important;
     width: 0 !important;
@@ -76,7 +76,6 @@
   display: flex;
   flex-direction: column;
   width: 100%;
-  max-width: 1200px;
   margin: 0 auto;
   overflow-y: scroll !important;
   -webkit-overflow-scrolling: touch !important;
@@ -85,7 +84,6 @@
   scrollbar-width: none !important;
   -ms-overflow-style: none !important;
   height: calc(100vh - 200px) !important;
-  padding-bottom: 20px !important; /* 增加底部padding确保内容可滚动 */
   
   &::-webkit-scrollbar {
     display: none !important;

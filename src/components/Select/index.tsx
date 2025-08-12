@@ -3,14 +3,14 @@ import { DownOutline, UpOutline } from "antd-mobile-icons";
 import styles from './index.module.less'
 
 interface SelectProps {
-  options?: Array<{label: string, value: string}>;
+  options?: Array<{ label: string, value: string }>;
   defaultValue?: string;
   defaultLabel?: string;
   title?: string;
 }
 
-export default function Select({ 
-  options = [], 
+export default function Select({
+  options = [],
   defaultLabel = '默认排序',
   title = '推荐'
 }: SelectProps) {
@@ -31,7 +31,7 @@ export default function Select({
         setOpen(false);
       }
     };
-    document.addEventListener("mousedown", handleClickOutside);
+      document.addEventListener("mousedown", handleClickOutside);
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
@@ -58,7 +58,7 @@ export default function Select({
                 onClick={() => handleSelect(opt.value)}
               >
                 <span>{opt.label}</span>
-                <span className={styles.arrow}>{opt.value.includes("asc") ? "↑" : "↓"}</span>
+                <span className={styles.arrow}>{opt.value.includes("asc") ? " ↑" : " ↓"}</span>
               </div>
             ))}
           </div>
