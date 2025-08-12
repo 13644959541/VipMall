@@ -10,6 +10,7 @@ interface ProductCardProps {
   name: string
   description: string
   points: number
+  sales?: number
   originalPrice: number
   redeemPeriod?: string
   conflictRule?: string
@@ -30,12 +31,13 @@ const ProductCard: React.FC<ProductCardProps> = ({
   description,
   points,
   originalPrice, // 兑换原价
-  redeemPeriod, // 可兑换时间段
+  redeemPeriod, // 可兑换时间段 
   conflictRule, // 兑换冲突规则
   remainingStock, // 剩余库存数量，仅对礼品券(gift)有效
   isAvailable = true,
   isRedeemable = true,
-  level = 1,
+  sales,
+  level,
   onClick = () => { },
 }) => {
   const disabled = !isAvailable || (redeemPeriod && !isRedeemable) // 禁用条件，包括不可用和兑换时间段不满足时?

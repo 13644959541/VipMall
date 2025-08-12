@@ -14,6 +14,7 @@ interface HomeContentProps {
     id: number;
     image: string;
     name: string;
+    sales: number;
     description: string;
     points: number;
     originalPrice: number;

@@ -1,5 +1,4 @@
 import React from 'react';
-import Carousel from '@/components/Carousel';
 import ProductCard from '@/components/ProductCard';
 import { Checkbox } from 'antd-mobile';
 import DropdownSort from '@/components/Select';
@@ -17,18 +16,43 @@ interface CouponContentProps {
     name: string;
     description: string;
     points: number;
+    sales: number;
     originalPrice: number;
   }>;
   productName: string;
   checkboxName: string;
+  sortOptions: Array<{
+    label: string;
+    value: string;
+  }>;
 }
-const sortOptions = [
-  { label: "积分从低到高", value: "score-asc" },
-  { label: "积分从高到低", value: "score-desc" },
-  { label: "销量从低到高", value: "sales-asc" }, 
-  { label: "销量从高到低", value: "sales-desc" }
-];
-const CouponContent: React.FC<CouponContentProps> = ({ products, checkboxName }) => {
+const CouponContent: React.FC<CouponContentProps> = ({ products, checkboxName, sortOptions }) => {
+  const [sortOption, setSortOption] = useState<string>('default');
+
+  const sortedProducts = useMemo(() => {
+    if (!products) return [];
+
+    const [field, order] = sortOption.split('-');
+    if (field === 'default') return products;
+
+    return [...products].sort((a, b) => {
+      if (field === 'score') {
+        return order === 'asc'
+          ? a.points - b.points
+          : b.points - a.points;
+      } else if (field === 'sales') {
+        return order === 'asc'
+          ? (a.sales || 0) - (b.sales || 0)
+          : (b.sales || 0) - (a.sales || 0);
+      }
+      return 0;
+    });
+  }, [products, sortOption]);
+
+  const handleSortChange = (value: string) => {
+    setSortOption(value);
+  };
+
   return (
     <div className={styles.contentWrapper}
       style={{
@@ -36,14 +60,19 @@ const CouponContent: React.FC<CouponContentProps> = ({ products, checkboxName })
         overscrollBehavior: 'contain'
       }}>
       <div className="flex items-center justify-between ml-1 mr-1">
-        <DropdownSort options={sortOptions} title="推荐" defaultLabel="默认排序"/>
+        <DropdownSort
+          options={sortOptions}
+          title="推荐"
+          defaultLabel="默认排序"
+          onChange={handleSortChange}
+        />
         <div className="flex items-center gap-4">
           <Checkbox className="text-gray-500">{checkboxName}</Checkbox>
         </div>
       </div>
 
       <div className="grid grid-cols-2">
-        {products.map(product => (
+        {sortedProducts.map(product => (
           <ProductCard
             type='coupon'
             key={product.id}

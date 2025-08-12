@@ -24,6 +24,7 @@ const HomePad = () => {
       name: '特色芋泥甜品特色芋泥甜品特色芋泥甜品特色芋泥甜品特色芋泥甜品特色芋泥甜品特色芋泥甜品',
       description: '累计兑换 89 份',
       points: 2500,
+      sales: 89,
       originalPrice: 58,
       isAvailable: true
     },
@@ -33,6 +34,7 @@ const HomePad = () => {
       image: '/taro-paste.png',
       name: '特色毛肚',
       description: '累计兑换 11189 份',
+      sales: 11189,
       points: 2500,
       originalPrice: 58,
       isAvailable: true
@@ -44,6 +46,7 @@ const HomePad = () => {
     image: '/taro-paste.png',
     name: '100元代金券',
     description: '累计兑换 156 份',
+    sales: 156,
     points: 5000,
     originalPrice: 100,
     redeemPeriod: '8/12-8/31 可兑换',
@@ -57,6 +60,7 @@ const HomePad = () => {
     name: '50元代金券',
     description: '累计兑换 342 份',
     points: 2500,
+    sales: 342,
     originalPrice: 50,
     conflictRule: '一桌只可使用一次',
     isAvailable: true
@@ -67,6 +71,7 @@ const HomePad = () => {
     image: '/taro-paste.png',
     name: '双人火锅套餐',
     description: '累计兑换 203 份',
+    sales: 203,
     points: 8000,
     originalPrice: 198,
     redeemPeriod: '10:00-22:00',
@@ -79,6 +84,7 @@ const HomePad = () => {
     image: '/taro-paste.png',
     name: '限量版熊猫玩偶',
     description: '累计兑换 56 份',
+    sales: 56,
     points: 12000,
     originalPrice: 299,
     remainingStock: 5,
@@ -90,6 +96,7 @@ const HomePad = () => {
     image: '/taro-paste.png',
     name: '火锅底料礼盒',
     description: '累计兑换 78 份',
+    sales: 78,
     points: 6000,
     originalPrice: 168,
     remainingStock: 12,
@@ -125,11 +132,19 @@ const HomePad = () => {
       )
     }
   ]
-   // 多语言变量
+  // 多语言变量
   const i18n = {
     productName: "热门推荐",
     checkboxName: "看我兑换"
   };
+
+  //排序
+  const sortOptions = [
+    { label: "积分从低到高", value: "score-asc" },
+    { label: "积分从高到低", value: "score-desc" },
+    { label: "销量从低到高", value: "sales-asc" },
+    { label: "销量从高到低", value: "sales-desc" }
+  ]
   //useTitle('主页');
   return (
     <div className={styles['pad-home']}>
@@ -146,7 +161,7 @@ const HomePad = () => {
                   <div
                     className={styles.contentWrapper}
                   >
-                    <HomeContent 
+                    <HomeContent
                       carouselItems={carouselItems}
                       products={products}
                       productName={i18n.productName}
@@ -155,7 +170,7 @@ const HomePad = () => {
                   </div>
                 )}
                 {index === 1 && (
-                   <div
+                  <div
                     className={styles.contentWrapper}
                     style={{
                       WebkitOverflowScrolling: 'touch',
@@ -167,38 +182,41 @@ const HomePad = () => {
                       products={coupon}
                       productName={i18n.productName}
                       checkboxName={i18n.checkboxName}
+                      sortOptions={sortOptions}
                     />
                   </div>
                 )}
                 {index === 2 && (
-                 <div
+                  <div
                     className={styles.contentWrapper}
                     style={{
                       WebkitOverflowScrolling: 'touch',
                       overscrollBehavior: 'contain'
                     }}
                   >
-                    <MealContent 
+                    <MealContent
                       carouselItems={carouselItems}
                       products={meal}
                       productName={i18n.productName}
                       checkboxName={i18n.checkboxName}
+                      sortOptions={sortOptions}
                     />
                   </div>
                 )}
                 {index === 3 && (
-                   <div
+                  <div
                     className={styles.contentWrapper}
                     style={{
                       WebkitOverflowScrolling: 'touch',
                       overscrollBehavior: 'contain'
                     }}
                   >
-                    <GiftContent  
+                    <GiftContent
                       carouselItems={carouselItems}
                       products={gift}
                       productName={i18n.productName}
                       checkboxName={i18n.checkboxName}
+                      sortOptions={sortOptions}
                     />
                   </div>
                 )}

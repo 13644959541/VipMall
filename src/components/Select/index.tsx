@@ -7,12 +7,14 @@ interface SelectProps {
   defaultValue?: string;
   defaultLabel?: string;
   title?: string;
+  onChange?: (value: string) => void;
 }
 
 export default function Select({
   options = [],
   defaultLabel = '默认排序',
-  title = '推荐'
+  title = '推荐',
+  onChange
 }: SelectProps) {
   const [open, setOpen] = useState(false);
   const [selected, setSelected] = useState(defaultLabel);
@@ -22,6 +24,7 @@ export default function Select({
     const item = options.find((opt) => opt.value === value)!;
     setSelected(item.label);
     setOpen(false);
+    onChange?.(value);
   };
 
   // 点击外部关闭
