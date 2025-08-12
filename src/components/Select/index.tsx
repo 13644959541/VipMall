@@ -6,14 +6,14 @@ interface SelectProps {
   options?: Array<{ label: string, value: string }>;
   defaultValue?: string;
   defaultLabel?: string;
-  title?: string;
+  // title?: string;
   onChange?: (value: string) => void;
 }
 
 export default function Select({
   options = [],
-  defaultLabel = '默认排序',
-  title = '推荐',
+  defaultLabel = '会员专区',
+  // title = '推荐',
   onChange
 }: SelectProps) {
   const [open, setOpen] = useState(false);
@@ -47,13 +47,12 @@ export default function Select({
         onClick={() => setOpen(!open)}
       >
         <span>{selected}</span>
-        {open ? <UpOutline /> : <DownOutline />}
       </div>
 
       {open && (
         <>
           <div className={styles['dropdown-menu']}>
-            <div className={`${styles['dropdown-title']}`}>{title}</div>
+            {/* <span className={`${styles['dropdown-title']}`}>{title}</span> */}
             {options.map((opt) => (
               <div
                 key={opt.value}
@@ -61,7 +60,6 @@ export default function Select({
                 onClick={() => handleSelect(opt.value)}
               >
                 <span>{opt.label}</span>
-                <span className={styles.arrow}>{opt.value.includes("asc") ? " ↑" : " ↓"}</span>
               </div>
             ))}
           </div>

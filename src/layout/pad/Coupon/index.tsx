@@ -1,8 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import ProductCard from '@/components/ProductCard';
 import { Checkbox } from 'antd-mobile';
 import DropdownSort from '@/components/Select';
+import MemberLevelFilter from '@/components/Sort';
 import styles from './index.module.less';
+import Sort from '@/components/Sort';
 
 interface CouponContentProps {
   carouselItems: Array<{
@@ -18,6 +20,7 @@ interface CouponContentProps {
     points: number;
     sales: number;
     originalPrice: number;
+    memberLevel?: string;
   }>;
   productName: string;
   checkboxName: string;
@@ -27,30 +30,41 @@ interface CouponContentProps {
   }>;
 }
 const CouponContent: React.FC<CouponContentProps> = ({ products, checkboxName, sortOptions }) => {
+  const [memberLevel, setMemberLevel] = useState<string | null>(null);
   const [sortOption, setSortOption] = useState<string>('default');
 
-  const sortedProducts = useMemo(() => {
+  const filteredAndSortedProducts = useMemo(() => {
     if (!products) return [];
+    
+    // 先筛选
+    let result = [...products];
+    if (memberLevel && memberLevel !== 'all') {
+      result = result.filter(product => product.memberLevel === memberLevel);
+    }
 
+    // 再排序
     const [field, order] = sortOption.split('-');
-    if (field === 'default') return products;
+    if (field !== 'default') {
+      result.sort((a, b) => {
+        if (field === 'points') {
+          return order === 'asc' ? a.points - b.points : b.points - a.points;
+        } else if (field === 'sales') {
+          return order === 'asc' 
+            ? (a.sales || 0) - (b.sales || 0) 
+            : (b.sales || 0) - (a.sales || 0);
+        }
+        return 0;
+      });
+    }
 
-    return [...products].sort((a, b) => {
-      if (field === 'score') {
-        return order === 'asc'
-          ? a.points - b.points
-          : b.points - a.points;
-      } else if (field === 'sales') {
-        return order === 'asc'
-          ? (a.sales || 0) - (b.sales || 0)
-          : (b.sales || 0) - (a.sales || 0);
-      }
-      return 0;
-    });
-  }, [products, sortOption]);
+    return result;
+  }, [products, memberLevel, sortOption]);
 
   const handleSortChange = (value: string) => {
     setSortOption(value);
+  };
+  const handleLevelChange = (value: string) => {
+    setMemberLevel(value);
   };
 
   return (
@@ -60,19 +74,23 @@ const CouponContent: React.FC<CouponContentProps> = ({ products, checkboxName, s
         overscrollBehavior: 'contain'
       }}>
       <div className="flex items-center justify-between ml-1 mr-1">
+        <div className="flex flex-row items-center space-x-4">
         <DropdownSort
           options={sortOptions}
-          title="推荐"
-          defaultLabel="默认排序"
+          onChange={handleLevelChange}
+        />
+        <Sort 
+          defaultLabel="综合排序"
+          pointsLabel="积分高低"
+          salesLabel="销量优先"
           onChange={handleSortChange}
         />
-        <div className="flex items-center gap-4">
-          <Checkbox className="text-gray-500">{checkboxName}</Checkbox>
         </div>
+        <Checkbox className="text-gray-500">{checkboxName}</Checkbox>
       </div>
 
       <div className="grid grid-cols-2">
-        {sortedProducts.map(product => (
+        {filteredAndSortedProducts.map(product => (
           <ProductCard
             type='coupon'
             key={product.id}

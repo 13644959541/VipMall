@@ -64,8 +64,6 @@ const GiftContent: React.FC<GiftContentProps> = ({ products, sortOptions, checkb
       <div className="flex items-center justify-between ml-1 mr-1">
         <DropdownSort
           options={sortOptions}
-          title="推荐"
-          defaultLabel="默认排序"
           onChange={handleSortChange}
         />
         <div className="flex items-center gap-4">

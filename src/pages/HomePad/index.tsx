@@ -26,7 +26,8 @@ const HomePad = () => {
       points: 2500,
       sales: 89,
       originalPrice: 58,
-      isAvailable: true
+      isAvailable: true,
+      memberLevel: 'red'
     },
     {
       id: 2,
@@ -37,7 +38,8 @@ const HomePad = () => {
       sales: 11189,
       points: 2500,
       originalPrice: 58,
-      isAvailable: true
+      isAvailable: true,
+      memberLevel: 'silver'
     }
   ]
   const coupon = [{
@@ -52,7 +54,8 @@ const HomePad = () => {
     redeemPeriod: '8/12-8/31 可兑换',
     conflictRule: '不可与其他优惠券同时使用，一桌只可使用一次，具体规则请咨询门店服务员。',
     isAvailable: true,
-    isRedeemable: true
+    isRedeemable: true,
+    memberLevel: 'red'
   }, {
     id: 2,
     type: 'coupon',
@@ -63,7 +66,8 @@ const HomePad = () => {
     sales: 342,
     originalPrice: 50,
     conflictRule: '一桌只可使用一次',
-    isAvailable: true
+    isAvailable: true,
+    memberLevel: 'silver'
   },]
   const meal = [{
     id: 1,
@@ -140,10 +144,11 @@ const HomePad = () => {
 
   //排序
   const sortOptions = [
-    { label: "积分从低到高", value: "score-asc" },
-    { label: "积分从高到低", value: "score-desc" },
-    { label: "销量从低到高", value: "sales-asc" },
-    { label: "销量从高到低", value: "sales-desc" }
+    { label: "全部", value: "all" },
+    { label: "红海会员可兑", value: "red" },
+    { label: "银海会员可兑", value: "silver" },
+    { label: "金海会员可兑", value: "gold" },
+    { label: "黑海会员可兑", value: "black" }
   ]
   //useTitle('主页');
   return (
