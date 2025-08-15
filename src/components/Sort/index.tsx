@@ -26,7 +26,6 @@ export default function Sort({
 
     setSortField(field);
     setSortOrder(order);
-
     // 传递给父组件的格式：field-order (如 "points-asc")
     onChange?.(field === 'default' ? 'default' : `${field}-${order}`);
   };
@@ -40,7 +39,7 @@ export default function Sort({
   );
 
   return (
-    <div className={styles['sort-container']}>
+    <div className={`${styles['sort-container']} flex items-center justify-between `}>
       <div
         className={`${styles['sort-item']} ${
           sortField === "" || sortField === "default" ? styles['active'] : ''

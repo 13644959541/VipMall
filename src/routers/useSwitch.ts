@@ -1,7 +1,7 @@
 import { White } from '@/typings';
 import { useEffect, useRef } from 'react';
 import { useLocation, useNavigationType, matchPath } from 'react-router-dom';
-import routes, { TabBarList } from './index';
+import routes from './index';
 
 const useSwitch = () => {
   const action = useNavigationType();
@@ -19,8 +19,10 @@ const useSwitch = () => {
   const routeSceneMode = routes.find((v) =>
     matchPath({path: v.path, end: true}, location.pathname),
   )?.sceneMode;
-  const [activeIndex, oldIndex] = TabBarList.reduce(
-    (pre, { path }, index) => {
+  
+  const tabBars = routes.find(route => route.tabBars)?.tabBars || [];
+  const [activeIndex, oldIndex] = tabBars.reduce(
+    (pre: [number, number], { path }: { path: string }, index: number) => {
       if (matchPath({path, end: true}, location.pathname)) {
         pre[0] = index;
       }
@@ -34,8 +36,8 @@ const useSwitch = () => {
   if (activeIndex !== -1 && oldIndex !== -1) {
     className.current =
       activeIndex > oldIndex
-        ? `forward-from-${TabBarList[activeIndex].sceneMode || 'right'}`
-        : `back-to-${TabBarList[oldIndex].sceneMode || 'right'}`;
+        ? `forward-from-${tabBars[activeIndex].sceneMode || 'right'}`
+        : `back-to-${tabBars[oldIndex].sceneMode || 'right'}`;
   } else {
     if (action === 'PUSH') {
       className.current = `forward-from-${routeSceneMode || 'right'}`;

@@ -74,7 +74,6 @@ const CouponContent: React.FC<CouponContentProps> = ({ products, checkboxName, s
         overscrollBehavior: 'contain'
       }}>
       <div className="flex items-center justify-between ml-1 mr-1">
-        <div className="flex flex-row items-center space-x-4">
         <DropdownSort
           options={sortOptions}
           onChange={handleLevelChange}
@@ -85,7 +84,6 @@ const CouponContent: React.FC<CouponContentProps> = ({ products, checkboxName, s
           salesLabel="销量优先"
           onChange={handleSortChange}
         />
-        </div>
         <Checkbox className="text-gray-500">{checkboxName}</Checkbox>
       </div>
 

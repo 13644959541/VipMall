@@ -19,7 +19,7 @@ const HomePad = () => {
   const products = [
     {
       id: 1,
-      type: 'product',
+      type: 'meal',
       image: '/taro-paste.png',
       name: '特色芋泥甜品特色芋泥甜品特色芋泥甜品特色芋泥甜品特色芋泥甜品特色芋泥甜品特色芋泥甜品',
       description: '累计兑换 89 份',
@@ -31,7 +31,7 @@ const HomePad = () => {
     },
     {
       id: 2,
-      type: 'product',
+      type: 'coupon',
       image: '/taro-paste.png',
       name: '特色毛肚',
       description: '累计兑换 11189 份',

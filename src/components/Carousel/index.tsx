@@ -18,7 +18,8 @@ interface CarouselProps {
 const Carousel = ({ items, height, className = '' }: CarouselProps) => {
   return (
     <Swiper
-     
+      autoplay
+      loop
       className={`${className}`}
       style={{ overflow: 'visible', width: '100%' }}
     >
@@ -27,7 +28,7 @@ const Carousel = ({ items, height, className = '' }: CarouselProps) => {
           <AntdImage
             src={item.image}
             alt={item.alt}
-            width="90%"  
+            width="100%"  
             style={{ borderRadius: '10px', margin: '0 auto' }} // 添加margin实现居中
             height={`${height}px`}
             fit="cover"

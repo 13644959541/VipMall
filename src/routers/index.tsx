@@ -2,23 +2,29 @@ import type { White } from "@/typings"
 import { lazy } from "react"
 const Home = lazy(() => import(/* chunkName: Home */ "@/pages/HomeWrapper"))
 const Index = lazy(() => import(/* chunkName: Index */ "@/pages/Index"))
+const ProductDetail = lazy(() => import(/* chunkName: ProductDetail */ "@/pages/ProductDetail"))
 const NoFound = lazy(() => import(/* chunkName: NoFound */ "../components/NoFound"))
-
-const TabBarList: Array<White.RouteTabBar> = [
-  {
-    path: "/",
-    component: Home, 
-    icon: "white-home1",
-    sceneMode: "scroll",
-    title: "商城兑换",
-  }
-]
 
 const routes: White.RouteConfig[] = [
   {
     path: "/",
     component: Index,
-    tabBars: TabBarList,
+    tabBars: [
+      {
+        path: "/",
+        component: Home,
+        icon: "white-home", 
+        sceneMode: "scroll",
+      }
+    ],
+  },
+  {
+    path: "/product/:id",
+    component: ProductDetail,
+  },
+  {
+    path: "/cart",
+    component: ProductDetail,
   },
   {
     path: "*",
@@ -26,5 +32,4 @@ const routes: White.RouteConfig[] = [
   },
 ]
 
-export { TabBarList }
 export default [...routes]

@@ -39,7 +39,7 @@ function TabBarView({ className }: TabBarViewProps) {
           className={`flex flex-col justify-center items-center ${
             styles.tabBarItem
           } ${state === index ? styles.chooseed : ''}`}
-          key={title}
+          key={path}
           onClick={() => {
             OnTabClick(index, path);
           }}>
