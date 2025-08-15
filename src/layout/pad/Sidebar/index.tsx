@@ -20,8 +20,8 @@ const Sidebar: React.FC<SidebarProps> = ({ className }) => {
       {/* 功能菜单 */}
       <NavMenu items={[
         { to: '/', icon: Gift, text: '商城兑换' },
-        { to: '/detail', icon: Clock, text: '兑换记录' },
-        { to: '/list', icon: ShoppingCart, text: '购物车' }
+        { to: '/details', icon: Clock, text: '兑换记录' },
+        { to: '/cart', icon: ShoppingCart, text: '购物车' }
       ]} />
     </div>
   );

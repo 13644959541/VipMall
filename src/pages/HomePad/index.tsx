@@ -5,7 +5,6 @@ import HomeContent from '@/layout/pad/HomeContent'
 import GiftContent from '@/layout/pad/Gift'
 import MealContent from '@/layout/pad/Meal'
 import CouponContent from '@/layout/pad/Coupon'
-import useTitle from '@/hooks/useTitle'
 const HomePad = () => {
   const [activeIndex, setActiveIndex] = useState(0)
   // 模拟标签数据

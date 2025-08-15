@@ -1,8 +1,9 @@
 import type React from "react"
 import { useState, useEffect, useRef } from "react"
 import { useParams, useNavigate } from "react-router-dom"
-import { Button, Image as AntdImage, Tag, Space } from "antd-mobile"
+import { Button, Image as AntdImage, Tag, Space, Toast } from "antd-mobile"
 import { ArrowLeft, Star, ShoppingCart } from "lucide-react"
+import { useCartStore } from "@/store/cart"
 import styles from './index.module.less'
 
 interface ProductDetailProps {
@@ -55,8 +56,21 @@ const ProductDetail: React.FC<ProductDetailProps> = () => {
     setProduct(mockProduct)
   }, [id])
 
+  const addToCart = useCartStore((state) => state.addItem)
+
   const handleAddToCart = () => {
-    console.log("加入购物车")
+    if (!product) return
+    
+    addToCart({
+      productId: product.id,
+      name: product.name,
+      image: product.image,
+      price: product.originalPrice,
+    })
+    Toast.show({
+      content: '已加入购物车',
+      position: 'bottom',
+    })
   }
 
   const handleRedeem = () => {
@@ -186,7 +200,10 @@ const ProductDetail: React.FC<ProductDetailProps> = () => {
           <div className="flex items-end justify-end h-1 gap-1">
             <div
               className={styles['cartButton']}
-              onClick={handleAddToCart}
+              onClick={(e) => {
+                handleAddToCart()
+                navigate('/cart')
+              }}
             >
               {TEXT.ADD_TO_CART}
             </div>
@@ -227,5 +244,3 @@ const ProductDetail: React.FC<ProductDetailProps> = () => {
 }
 
 export default ProductDetail;
-
-

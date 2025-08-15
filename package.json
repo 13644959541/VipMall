@@ -43,6 +43,10 @@
     "not ie <= 10"
   ],
   "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^7.0.0",
+    "@fortawesome/free-regular-svg-icons": "^7.0.0",
+    "@fortawesome/free-solid-svg-icons": "^7.0.0",
+    "@fortawesome/react-fontawesome": "^0.2.3",
     "@nuxt/kit": "latest",
     "@testing-library/jest-dom": "latest",
     "@types/react-responsive": "^9.0.0",
@@ -52,6 +56,7 @@
     "axios": "latest",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "framer-motion": "^12.23.12",
     "fs": "latest",
     "history": "latest",
     "jiti": "latest",
@@ -64,6 +69,7 @@
     "react-dom": "^18",
     "react-responsive": "^10.0.1",
     "react-router-dom": "latest",
+    "react-swipeable": "^7.0.2",
     "react-transition-group": "latest",
     "rmox": "latest",
     "rolldown": "latest",
@@ -75,7 +81,8 @@
     "tailwind-merge": "^2.5.5",
     "tailwindcss-animate": "^1.0.7",
     "tsx": "latest",
-    "yaml": "latest"
+    "yaml": "latest",
+    "zustand": "^5.0.7"
   },
   "devDependencies": {
     "@types/node": "^22",

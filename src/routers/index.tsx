@@ -24,7 +24,7 @@ const routes: White.RouteConfig[] = [
   },
   {
     path: "/cart",
-    component: ProductDetail,
+    component: lazy(() => import(/* chunkName: Cart */ "@/pages/Cart")),
   },
   {
     path: "*",
