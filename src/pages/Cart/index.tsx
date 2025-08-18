@@ -1,7 +1,7 @@
 import React, { useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Button, Image as AntdImage, Space, Toast, Checkbox } from 'antd-mobile'
-import { ArrowLeft, Trash2 } from 'lucide-react'
+import { ArrowLeft, Star, Trash2 } from 'lucide-react'
 import { useCartStore } from '@/store/cart'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faAngleRight } from '@fortawesome/free-solid-svg-icons'
@@ -58,22 +58,34 @@ const CartPage = () => {
 
   return (
     <div className="flex flex-col h-screen">
-      <div className="flex-1 overflow-y-auto">
+      <div className="flex-1 w-full h-full overflow-y-auto">
         {/* Empty State */}
         {items.length === 0 && (
           <div className="flex flex-col items-center justify-center h-full">
-            <AntdImage src="/pad/empty-.svg" width={200} height={200} />
+            <AntdImage src="/empty-.svg" width={200} height={200} />
             <div className={styles['cart-msg']}>购物车还是空的，快去加购商品吧</div>
           </div>
         )}
 
         {/* Cart Items */}
         {items.length > 0 && (
-          <div className="p-2 space-y-2 pb-20">
+          <div className="flex items-center mt-1">
             {items.map((item, index) => (
+              <React.Fragment key={item.id}>
+              <div className="ml-1 mr-1">
+                <Checkbox
+              checked={items.length > 0 && items.every(item => item.selected)}
+              onChange={(checked) => {
+                items.forEach(item => {
+                  if(item.selected !== checked) {
+                    toggleSelect(item.id)
+                  }
+                })
+              }}
+              
+            /></div>
               <div
-                key={item.id}
-                className="relative overflow-hidden bg-white rounded-lg"
+                className="relative overflow-hidden bg-white rounded-lg w-full mr-1"
                 onTouchMove={(e) => handleSwipe(index, e.touches[0].clientX - e.touches[0].clientX)}
                 onTouchEnd={() => handleSwipeEnd(index)}
               >
@@ -84,68 +96,65 @@ const CartPage = () => {
                       swipeRefs.current[index] = el
                     }
                   }}
-                  className="flex items-center p-3 transition-transform duration-300"
+                  className="flex items-center p-1 transition-transform duration-300"
                   style={{ transform: 'translateX(0)' }}
                 >
-            <Checkbox
-              checked={items.length > 0 && items.every(item => item.selected)}
-              onChange={(checked) => {
-                items.forEach(item => {
-                  if(item.selected !== checked) {
-                    toggleSelect(item.id)
-                  }
-                })
-              }}
-              className="ml-2 mr-2"
-              indeterminate={false}
-            />
+          
                   <AntdImage
                     src={item.image}
-                    width={80}
-                    height={80}
+                    width={150}
+                    height={130}
                     fit="cover"
-                    className="rounded-lg"
                   />
-                  <div className="ml-3 flex-1">
-                    <h3 className="text-sm font-medium line-clamp-2">{item.name}</h3>
+                  <div className="ml-3 flex-1 space-y-1">
+                    <div className={styles.name}>{item.name}</div>
+                    <div className="space-y-1">
+                       <div className={`${styles['font']} ${styles['detail']}`}>{item.details}</div>
+                       <div className={`${styles['font']} ${styles['rule']}`}>* {item.conflictRule}</div>
+                    </div>
                     <div className="flex justify-between items-center mt-2">
-                      <span className="text-red-500 font-bold">¥{item.price}</span>
-                      <div className="flex items-center border rounded-full">
-                        <Button
-                          size="mini"
-                          onClick={() => updateQuantity(item.id, Math.max(1, item.quantity - 1))}
-                          className="w-8 h-8"
-                        >
-                          -
-                        </Button>
-                        <span className="mx-2">{item.quantity}</span>
-                        <Button
-                          size="mini"
-                          onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                          className="w-8 h-8"
-                        >
-                          +
-                        </Button>
+                      <div className="flex items-center mr-2">
+                        <Star className="h-1 w-1 fill-orange-500 text-orange-500 mr-1" />
+                        <div className={`${styles['point']} mr-2`}>{item.points}</div>
+                        <div className={`${styles['originalPrice']} mr-2`}>¥{item.price}</div>
                       </div>
+                         <div className="flex flex-col items-end">
+                          <div className="flex items-center gap-1">
+                            <div
+                              className="w-[22px] h-[22px] rounded-full bg-gray-200 text-black text-xxs flex items-center justify-center"
+                              onClick={() => updateQuantity(item.id, Math.max(1, item.quantity - 1))}
+                            >
+                              -
+                            </div>
+                            <div className="text-xxxs">{item.quantity}</div>
+                            <div
+                              className="w-[22px] h-[22px] rounded-full bg-red-500 text-white text-xxs flex items-center justify-center"
+                              onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                            >
+                              +
+                            </div>
+                          </div>
+                        </div>
                     </div>
                   </div>
                 </div>
 
                 {/* Delete Action (shown on swipe) */}
                 <div
-                  className="absolute right-0 bottom-0 w-20 h-20 bg-red-500 flex items-center justify-center"
+                  className="absolute right-2 top-1 w-2 h-2 flex items-center justify-center"
                   onClick={() => removeItem(item.id)}
                 >
-                  <Trash2 size={20} className="text-white" />
+                  <Trash2 size={20} className="text-red-500" />
                 </div>
               </div>
+              </React.Fragment>
             ))}
           </div>
         )}
       </div>
 
       {/* Checkout Bar */}
-      <div className={styles['checkout']}>
+      <div className={`${styles['checkout']} w-full`}>
           <div className="flex items-center">
             <Checkbox
               onChange={(checked) => {
@@ -159,7 +168,7 @@ const CartPage = () => {
             />
             <div className={styles['font']}>
               <div >
-                合计积分: <span >¥{totalPrice()}</span>
+                合计积分: <span >{totalPrice()}</span>
               </div>
               <div className={styles['span']} >
                 积分所兑的商品不支持退换货

@@ -1,7 +1,7 @@
 import type React from "react"
 import { Card, Image as AntdImage } from "antd-mobile"
 import { Star } from "lucide-react"
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 
 type ProductType = "coupon" | "product" | "meal" | "gift"
 
@@ -42,15 +42,23 @@ const ProductCard: React.FC<ProductCardProps> = ({
   onRedeem,
   productId = 1,
 }) => {
+  const navigate = useNavigate();
+  
   const handleClick = (e: React.MouseEvent) => {
     console.log("ProductCard clicked, productId:", productId)
     
     if (onClick) {
       e.preventDefault()
       onClick()
+    } else {
+      // 直接通过URL参数控制导航栏状态
+      e.preventDefault()
+      if (window.innerWidth < 768) { // 移动端
+        navigate(`/product/${productId}?resetTab=true`, { replace: true })
+      } else { // iPad/桌面端
+        navigate(`/product/${productId}`)
+      }
     }
-    // 导航由Link组件自动处理
-    console.log("Navigating to:", `/product/${productId}`)
   }
 
   const disabled = !isAvailable || (redeemPeriod && !isRedeemable)

@@ -8,12 +8,17 @@ type CartItem = {
   image: string
   price: number
   quantity: number
-  selected?: boolean
+  selected: boolean
+  points: number
+  details: string
+  conflictRule:string
+  redeemPeriod:string
+  type:string
 }
 
 type CartState = {
   items: CartItem[]
-  addItem: (product: Omit<CartItem, 'id' | 'quantity'>) => void
+  addItem: (product: Omit<CartItem, 'id'> & { quantity?: number }) => void
   removeItem: (id: string | number) => void
   updateQuantity: (id: string | number, quantity: number) => void
   toggleSelect: (id: string | number) => void
@@ -35,7 +40,10 @@ export const useCartStore = create<CartState>()(
             return {
               items: state.items.map((item) =>
                 item.productId === product.productId
-                  ? { ...item, quantity: item.quantity + 1 }
+                  ? { 
+                      ...item, 
+                      quantity: product.quantity ? item.quantity + product.quantity : item.quantity + 1,
+                    }
                   : item
               ),
             }
@@ -43,7 +51,12 @@ export const useCartStore = create<CartState>()(
           return {
             items: [
               ...state.items,
-              { ...product, id: Date.now(), quantity: 1, selected: true },
+              { 
+                ...product, 
+                id: Date.now(), 
+                quantity: product.quantity || 1, 
+                selected: true 
+              },
             ],
           }
         }),
@@ -67,7 +80,12 @@ export const useCartStore = create<CartState>()(
       totalItems: () => get().items.reduce((sum, item) => sum + item.quantity, 0),
       totalPrice: () => 
         get().items.reduce(
-          (sum, item) => sum + (item.selected ? item.price * item.quantity : 0), 
+          (sum, item) => sum + (item.selected ? item.points * item.quantity : 0), 
+          0
+        ),
+      totalPoints: () => 
+        get().items.reduce(
+          (sum, item) => sum + (item.selected ? item.points * item.quantity : 0), 
           0
         ),
     }),

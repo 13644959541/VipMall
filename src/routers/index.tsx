@@ -15,6 +15,7 @@ const routes: White.RouteConfig[] = [
         component: Home,
         icon: "white-home", 
         sceneMode: "scroll",
+        title: "商城兑换"
       }
     ],
   },

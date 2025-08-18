@@ -60,16 +60,24 @@ const ProductDetail: React.FC<ProductDetailProps> = () => {
 
   const handleAddToCart = () => {
     if (!product) return
-    
-    addToCart({
+    const cartItem = {
       productId: product.id,
       name: product.name,
       image: product.image,
       price: product.originalPrice,
-    })
+      points: product.points,
+      details: product.details,
+      conflictRule: product.conflictRule || "",
+      redeemPeriod: product.redeemPeriod || "",
+      type: product.type,
+      quantity: quantity,
+      selected: true
+    };
+    console.log('Adding to cart:', cartItem);
+    addToCart(cartItem);
     Toast.show({
       content: '已加入购物车',
-      position: 'bottom',
+      position: 'center',
     })
   }
 
@@ -195,8 +203,8 @@ const ProductDetail: React.FC<ProductDetailProps> = () => {
             </div>
           </div>
           </div>
-          <div className={`${styles['font']}`} >{TEXT.NOT_READY_TO_REDEEM} </div>
-          <div className={`${styles['font']} ${styles['rule']}`} >* {TEXT.RULE}</div>
+          <div className={`${styles['font']}`} >{product.redeemPeriod} </div>
+          <div className={`${styles['font']} ${styles['rule']}`} >* {product.conflictRule}</div>
           <div className="flex items-end justify-end h-1 gap-1">
             <div
               className={styles['cartButton']}
@@ -216,10 +224,8 @@ const ProductDetail: React.FC<ProductDetailProps> = () => {
           </div>
         </div>
         <div className="flex-1 min-w-0 bg-white mt-1 p-1 rounded-lg space-y-1">
-          <div className={styles['name']} >{TEXT.PRODUCT_INFO}</div>
-          <div className="bg-white">
-            <p className={`${styles['font']} ${styles['detail']}`} >{product.details}</p>
-          </div>
+            <div className={styles['name']} >{TEXT.PRODUCT_INFO}</div>
+            <div className={`${styles['font']} ${styles['detail']}`} >{product.details}</div>
         </div>
         <div className="flex-1 min-w-0 bg-white mt-1 p-1 rounded-lg space-y-1">
           <div className={styles['name']}>
