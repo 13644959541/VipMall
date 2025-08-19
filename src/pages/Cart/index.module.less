@@ -61,9 +61,9 @@
   vertical-align: middle;
 }
 .arrow-icon {
-    font-size: 20px; /* 调整图标大小 */
-    margin-left: 10px; /* 图标与文本之间的间距 */
-    color: white; /* 图标颜色，与按钮背景色形成对比 */
+    font-size: 20px;
+    margin-left: 10px;
+    color: white;
 }
 
 .point {
@@ -106,6 +106,34 @@
 }
 .detail {
   color: #6F6F72
+}
+
+.delete-btn {
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 100px;
+  height: 100%;
+  background: #ff4d4f;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+.swipe-content {
+  position: relative;
+  z-index: 20;
+  background: white;
+  transition: transform 0.3s ease;
+}
+
+.fixed-delete-icon {
+  position: absolute;
+  right: 110px;
+  top: 8px;
+  z-index: 20;
 }
 
 :global(.adm-checkbox.adm-checkbox-checked .adm-checkbox-icon) {

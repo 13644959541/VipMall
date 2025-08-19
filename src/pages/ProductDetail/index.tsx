@@ -153,13 +153,17 @@ const ProductDetail: React.FC<ProductDetailProps> = () => {
           <div className={styles['name']}>{product.name}</div>
           <div className="flex items-center w-[102px] h-[30px]">
             <div className="flex items-center mr-2">
-              <Star className="h-1 w-1 fill-orange-500 text-orange-500 mr-1" />
+             <img
+                src="/star.svg"
+                className="h-2 w-2 mr-0.5"
+                alt="star"
+              />
               <div className={`${styles['point']} mr-2`}>{product.points.toLocaleString()}</div>
               <div className={`${styles['originalPrice']} mr-2`}>¥{product.originalPrice}</div>
               <div className={`${styles['levelTap']} mr-2`}>{product.levelTap}</div>
             </div>
           </div>
-          <div className="flex items-center gap-1">
+          <div className={`${styles['detail-badge']} flex items-center gap-1`}>
             <div className={styles['font']}>{TEXT.MEMBER_LEVEL}</div>
             {memberLevels.map((item) => (
               <Badge
@@ -195,7 +199,7 @@ const ProductDetail: React.FC<ProductDetailProps> = () => {
               </div>
               <div className="text-xxxs">{quantity}</div>
               <div
-                className="w-[22px] h-[22px] rounded-full bg-red-500 text-white text-xxs flex items-center justify-center"
+                className="w-[22px] h-[22px] rounded-full bg-[#E60012] text-white text-xxs flex items-center justify-center"
                 onClick={() => setQuantity(quantity + 1)}
               >
                 +

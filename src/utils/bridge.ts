@@ -71,7 +71,8 @@ export const NativeBridge = {
   },
   
   // 关闭WebView
-  closeWebView: () => {
-    callNativeHandler('closeWebView', null)
+  closePage: () => {
+    console.log('关闭页面');
+    callNativeHandler('closePage', null)
   }
 }

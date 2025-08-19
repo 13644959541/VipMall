@@ -111,7 +111,7 @@ const HomePad = () => {
       image: "/hot-pot-banner.png",
       alt: "纯纯纯牛油锅 NEW",
       fallback: (
-        <div className="w-full h-48 bg-red-500 flex items-center justify-center text-white text-xl font-bold">
+        <div className="w-full h-48 bg-[#E60012] flex items-center justify-center text-white text-xl font-bold">
           纯纯纯牛油锅 NEW<br />BEEF TALLOW<br />HOT POT SOUP BASE
         </div>
       )
@@ -125,20 +125,11 @@ const HomePad = () => {
         </div>
       )
     },
-    {
-      image: "/panda-promotion.png",
-      alt: "熊猫促销",
-      fallback: (
-        <div className="w-full h-48 bg-green-500 flex items-center justify-center text-white text-xl font-bold">
-          熊猫主题促销
-        </div>
-      )
-    }
   ]
   // 多语言变量
   const i18n = {
     productName: "热门推荐",
-    checkboxName: "看我兑换"
+    checkboxName: "可兑换"
   };
 
   //排序

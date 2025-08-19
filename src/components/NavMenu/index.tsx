@@ -17,7 +17,7 @@ const NavMenu: React.FC<NavMenuProps> = ({ items, className = '' }) => {
   
   return (
     <div className={`w-full mt-2 ${className}`}>
-      <div className="flex flex-col items-stretch gap-2 px-2">
+      <div className="flex flex-col items-stretch gap-2 px-1">
         {items.map((item) => (
           <NavLink
             key={item.to}
@@ -25,8 +25,8 @@ const NavMenu: React.FC<NavMenuProps> = ({ items, className = '' }) => {
             className={({isActive}) => {
               const shouldHighlight = isActive || 
                 (item.to === '/' && location.pathname.startsWith('/product/'));
-              return `rounded-sm py-1 px-1 gap-2 flex items-center transition-colors
-                ${shouldHighlight ? 'bg-red-500 text-white' : 'bg-gray-50 hover:bg-gray-100 text-gray-700'}`;
+              return `rounded-sm py-1 px-1 gap-1 flex items-center transition-colors
+                ${shouldHighlight ? 'bg-[#E60012] text-white' : 'text-[#6F6F72]'}`;
             }}
           >
             <item.icon className="h-1 w-1 flex-shrink-0" />

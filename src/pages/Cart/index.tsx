@@ -23,7 +23,7 @@ const CartPage = () => {
   // 初始化时取消所有选中
   React.useEffect(() => {
     const selectedItems = items.filter(item => item.selected)
-    if(selectedItems.length > 0) {
+    if (selectedItems.length > 0) {
       selectedItems.forEach(item => toggleSelect(item.id))
     }
   }, [items.length]) // 依赖items.length确保购物车内容变化时重新检查
@@ -31,7 +31,9 @@ const CartPage = () => {
   const handleSwipe = (index: number, dx: number) => {
     const element = swipeRefs.current[index]
     if (element) {
-      element.style.transform = `translateX(${dx}px)`
+      // 限制最大滑动距离为100px
+      const translateX = Math.max(-100, dx)
+      element.style.transform = `translateX(${translateX}px)`
     }
   }
 
@@ -40,10 +42,12 @@ const CartPage = () => {
     if (element) {
       const transform = window.getComputedStyle(element).transform
       const matrix = new DOMMatrix(transform)
-      if (matrix.m41 < -60) { // 滑动超过60px显示删除
-        removeItem(items[index].id)
+      // 滑动超过一半时保持打开状态，否则恢复
+      if (matrix.m41 < -50) {
+        element.style.transform = 'translateX(-100px)'
+      } else {
+        element.style.transform = 'translateX(0)'
       }
-      element.style.transform = 'translateX(0)'
     }
   }
 
@@ -72,53 +76,73 @@ const CartPage = () => {
           <div className="flex items-center mt-1">
             {items.map((item, index) => (
               <React.Fragment key={item.id}>
-              <div className="ml-1 mr-1">
-                <Checkbox
-              checked={items.length > 0 && items.every(item => item.selected)}
-              onChange={(checked) => {
-                items.forEach(item => {
-                  if(item.selected !== checked) {
-                    toggleSelect(item.id)
-                  }
-                })
-              }}
-              
-            /></div>
-              <div
-                className="relative overflow-hidden bg-white rounded-lg w-full mr-1"
-                onTouchMove={(e) => handleSwipe(index, e.touches[0].clientX - e.touches[0].clientX)}
-                onTouchEnd={() => handleSwipeEnd(index)}
-              >
-                {/* Swipeable Content */}
-                <div
-                  ref={(el) => {
-                    if (el) {
-                      swipeRefs.current[index] = el
-                    }
-                  }}
-                  className="flex items-center p-1 transition-transform duration-300"
-                  style={{ transform: 'translateX(0)' }}
-                >
-          
-                  <AntdImage
-                    src={item.image}
-                    width={150}
-                    height={130}
-                    fit="cover"
-                  />
-                  <div className="ml-3 flex-1 space-y-1">
-                    <div className={styles.name}>{item.name}</div>
-                    <div className="space-y-1">
-                       <div className={`${styles['font']} ${styles['detail']}`}>{item.details}</div>
-                       <div className={`${styles['font']} ${styles['rule']}`}>* {item.conflictRule}</div>
-                    </div>
-                    <div className="flex justify-between items-center mt-2">
-                      <div className="flex items-center mr-2">
-                        <Star className="h-1 w-1 fill-orange-500 text-orange-500 mr-1" />
-                        <div className={`${styles['point']} mr-2`}>{item.points}</div>
-                        <div className={`${styles['originalPrice']} mr-2`}>¥{item.price}</div>
+                <div className="ml-1 mr-1">
+                  <Checkbox
+                    checked={items.length > 0 && items.every(item => item.selected)}
+                    onChange={(checked) => {
+                      items.forEach(item => {
+                        if (item.selected !== checked) {
+                          toggleSelect(item.id)
+                        }
+                      })
+                    }}
+
+                  /></div>
+                <div className="relative overflow-hidden bg-white rounded-lg w-full mr-1">
+                  {/* Delete Button (shown on swipe) */}
+                  <div
+                    className="absolute right-0 top-0 h-full w-[100px] bg-[#E60012] flex items-center justify-center text-white z-10"
+                    onClick={() => removeItem(item.id)}
+                  >
+                    删除
+                  </div>
+
+                  {/* Swipeable Content */}
+                  <div
+                    ref={(el) => {
+                      if (el) {
+                        swipeRefs.current[index] = el
+                      }
+                    }}
+                    className="flex items-center p-1 transition-transform duration-300 bg-white z-20 relative"
+                    style={{ transform: 'translateX(0)' }}
+                    onTouchStart={(e) => {
+                      const touch = e.touches[0];
+                      (swipeRefs.current[index] as any).startX = touch.clientX;
+                    }}
+                    onTouchMove={(e) => {
+                      const touch = e.touches[0];
+                      const startX = (swipeRefs.current[index] as any).startX;
+                      const deltaX = touch.clientX - startX;
+                      handleSwipe(index, Math.min(0, deltaX));
+                    }}
+                    onTouchEnd={() => handleSwipeEnd(index)}
+                  >
+
+                    <AntdImage
+                      src={item.image}
+                      width={150}
+                      height={130}
+                      fit="cover"
+                    />
+                    <div className="ml-3 flex-1 space-y-1">
+                      <div className={styles.name}>{item.name}</div>
+                      <div className="space-y-1">
+                        <div className={`${styles['font']} ${styles['detail']}`}>{item.details}</div>
+                        <div className={`${styles['font']} ${styles['rule']}`}>* {item.conflictRule}</div>
                       </div>
-                         <div className="flex flex-col items-end">
+                      <div className="flex justify-between items-center mt-2">
+                        <div className="flex items-center mr-2">
+                          <img
+                            src="/star.svg"
+                            className="h-2 w-2 mr-0.5"
+                            alt="star"
+                          />
+                          <div className={`${styles['point']} mr-2`}>{item.points}</div>
+                          <div className={`${styles['originalPrice']} mr-2`}>¥{item.price}</div>
+                        </div>
+
+                        <div className="flex flex-col items-end">
                           <div className="flex items-center gap-1">
                             <div
                               className="w-[22px] h-[22px] rounded-full bg-gray-200 text-black text-xxs flex items-center justify-center"
@@ -128,25 +152,28 @@ const CartPage = () => {
                             </div>
                             <div className="text-xxxs">{item.quantity}</div>
                             <div
-                              className="w-[22px] h-[22px] rounded-full bg-red-500 text-white text-xxs flex items-center justify-center"
+                              className="w-[22px] h-[22px] rounded-full bg-[#E60012] text-white text-xxs flex items-center justify-center"
                               onClick={() => updateQuantity(item.id, item.quantity + 1)}
                             >
                               +
                             </div>
                           </div>
                         </div>
+                      </div>
                     </div>
                   </div>
-                </div>
 
-                {/* Delete Action (shown on swipe) */}
-                <div
-                  className="absolute right-2 top-1 w-2 h-2 flex items-center justify-center"
-                  onClick={() => removeItem(item.id)}
-                >
-                  <Trash2 size={20} className="text-red-500" />
+                  {/* Fixed Delete Icon (保留原有删除图标) */}
+                  <div
+                    className="absolute right-[10px] top-1 w-2 h-2 flex items-center justify-center z-20"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      removeItem(item.id);
+                    }}
+                  >
+                    <Trash2 size={20} className="text-[#E60012]" />
+                  </div>
                 </div>
-              </div>
               </React.Fragment>
             ))}
           </div>
@@ -155,35 +182,35 @@ const CartPage = () => {
 
       {/* Checkout Bar */}
       <div className={`${styles['checkout']} w-full`}>
-          <div className="flex items-center">
-            <Checkbox
-              onChange={(checked) => {
-                items.forEach(item => {
-                  if(item.selected !== checked) {
-                    toggleSelect(item.id)
-                  }
-                })
-              }}
-              className="ml-2 mr-2"
-            />
-            <div className={styles['font']}>
-              <div >
-                合计积分: <span >{totalPrice()}</span>
-              </div>
-              <div className={styles['span']} >
-                积分所兑的商品不支持退换货
-              </div>
-          </div>
-          </div>
-          
-          <div
-            onClick={handleCheckout}
-            className={`${styles['font']} mr-5`}
-          >
-            立即兑换({totalItems()})
-             <FontAwesomeIcon icon={faAngleRight} className={styles['arrow-icon']}/>
+        <div className="flex items-center">
+          <Checkbox
+            onChange={(checked) => {
+              items.forEach(item => {
+                if (item.selected !== checked) {
+                  toggleSelect(item.id)
+                }
+              })
+            }}
+            className="ml-2 mr-2"
+          />
+          <div className={styles['font']}>
+            <div >
+              合计积分: <span >{totalPrice()}</span>
+            </div>
+            <div className={styles['span']} >
+              积分所兑的商品不支持退换货
+            </div>
           </div>
         </div>
+
+        <div
+          onClick={handleCheckout}
+          className={`${styles['font']} mr-5`}
+        >
+          立即兑换({totalItems()})
+          <FontAwesomeIcon icon={faAngleRight} className={styles['arrow-icon']} />
+        </div>
+      </div>
     </div>
   )
 }

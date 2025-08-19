@@ -33,7 +33,6 @@ const HomeContent: React.FC<HomeContentProps> = ({ carouselItems, products, prod
       <Carousel
         items={carouselItems}
         height={300}
-        className="mt-2 mb-2"
       />
 
       <div className="flex items-center justify-between mr-1">
@@ -46,7 +45,7 @@ const HomeContent: React.FC<HomeContentProps> = ({ carouselItems, products, prod
       <div className="grid grid-cols-2">
         {products.map(product => (
           <ProductCard
-            type="product"
+            type="other"
             key={product.id}
             {...product}
           />
