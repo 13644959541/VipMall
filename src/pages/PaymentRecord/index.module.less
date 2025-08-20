@@ -1,0 +1,165 @@
+.cart-msg {
+  width: auto;
+  height: 30px;
+  font-family: SF Pro;
+  font-weight: 590;
+  font-size: 16px;
+  line-height: 20px;
+  letter-spacing: 0px;
+  color: black;
+  margin-top: 10px;
+}
+
+.name {
+  width: 100%;
+  height: 20px;
+  opacity: 1;
+  font-family: SF Pro;
+  font-weight: 590;
+  font-size: 16px;
+  line-height: 20px;
+  letter-spacing: 0px;
+  margin-bottom: 8px;
+}
+
+.point {
+  font-family: SF Pro;
+  font-weight: 860;
+  font-size: 18px;
+  line-height: 24px;
+  letter-spacing: 0px;
+  color: #E60012;
+}
+
+.font {
+  color: #6F6F72;
+  font-size: 14px;
+  font-family: SF Pro;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 18px;
+  letter-spacing: 0px;
+}
+
+.span {
+  margin-top: 10px;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 16px;
+  letter-spacing: 0px;
+  vertical-align: middle;
+}
+
+.arrow-icon {
+  font-size: 20px;
+  margin-left: 10px;
+  color: white;
+}
+
+.originalPrice {
+  width: 27px;
+  height: 19px;
+  padding-top: 9px;
+  font-family: SF Pro;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 19px;
+  letter-spacing: 0px;
+  text-align: right;
+  text-decoration: line-through;
+  color: #6F6F72;
+}
+
+.rule {
+  color: #E60012;
+  font-size: 12px;
+}
+
+.detail {
+  color: #6F6F72
+}
+
+.delete-btn {
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 100px;
+  height: 100%;
+  background: #ff4d4f;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+.swipe-content {
+  position: relative;
+  z-index: 20;
+  background: white;
+  transition: transform 0.3s ease;
+}
+
+.fixed-delete-icon {
+  position: absolute;
+  right: 110px;
+  top: 8px;
+  z-index: 20;
+}
+
+.main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: visible; /* 允许内容溢出 */
+  -webkit-overflow-scrolling: touch; /* 启用iOS惯性滚动 */
+  touch-action: pan-y; /* 启用垂直滑动 */
+}
+.quantity-badge {
+  position: absolute;
+  top: 0;
+  right: 0;
+  font-size: 14px;
+  padding: 2px 6px;
+  font-weight: 590;
+}
+.name-container {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+}
+
+.redeemButton{
+  width: 160px;
+  height: 56px;
+  font-family: SF Pro;
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 24px;
+  letter-spacing: 0px;
+  text-align: center;
+  vertical-align: middle;
+  color: #FFFFFF;
+  border: 1px solid #F33434;
+  background-color: #F33434;
+  display: flex;
+  justify-content: center;
+  /* 在主轴上居中 */
+  align-items: center;
+  /* 在交叉轴上居中 */
+  border-radius: 12px;
+  cursor: pointer;
+}
+
+.redeemButton.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+  background: #CCCCCC;
+  border-color: #CCCCCC;
+}
+
+:global(.adm-checkbox.adm-checkbox-checked .adm-checkbox-icon) {
+  border-color: #FFFFFF;
+  background-color: #E60012;
+}

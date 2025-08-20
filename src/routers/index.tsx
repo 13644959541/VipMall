@@ -28,6 +28,10 @@ const routes: White.RouteConfig[] = [
     component: lazy(() => import(/* chunkName: Cart */ "@/pages/Cart")),
   },
   {
+    path: "/record",
+    component: lazy(() => import(/* chunkName: PaymentRecord */ "@/pages/PaymentRecord")),
+  },
+  {
     path: "*",
     component: NoFound,
   },

@@ -58,7 +58,7 @@ const UserProfile: React.FC<UserProfileProps> = ({
             alt="star-icon"
           />
           <div style={{ fontSize: '24px', fontWeight: 860  }}>
-            {points.toLocaleString('zh-CN')}
+            {points.toLocaleString('zh-CN', { useGrouping: true })}
           </div>
         </div>
       </div>
