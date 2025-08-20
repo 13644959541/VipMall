@@ -15,7 +15,7 @@ const Sidebar: React.FC<SidebarProps> = ({
     avatar: '/user.svg',
     name: '未知用户',
     localLevel: '4',
-    points: 0
+    points: 999999
   });
 
   useEffect(() => {
@@ -24,10 +24,10 @@ const Sidebar: React.FC<SidebarProps> = ({
       NativeBridge.getUserInfo((data) => {
         if (!data) throw new Error('获取用户信息失败')
         setUserInfo({
-          avatar: data.avatar || '/user.svg',
-          name: data.nickname || '未知用户',
-          localLevel: data.level || 1,
-          points: data.points || 0
+          avatar: data.avatar === ''? '/user.svg' : data.avatar,
+          name: data.nickname === '' ? '未知用户' : data.nickname,
+          localLevel: data.level === '' ?  1 : data.nickname,
+          points: data.points === '' ?  0 :data.points
         })
       })
     } catch (error) {
