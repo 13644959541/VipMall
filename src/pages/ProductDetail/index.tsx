@@ -232,7 +232,7 @@ const ProductDetail: React.FC<ProductDetailProps> = () => {
             <div className={`${styles['font']} ${styles['detail']}`} >{product.details}</div>
         </div>
         <div className="flex-1 min-w-0 bg-white mt-1 p-1 rounded-lg space-y-1">
-          <div className={styles['name']}>
+          <div className={`${styles['name']} mb-1`}>
             {TEXT.REDEMPTION_RULES.TITLE}
           </div>
           <div className="space-y-1">
@@ -240,9 +240,9 @@ const ProductDetail: React.FC<ProductDetailProps> = () => {
               const keyStr = rule.key?.toString() || '';
               const valueStr = rule.value?.toString() || '';
               return (
-                <div key={`${keyStr}-${valueStr}`} className="flex text-xxxs">
-                  <div className="text-gray-500 w-20 flex-shrink-0">{keyStr}</div>
-                  <div className="text-gray-800">{valueStr}</div>
+                <div key={`${keyStr}-${valueStr}`} className="flex space-y-1 flex-col text-xxxs">
+                  <div className={styles['font']}>{keyStr}</div>
+                  <div className={styles['value']}>{valueStr}</div>
                 </div>
               );
             })}
