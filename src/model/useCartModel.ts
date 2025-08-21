@@ -15,7 +15,7 @@ const useCartModel = () => {
   const [cartItems, setCartItems] = useState<CartItem[]>(() => {
     // 初始化时从本地存储加载
     if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem(CART_STORAGE_KEY);
+      const saved = sessionStorage.getItem(CART_STORAGE_KEY);
       return saved ? JSON.parse(saved) : [];
     }
     return [];
@@ -23,7 +23,7 @@ const useCartModel = () => {
 
   // 持久化到本地存储
   useEffect(() => {
-    localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cartItems));
+    sessionStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cartItems));
   }, [cartItems]);
 
   const addToCart = (item: CartItem) => {

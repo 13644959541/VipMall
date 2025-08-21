@@ -100,7 +100,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
             <div className="flex items-center mt-0.5">
               <div className="flex items-center text-orange-500 mr-1">
                 <img src="/star.svg" className="h-2 w-2 mr-0.5" alt="star" />
-                <div className={`${styles['point']} mr-2`}>{points.toLocaleString()}</div>
+                <div className={`${styles['point']} mr-2`}>{points}</div>
                 <div className={`${styles['originalPrice']} mr-2`}>¥{originalPrice}</div>
               </div>
             </div>

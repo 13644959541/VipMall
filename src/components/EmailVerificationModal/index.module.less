@@ -1,0 +1,201 @@
+/* index.module.less */
+
+.modalWrapper {
+  width: 300px;
+  border-radius: 8px;
+  overflow: visible !important;
+}
+
+.modalTitle {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative; 
+}
+
+.pandaIcon {
+  width: 180px;
+  height: 200px;
+  position: absolute;
+  top: -70px;
+  right: 0px;
+  z-index: 5;
+}
+
+.inputWrapper {
+  margin-top: 30px;
+  padding: 20px 0;
+  text-align: center;
+}
+
+.inputField {
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+.verifyButton {
+  background-color: #f44336;
+  color: white;
+}
+
+.codeInput {
+  width: 100%;
+}
+
+.codeInputWrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.sendCodeButton {
+  position: absolute;
+  color: #101820;
+  font-family: SF Pro;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 20px;
+  letter-spacing: 0px;
+  right: 35px;
+  text-decoration: underline !important; 
+  
+  &.disabled {
+    color: #999;
+    cursor: not-allowed;
+    text-decoration: underline !important; 
+  }
+}
+
+.userInfo {
+  color: #101820;
+  text-align: center;
+  font-family: SF Pro;
+  font-weight: 860;
+  font-size: 18px;
+  line-height: 22px;
+  letter-spacing: 0px;
+  padding: 10px;
+}
+
+.toggleWrapper {
+  text-align: end;
+  margin-right: 25px;
+}
+
+.toggleButton {
+  color: #9B9B9E;
+  cursor: pointer;
+  text-decoration: underline;
+  font-family: SF Pro;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 20px;
+  letter-spacing: 0px;
+  text-decoration: underline !important;
+  text-decoration-style: solid !important;
+  text-decoration-color: #9B9B9E;
+}
+
+.footerButton {
+  background-color: #f44336;
+  color: white;
+}
+
+.modalActions {
+  display: flex;
+  justify-content: center;
+  gap: 50px;
+  margin-top: 20px;
+}
+
+.cancelButton {
+  width: 160px;
+  height: 56px;
+  font-family: SF Pro;
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 24px;
+  letter-spacing: 0px;
+  text-align: center;
+  vertical-align: middle;
+  color: #F33434;
+  border: 1px solid #F33434;
+  background-color: #FFFFFF;
+  display: flex;
+  justify-content: center;
+  /* 在主轴上居中 */
+  align-items: center;
+  /* 在交叉轴上居中 */
+  border-radius: 12px;
+}
+
+.confirmButton {
+  width: 160px;
+  height: 56px;
+  font-family: SF Pro;
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 24px;
+  letter-spacing: 0px;
+  text-align: center;
+  vertical-align: middle;
+  color: #FFFFFF;
+  border: 1px solid #F33434;
+  background-color: #F33434;
+  display: flex;
+  justify-content: center;
+  /* 在主轴上居中 */
+  align-items: center;
+  /* 在交叉轴上居中 */
+  border-radius: 12px;
+}
+
+:global(.adm-modal-title) {
+    min-height: 35px;
+    padding: 0 12px;
+    font-size: 20px;
+    font-weight: 860;
+    line-height: 25px;
+    text-align: center;
+    background-color: #3F3E42;
+    color: #FFFFFF;
+    font-family: SF Pro;
+    line-height: 24px;
+    letter-spacing: 0px;
+}
+:global(.adm-modal-body ){
+   background-color: #3F3E42;
+   overflow: visible !important;
+   border-radius: 0.375rem !important
+}
+:global(.adm-modal-content) {
+    background-color: #ffffff;
+    padding: 10px;
+    max-height: 70vh;
+    overflow-x: visible;
+    overflow-y: auto;
+    font-size: 14px;
+    font-family: SF Pro;
+    z-index: 10;
+    width: 581px;
+    height: 320px;
+    border-radius: 0.375rem !important
+}
+
+:global(.adm-modal-footer-empty) {
+   height: 0px !important;
+}
+
+:global(.adm-input-element) {
+  border: 1px solid #EBEDF0;
+  font-size: 14px !important;
+  padding: 10px;
+  margin: 0px 10px;
+  font-family: SF Pro;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 20px;
+  letter-spacing: 0px;
+  color: #6F6F72;
+}

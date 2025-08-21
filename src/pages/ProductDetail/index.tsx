@@ -1,9 +1,10 @@
 import type React from "react"
 import { useState, useEffect, useRef } from "react"
 import { useParams, useNavigate } from "react-router-dom"
-import { Button, Image as AntdImage, Tag, Space, Toast } from "antd-mobile"
-import { ArrowLeft, Star, ShoppingCart } from "lucide-react"
+import { Image as AntdImage, Toast, Badge } from "antd-mobile"
 import { useCartStore } from "@/store/cart"
+import EmailVerificationModal from "@/components/EmailVerificationModal"
+import useAuthModel from "@/model/useAuthModel"
 import styles from './index.module.less'
 
 interface ProductDetailProps {
@@ -33,6 +34,8 @@ const ProductDetail: React.FC<ProductDetailProps> = () => {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
   const [product, setProduct] = useState<ProductInfo | null>(null)
+  const [showEmailModal, setShowEmailModal] = useState(false)
+  const { user } = useAuthModel()
 
   useEffect(() => {
     const mockProduct: ProductInfo = {
@@ -82,7 +85,7 @@ const ProductDetail: React.FC<ProductDetailProps> = () => {
   }
 
   const handleRedeem = () => {
-    console.log("立即兑换")
+    setShowEmailModal(true)
   }
 
   const memberLevels = [
@@ -158,7 +161,7 @@ const ProductDetail: React.FC<ProductDetailProps> = () => {
                 className="h-2 w-2 mr-0.5"
                 alt="star"
               />
-              <div className={`${styles['point']} mr-2`}>{product.points.toLocaleString()}</div>
+              <div className={`${styles['point']} mr-2`}>{product.points}</div>
               <div className={`${styles['originalPrice']} mr-2`}>¥{product.originalPrice}</div>
               <div className={`${styles['levelTap']} mr-2`}>{product.levelTap}</div>
             </div>
@@ -170,7 +173,7 @@ const ProductDetail: React.FC<ProductDetailProps> = () => {
                 key={`member-level-${item.level}`}
                 content={item.name}
                 color={
-                  item.level === 1 ? '#ff4d4f' : // 红色
+                  item.level === 1 ? '#E60012' : // 红色
                     item.level === 2 ? '#d9d9d9' : // 银色
                       item.level === 3 ? '#faad14' : // 金色
                         '#000000' // 黑色
@@ -249,6 +252,15 @@ const ProductDetail: React.FC<ProductDetailProps> = () => {
           </div>
         </div>
       </div>
+      <EmailVerificationModal
+        visible={showEmailModal}
+        onClose={() => setShowEmailModal(false)}
+        onConfirm={(email, code) => {
+          console.log('Email verified:', email, code)
+          setShowEmailModal(false)
+        }}
+        userInfo={user || { email: undefined, mobile: undefined }}
+      />
     </div>
   );
 }

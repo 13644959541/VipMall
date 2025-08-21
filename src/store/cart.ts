@@ -25,6 +25,7 @@ type CartState = {
   clearCart: () => void
   totalItems: () => number
   totalPrice: () => number
+  totalPoints: () => number
 }
 
 export const useCartStore = create<CartState>()(
@@ -93,14 +94,14 @@ export const useCartStore = create<CartState>()(
       name: 'cart-storage',
       storage: {
         getItem: (name) => {
-          const item = localStorage.getItem(name)
+          const item = sessionStorage.getItem(name)
           return item ? JSON.parse(item) : null
         },
         setItem: (name, value) => {
-          localStorage.setItem(name, JSON.stringify(value))
+          sessionStorage.setItem(name, JSON.stringify(value))
         },
         removeItem: (name) => {
-          localStorage.removeItem(name)
+          sessionStorage.removeItem(name)
         },
       },
     }

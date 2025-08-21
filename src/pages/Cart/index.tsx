@@ -55,7 +55,7 @@ const CartPage = () => {
     const selectedItems = items.filter(item => item.selected)
     if (selectedItems.length === 0) {
       Toast.show('请选择要结算的商品')
-      return
+      return;
     }
     navigate('/checkout')
   }

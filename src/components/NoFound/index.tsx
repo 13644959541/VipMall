@@ -1,20 +1,10 @@
 import { memo } from 'react';
-import './index.less';
-import image from '@/assets/images/common/404.png';
-import { useNavigate } from 'react-router-dom';
+import { Image as AntdImage } from 'antd-mobile'
+
 const NoFound = () => {
-  const nav = useNavigate();
   return (
-    <div className="column_center">
-      <img src={image} alt="" />
-      <p>Sorry,您访问的页面丢了~</p>
-      <div
-        className="back_btn"
-        onClick={() => {
-          nav('/', { replace: true });
-        }}>
-        返回首页
-      </div>
+    <div className={`flex flex-col items-center justify-center h-full mt-12`}>
+      <AntdImage src="/error.svg" width={500} height={500} />
     </div>
   );
 };

@@ -38,7 +38,7 @@ const HomeContent: React.FC<HomeContentProps> = ({ carouselItems, products, prod
       <div className="flex items-center justify-between mr-1">
         <h2 className="font-bold ml-1.5 mr-1.5">{productName}</h2>
         <div className="flex items-center gap-4">
-          <Checkbox className="text-gray-500">{checkboxName}</Checkbox>
+          <Checkbox className={styles.check}>{checkboxName}</Checkbox>
         </div>
       </div>
 

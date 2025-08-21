@@ -2,49 +2,38 @@ import { ShoppingCart, Clock, Gift, LogOut } from 'lucide-react';
 import UserProfile from '@/components/UserProfile';
 import NavMenu from '@/components/NavMenu';
 import './index.less';
+import useAuthModel from '@/model/useAuthModel';
+import { NativeBridge } from '@/utils/bridge';
+import { useNavigate } from 'react-router-dom'
 interface SidebarProps {
   className?: string;
 }
 
-import { useState, useEffect } from 'react';
-import { NativeBridge } from '@/utils/bridge';
-
 const Sidebar: React.FC<SidebarProps> = ({
    className }) => {
-  const [userInfo, setUserInfo] = useState({
-    avatar: '/user.svg',
-    name: '未知用户',
-    localLevel: '4',
-    points: 999999
-  });
-
-  useEffect(() => {
-  const fetchUserInfo = async () => {
-    try {
-      NativeBridge.getUserInfo((data) => {
-        if (!data) throw new Error('获取用户信息失败')
-        setUserInfo({
-          avatar: data.avatar === ''? '/user.svg' : data.avatar,
-          name: data.nickname === '' ? '未知用户' : data.nickname,
-          localLevel: data.level === '' ?  1 : data.nickname,
-          points: data.points === '' ?  0 :data.points
-        })
-      })
-    } catch (error) {
-      console.error('获取用户信息失败:', error)
-    }
+  const { user, loading } = useAuthModel();
+  const navigate = useNavigate();
+  // 如果没有用户信息，跳转到500错误页面
+  if (!user) {
+    navigate('/notfound')
+    return null;
   }
 
-  fetchUserInfo()
-}, [])
+  // 获取用户信息用于显示
+  const displayUserInfo = {
+    avatar: user.avatar === '' ? '/user.svg' : user.avatar || '/user.svg',
+    name: user.nickname === '' ? '未知用户' : user.nickname || '未知用户',
+    localLevel: user.localLevel === '' ? '1' : user.localLevel || '1',
+    points: user.points || 0
+  };
   return (
     <div className={className}>
       {/* 用户信息 */}
       <UserProfile 
-        avatar={userInfo.avatar}
-        name={userInfo.name}
-        localLevel={userInfo.localLevel}
-        points={userInfo.points}
+        avatar={displayUserInfo.avatar}
+        name={displayUserInfo.name}
+        localLevel={displayUserInfo.localLevel}
+        points={displayUserInfo.points}
       />
 
       {/* 功能菜单 */}
