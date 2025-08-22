@@ -1,8 +1,9 @@
+import React, { useEffect } from 'react';
 import { ShoppingCart, Clock, Gift, LogOut } from 'lucide-react';
 import UserProfile from '@/components/UserProfile';
 import NavMenu from '@/components/NavMenu';
 import './index.less';
-import useAuthModel from '@/model/useAuthModel';
+import { useAuthModel } from '@/model/useAuthModel';
 import { NativeBridge } from '@/utils/bridge';
 import { useNavigate } from 'react-router-dom'
 interface SidebarProps {
@@ -13,9 +14,20 @@ const Sidebar: React.FC<SidebarProps> = ({
    className }) => {
   const { user, loading } = useAuthModel();
   const navigate = useNavigate();
-  // 如果没有用户信息，跳转到500错误页面
+
+  useEffect(() => {
+    console.log('Sidebar useEffect - user:', user, 'loading:', loading);
+    if (!loading && !user) {
+      console.log('用户信息获取失败，跳转到 /notfound 页面');
+      navigate('/notfound');
+    }
+  }, [user, loading, navigate]);
+
+  if (loading) {
+    return null;
+  }
+
   if (!user) {
-    navigate('/notfound')
     return null;
   }
 

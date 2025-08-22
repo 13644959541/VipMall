@@ -66,7 +66,7 @@ const CartPage = () => {
         {/* Empty State */}
         {items.length === 0 && (
           <div className="flex flex-col items-center justify-center h-full">
-            <AntdImage src="/empty-.svg" width={200} height={200} />
+            <AntdImage src="/empty.svg" width={200} height={200} />
             <div className={styles['cart-msg']}>购物车还是空的，快去加购商品吧</div>
           </div>
         )}
@@ -120,7 +120,7 @@ const CartPage = () => {
                   >
 
                     <AntdImage
-                      src={item.image}
+                      src={item.imgUrl}
                       width={150}
                       height={130}
                       fit="cover"
@@ -129,7 +129,7 @@ const CartPage = () => {
                       <div className={styles.name}>{item.name}</div>
                       <div className="space-y-1">
                         <div className={`${styles['font']} ${styles['detail']}`}>{item.details}</div>
-                        <div className={`${styles['font']} ${styles['rule']}`}>* {item.conflictRule}</div>
+                        <div className={`${styles['font']} ${styles['rule']}`}>* {item.rules}</div>
                       </div>
                       <div className="flex justify-between items-center mt-2">
                         <div className="flex items-center mr-2">

@@ -18,6 +18,7 @@ interface CarouselProps {
 const Carousel = ({ items, height, className = '' }: CarouselProps) => {
   return (
     <Swiper
+      autoplayInterval ={5000}
       autoplay
       loop
       className={`${className}`}

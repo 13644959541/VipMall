@@ -5,13 +5,13 @@ type CartItem = {
   id: string | number
   productId: string | number
   name: string
-  image: string
+  imgUrl: string
   price: number
   quantity: number
   selected: boolean
   points: number
   details: string
-  conflictRule:string
+  rules:string
   redeemPeriod:string
   type:string
 }

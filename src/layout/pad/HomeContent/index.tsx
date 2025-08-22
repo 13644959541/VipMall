@@ -42,7 +42,7 @@ const HomeContent: React.FC<HomeContentProps> = ({ carouselItems, products, prod
         </div>
       </div>
 
-      <div className="grid grid-cols-2">
+      <div className={`${styles.grid} grid grid-cols-2`}>
         {products.map(product => (
           <ProductCard
             type="other"

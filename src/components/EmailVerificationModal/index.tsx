@@ -10,13 +10,17 @@ interface EmailVerificationModalProps {
     email?: string;
     mobile?: string;
   };
+  confirmText: string;
+  cancelText: string;
 }
 
 const EmailVerificationModal: React.FC<EmailVerificationModalProps> = ({
   visible,
   onClose,
   onConfirm,
-  userInfo
+  userInfo,
+  confirmText,
+  cancelText,
 }) => {
   const [verificationType, setVerificationType] = useState<'email' | 'mobile'>('email');
   const [code, setCode] = useState('');
@@ -73,7 +77,7 @@ const EmailVerificationModal: React.FC<EmailVerificationModalProps> = ({
         ? '验证码已发送至邮箱' 
         : '验证码已发送至手机';
       Toast.show(message);
-    },2000);
+    },1000);
   };
 
   const handleVerify = () => {
@@ -81,9 +85,6 @@ const EmailVerificationModal: React.FC<EmailVerificationModalProps> = ({
       Toast.show('请输入验证码');
       return;
     }
-
-    // 模拟验证码验证
-    Toast.show('验证成功');
     const contact = verificationType === 'email' ? userInfo?.email || '' : userInfo?.mobile || '';
     onConfirm(contact, code);
   };
@@ -143,10 +144,10 @@ const EmailVerificationModal: React.FC<EmailVerificationModalProps> = ({
 
           <div className={styles.modalActions}>
             <div onClick={onClose} className={styles.cancelButton}>
-              取消
+              {cancelText}
             </div>
             <div onClick={handleVerify} className={styles.confirmButton}>
-              继续兑换
+              {confirmText}
             </div>
           </div>
         </div>

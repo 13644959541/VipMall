@@ -1,5 +1,4 @@
-import { useState, useEffect } from 'react';
-import { createModel } from 'rmox';
+import { create } from 'zustand';
 import { NativeBridge } from '@/utils/bridge';
 
 interface MemberLevelConfig {
@@ -45,31 +44,38 @@ interface UserInfo {
   avatar: string;
 }
 
-const useAuthModel = () => {
-  const [user, setUser] = useState<UserInfo | null>(null);
-  const [loading, setLoading] = useState(false);
+interface AuthState {
+  user: UserInfo | null;
+  loading: boolean;
+  setUser: (user: UserInfo | null) => void;
+  fetchUserInfo: () => void;
+}
 
-  // 获取用户信息
-  const fetchUserInfo = () => {
-    setLoading(true);
+export const useAuthModel = create<AuthState>((set, get) => ({
+  user: null,
+  loading: false,
+
+  setUser: (user) => set({ user }),
+
+  fetchUserInfo: () => {
+    set({ loading: true });
+    console.log('开始获取用户信息...');
+    
     NativeBridge.getUserInfo((userInfo) => {
+      console.log('获取到的用户信息:', userInfo);
       if (userInfo) {
-        setUser(userInfo);
+        console.log('用户信息有效，设置用户状态');
+        set({ user: userInfo, loading: false });
+      } else {
+        console.log('用户信息为空或未获取到');
+        set({ loading: false });
       }
-      setLoading(false);
     });
-  };
+  },
+}));
 
-  // 项目启动时自动获取用户信息
-  useEffect(() => {
-    fetchUserInfo();
-  }, []);
-
-  return {
-    setUser,
-    user,
-    loading,
-    fetchUserInfo, // 暴露fetch方法，可以在其他地方调用
-  };
+// 在应用启动时自动获取用户信息
+export const initializeAuth = () => {
+  const { fetchUserInfo } = useAuthModel.getState();
+  fetchUserInfo();
 };
-export default createModel(useAuthModel, { global: true });
