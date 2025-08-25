@@ -32,8 +32,8 @@ export default function ResponsiveLayout({ children }: ResponsiveLayoutProps) {
             <Header />
           </div>
           <div className="desktop-layout">
-            <Sidebar key="desktop-sidebar" className="sidebar bg-white shadow-md border-r border-gray-200" />
-            <div className="main-content">{children}</div>
+            <Sidebar key="desktop-sidebar" className="sidebar bg-white" />
+            <div className="main-content rounded-lg">{children}</div>
           </div>
         </>
       ) : (

@@ -1,0 +1,30 @@
+.header {
+  padding: 29px;
+  font-family: SF Pro;
+  font-weight: 400;
+  font-size: 14px;
+  position: relative;
+  z-index: 1;
+}
+
+.nav {
+  padding: 10px;
+  
+  // 禁用状态的返回箭头样式
+  &.disabled {
+    :global(.adm-nav-bar-back-arrow) {
+      color: #ccc !important;
+      cursor: not-allowed;
+    }
+  }
+}
+
+.lang {
+  margin-left: calc(50%); // 从中间位置偏移固定距离
+  position: relative;
+  z-index: 10000;
+}
+
+.table {
+  margin-left: 170px;
+}

@@ -23,7 +23,7 @@
 body {
   margin: 0;
   padding: 0;
-  font-family: theme('fontFamily.sans');
+  font-family: SF Pro !important;
   width: 100vw;
   overflow: hidden;
 }
@@ -117,6 +117,7 @@ i {
     margin: 0 auto;
   }
 
+  
   /* 通用Pad样式优化 */
   .component {
     padding: 0.4rem;
@@ -126,7 +127,7 @@ i {
   /* 横屏专属优化 */
   @media (orientation: landscape) {
     html {
-      font-size: calc(100vw / 10.24); /* 横屏更小字号 */
+     font-size: calc(100vw / 10.24); /* 横屏更小字号 */
     }
     .tabbar {
       width: 120px;

@@ -47,12 +47,12 @@ export default function Select({
         onClick={() => setOpen(!open)}
       >
         <span>{selected}</span>
+        {open ? <UpOutline /> : <DownOutline />}
       </div>
 
       {open && (
         <>
           <div className={styles['dropdown-menu']}>
-            {/* <span className={`${styles['dropdown-title']}`}>{title}</span> */}
             {options.map((opt) => (
               <div
                 key={opt.value}

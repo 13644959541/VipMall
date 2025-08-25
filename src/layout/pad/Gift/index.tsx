@@ -67,7 +67,7 @@ const GiftContent: React.FC<GiftContentProps> = ({ products, sortOptions, checkb
           onChange={handleSortChange}
         />
         <div className="flex items-center gap-4">
-          <Checkbox className="text-gray-500">{checkboxName}</Checkbox>
+           <Checkbox className={styles.check}>{checkboxName}</Checkbox>
         </div>
       </div>
 

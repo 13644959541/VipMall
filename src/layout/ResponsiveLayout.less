@@ -18,12 +18,10 @@
     top: 0;
     left: 0;
     right: 0;
-    height: 100px;
-    z-index: 1000;
+    z-index: 9999;
     background: #fff;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     width: 100%;
-    overflow: hidden;
+    overflow: visible;
   }
   .desktop-layout {
     display: flex;
@@ -42,7 +40,6 @@
   .sidebar {
     height: 100%;
     background: #fff;
-    border-right: 1px solid #f0f0f0;
     left: 0;
     top: 60px;
     bottom: 0;
@@ -52,11 +49,11 @@
 
 
   .main-content {
+    margin-right: 10px;
     width: 100%;
     height: calc(100vh - 60px);
-    padding-top: 20px;
     overflow: hidden;
-    background: #f5f5f5;
+    background: #F4F4F5;
   }
 
   .mobile-layout {

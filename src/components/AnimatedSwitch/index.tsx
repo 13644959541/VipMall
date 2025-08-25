@@ -16,7 +16,7 @@ const AnimatedSwitch = forwardRef<HTMLElement, AnimatedSwitchProps>(({
 }, ref) => {
   return (
     <TransitionGroup
-      childFactory={(child) => cloneElement(child, { classNames })}>
+      childFactory={(child) => cloneElement(child, { classNames } as React.HTMLAttributes<any>)}>
       <CSSTransition
         key={primaryKey}
         timeout={timeout}

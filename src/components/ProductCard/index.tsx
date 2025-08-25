@@ -74,13 +74,13 @@ const ProductCard: React.FC<ProductCardProps> = ({
             <AntdImage src={image} alt={name} width="100%" height="100%" fit="cover" className="rounded-sm" />
           </div>
           <div className="flex-1 min-w-0 ml-1">
-            <span className="text-xxs font-black line-clamp-2 h-[50px] text-gray-900" title={name}>
+            <span className="text-[14px] font-black line-clamp-2 h-[60px] text-gray-900" title={name}>
               {name}
             </span>
-            <span className="text-xxxs text-gray-500 truncate mt-1" title={description}>
+            <span className="text-[14px] text-gray-500 truncate mt-1" title={description}>
               {description}
             </span>
-            <div className="text-xxxs h-[80px] space-y-1 mt-1">
+            <div className="text-[14px] h-[80px] space-y-1 mt-1">
               {showStock && <span className="text-gray-400 block truncate">剩余: {remainingStock}件</span>}
               {redeemPeriod ? (
                 <span className="text-[#E60012] block truncate" title={redeemPeriod}>

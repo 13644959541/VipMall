@@ -110,7 +110,7 @@ export const NativeBridge = {
       solarBirth: "",
       email: "123456789@qq.com",
       country: "",
-      tableNo: "",
+      tableNo: "55",
       shopNo: "",
       avatar: "/user.svg" // Added avatar field for UI compatibility
     };

@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import ProductCard from '@/components/ProductCard';
 import { Checkbox } from 'antd-mobile';
 import DropdownSort from '@/components/Select';
-import MemberLevelFilter from '@/components/Sort';
 import styles from './index.module.less';
 import Sort from '@/components/Sort';
 
@@ -84,7 +83,7 @@ const CouponContent: React.FC<CouponContentProps> = ({ products, checkboxName, s
           salesLabel="销量优先"
           onChange={handleSortChange}
         />
-        <Checkbox className="text-gray-500">{checkboxName}</Checkbox>
+        <Checkbox className={styles.check}>{checkboxName}</Checkbox>
       </div>
 
       <div className="grid grid-cols-2">

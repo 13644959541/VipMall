@@ -30,7 +30,7 @@ const NavMenu: React.FC<NavMenuProps> = ({ items, className = '' }) => {
             }}
           >
             <item.icon className="h-1 w-1 flex-shrink-0" />
-            <span className="flex-grow text-left">{item.text}</span>
+            <span className="flex-grow text-left text-[16px]">{item.text}</span>
           </NavLink>
         ))}
       </div>

@@ -341,14 +341,14 @@ const ProductDetail: React.FC<ProductDetailProps> = () => {
           <div className={`relative`}>
             <div className="absolute right-0 -top-[50px] flex items-center gap-1">
               <div
-                className="w-[22px] h-[22px] rounded-full bg-gray-200 text-black text-xxs flex items-center justify-center"
+                className="w-[22px] h-[22px] rounded-full bg-gray-200 text-black flex items-center justify-center"
                 onClick={() => setQuantity(Math.max(1, quantity - 1))}
               >
                 -
               </div>
               <div className="text-xxxs">{quantity}</div>
               <div
-                className="w-[22px] h-[22px] rounded-full bg-[#E60012] text-white text-xxs flex items-center justify-center"
+                className="w-[22px] h-[22px] rounded-full bg-[#E60012] text-white flex items-center justify-center"
                 onClick={() => setQuantity(quantity + 1)}
               >
                 +

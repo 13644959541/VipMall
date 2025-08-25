@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Modal, Input, Button, Toast } from 'antd-mobile';
+import { Modal, Input, Toast } from 'antd-mobile';
 import styles from './index.module.less'
 
 interface EmailVerificationModalProps {
@@ -27,6 +27,7 @@ const EmailVerificationModal: React.FC<EmailVerificationModalProps> = ({
   const [sending, setSending] = useState(false);
   const [countdown, setCountdown] = useState(0);
   const [hasSent, setHasSent] = useState(false);
+  const [emailSent, setEmailSent] = useState(false);
 
   useEffect(() => {
     // Set initial verification type based on available user info
@@ -43,6 +44,7 @@ const EmailVerificationModal: React.FC<EmailVerificationModalProps> = ({
       setCode('');
       setCountdown(0);
       setHasSent(false);
+      setEmailSent(false);
     }
   }, [visible]);
 
@@ -69,6 +71,11 @@ const EmailVerificationModal: React.FC<EmailVerificationModalProps> = ({
     setSending(true);
     setCountdown(90);
     setHasSent(true);
+    
+    // 如果是邮箱验证，标记邮箱验证码已发送
+    if (verificationType === 'email') {
+      setEmailSent(true);
+    }
     
     // 模拟发送验证码请求
     setTimeout(() => {
@@ -136,7 +143,10 @@ const EmailVerificationModal: React.FC<EmailVerificationModalProps> = ({
           {/* Toggle button for switching verification type */}
           {userInfo?.email && userInfo?.mobile && (
             <div className={styles.toggleWrapper}>
-              <a onClick={toggleVerificationType} className={styles.toggleButton}>
+              <a 
+                onClick={(verificationType === 'email' && !emailSent) ? undefined : toggleVerificationType} 
+                className={`${styles.toggleButton} ${(verificationType === 'email' && !emailSent) ? styles.disabled : ''}`}
+              >
                 {verificationType === 'email' ? '发送手机验证码' : '发送邮箱验证码'}
               </a>
             </div>
