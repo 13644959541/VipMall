@@ -1,7 +1,7 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 
-type CartItem = {
+export type CartItem = {
   id: string | number
   productId: string | number
   name: string
@@ -18,7 +18,7 @@ type CartItem = {
 
 type CartState = {
   items: CartItem[]
-  addItem: (product: Omit<CartItem, 'id'> & { quantity?: number }) => void
+  addItem: (product: Omit<CartItem, 'id'> & { quantity?: number }, skipConflictCheck?: boolean) => { hasConflict: boolean; item?: CartItem }
   removeItem: (id: string | number) => void
   updateQuantity: (id: string | number, quantity: number) => void
   toggleSelect: (id: string | number) => void
@@ -32,7 +32,30 @@ export const useCartStore = create<CartState>()(
   persist(
     (set, get) => ({
       items: [],
-      addItem: (product) => 
+      addItem: (product, skipConflictCheck = false) => {
+        // 检查互斥规则：如果购物车中已有同类券（rules不为空且相同），则返回冲突状态
+        const state = get()
+        const hasConflictRule = product.rules && product.rules.trim() !== ''
+        
+        if (hasConflictRule && !skipConflictCheck) {
+          const existingConflictItem = state.items.find(
+            item => item.rules && item.rules.trim() !== '' && item.rules === product.rules
+          )
+          
+          if (existingConflictItem) {
+            // 返回冲突状态，不实际添加商品
+            return { hasConflict: true, item: undefined }
+          }
+        }
+        
+        // 没有冲突，正常添加商品
+        const newItem = {
+          ...product,
+          id: Date.now(),
+          quantity: product.quantity || 1,
+          selected: true
+        }
+        
         set((state) => {
           const existingItem = state.items.find(
             (item) => item.productId === product.productId
@@ -50,17 +73,13 @@ export const useCartStore = create<CartState>()(
             }
           }
           return {
-            items: [
-              ...state.items,
-              { 
-                ...product, 
-                id: Date.now(), 
-                quantity: product.quantity || 1, 
-                selected: true 
-              },
-            ],
+            items: [...state.items, newItem],
           }
-        }),
+        })
+        
+        // 返回成功状态
+        return { hasConflict: false, item: newItem }
+      },
       removeItem: (id) =>
         set((state) => ({
           items: state.items.filter((item) => item.id !== id),

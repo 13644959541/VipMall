@@ -3,6 +3,9 @@ import { Image as AntdImage, Toast, Swiper } from 'antd-mobile'
 import SwipeTabs from '../../components/SwipeTabs'
 import PaymentRecordItem from '../../components/PaymentRecordItem'
 import EmptyState from '../../components/EmptyState'
+import AlertModal from '../../components/AlertModal'
+import EmailVerificationModal from '../../components/EmailVerificationModal'
+import { useAuthModel } from '../../model/useAuthModel'
 import styles from './index.module.less'
 
 interface PaymentRecordItem {
@@ -22,7 +25,13 @@ interface PaymentRecordItem {
 
 const PaymentRecordPage = () => {
   const [activeIndex, setActiveIndex] = useState(0)
-  
+  const [showEmailModal, setShowEmailModal] = useState(false)
+  const [showAlertModal, setShowAlertModal] = useState(false)
+  const [alertContent, setAlertContent] = useState({ title: '', message: '' })
+  const [currentRecordId, setCurrentRecordId] = useState<string>('')
+  const [currentRecordStatus, setCurrentRecordStatus] = useState<string>('')
+  const { user } = useAuthModel()
+
   // 标签项配置
   const tabItems = [
     { key: 'gift', title: '周边礼品' },
@@ -106,25 +115,78 @@ const PaymentRecordPage = () => {
   const giftRecords = records.filter(record => record.type === 'gift')
   const couponRecords = records.filter(record => record.type === 'coupon')
 
-  const handleChangeStatus = async (recordId: string, currentStatus: string) => {
+  const handleChangeStatus = (recordId: string, currentStatus: string) => {
     if (currentStatus === 'completed') return; // 已核销的不再处理
-    
+
+    // 保存当前记录信息
+    setCurrentRecordId(recordId)
+    setCurrentRecordStatus(currentStatus)
+
+    // 显示确认核销的AlertModal
+    setAlertContent({
+      title: '确认核销',
+      message: '您正在领取周边礼品，是否确认核销？'
+    })
+    setShowAlertModal(true)
+  }
+
+  const handleConfirmVerification = () => {
+    // 关闭AlertModal并显示EmailVerificationModal
+    setShowAlertModal(false)
+    setShowEmailModal(true)
+  }
+
+  const exchange = async (email: string, code: string) => {
     try {
-      Toast.show('核销中...')
-      
-      // 模拟API调用延迟
-      await new Promise(resolve => setTimeout(resolve, 1000))
-      
-      // 更新状态
-      setRecords(prevRecords => 
-        prevRecords.map(record => 
-          record.id === recordId ? { ...record, status: 'completed' } : record
-        )
-      )
-      
-      Toast.show('核销成功')
+      // 验证输入
+      if (!email || !email.trim()) {
+        Toast.show({ icon: 'fail', content: '请输入邮箱地址' });
+        return;
+      }
+
+      // 简单的邮箱格式验证
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        Toast.show({ icon: 'fail', content: '请输入有效的邮箱地址' });
+        return;
+      }
+
+      if (!code || !code.trim()) {
+        Toast.show({ icon: 'fail', content: '请输入验证码' });
+        return;
+      }
+
+      // 模拟 API 请求 - 这里应该替换为实际的 API 调用
+      // 例如: const response = await api.post('/exchange', { email, code, productId: product?.id, quantity });
+
+      // 模拟请求延迟
+      await new Promise(resolve => setTimeout(resolve, 1000));
+
+      // 模拟成功响应
+      const success = Math.random() > 0.3; // 70% 成功率用于演示
+
+      if (success) {
+        // 更新记录状态为已核销
+        const updatedRecord = records.find(record => record.id === currentRecordId)!
+        updatedRecord!.status = 'completed'
+        setRecords([...records])
+        Toast.show({
+          content: '核销成功',
+          position: 'center',
+          duration: 3000
+        })
+
+      } else {
+        throw new Error('兑换失败');
+      }
     } catch (error) {
-      Toast.show('核销失败')
+      console.error('兑换失败:', error);
+      Toast.show({
+        icon: 'fail',
+        content: '请求失败',
+        position: 'center',
+        duration: 3000
+      });
     }
   }
 
@@ -178,6 +240,26 @@ const PaymentRecordPage = () => {
           </Swiper.Item>
         </SwipeTabs>
       </div>
+      <EmailVerificationModal
+        visible={showEmailModal}
+        onClose={() => setShowEmailModal(false)}
+        onConfirm={(email, code) => {
+          exchange(email, code)
+          setShowEmailModal(false)
+        }}
+        confirmText="继续核销"
+        cancelText="取消"
+        userInfo={user || { email: undefined, mobile: undefined }}
+      />
+      <AlertModal
+        visible={showAlertModal}
+        onClose={() => setShowAlertModal(false)}
+        onConfirm={handleConfirmVerification}
+        title={alertContent.title}
+        message={alertContent.message}
+        confirmText="确认"
+        cancelText="取消"
+      />
     </div>
   )
 }

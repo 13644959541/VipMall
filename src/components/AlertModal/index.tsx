@@ -5,7 +5,7 @@ import styles from './index.module.less'
 interface AlertModalProps {
   visible: boolean;
   onClose: () => void;
-  onConfirm: () => void;
+  onConfirm?: () => void;
   title: string;
   message: string;
   confirmText: string;

@@ -1,10 +1,13 @@
-import React, { useRef } from 'react'
+import React, { useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Button, Image as AntdImage, Space, Toast, Checkbox } from 'antd-mobile'
 import { ArrowLeft, Star, Trash2 } from 'lucide-react'
-import { useCartStore } from '@/store/cart'
+import { useCartStore, type CartItem } from '@/store/cart'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faAngleRight } from '@fortawesome/free-solid-svg-icons'
+import AlertModal from '@/components/AlertModal'
+import EmailVerificationModal from '@/components/EmailVerificationModal'
+import { useAuthModel } from '@/model/useAuthModel'
 import styles from './index.module.less'
 
 const CartPage = () => {
@@ -19,6 +22,15 @@ const CartPage = () => {
     totalItems,
     totalPrice
   } = useCartStore()
+  const { user } = useAuthModel()
+  const [showEmailModal, setShowEmailModal] = useState(false)
+  const [showAlertModal, setShowAlertModal] = useState(false)
+  const [showGiftSuccessModal, setShowGiftSuccessModal] = useState(false)
+  const [alertContent, setAlertContent] = useState({ title: '', message: '' })
+  const [hasGiftItems, setHasGiftItems] = useState(false)
+  const [itemToDelete, setItemToDelete] = useState<string | number | null>(null)
+  const [itemToAdd, setItemToAdd] = useState<Omit<CartItem, 'id'> & { quantity?: number } | null>(null)
+  const [showAddConfirmModal, setShowAddConfirmModal] = useState(false)
 
   // 初始化时取消所有选中
   React.useEffect(() => {
@@ -57,7 +69,102 @@ const CartPage = () => {
       Toast.show('请选择要结算的商品')
       return;
     }
-    navigate('/checkout')
+
+    // 检查购物车中是否有礼品类型的商品并存储状态
+    const giftItemsExist = selectedItems.some(item => item.type === 'gift')
+    setHasGiftItems(giftItemsExist)
+    
+    // 显示确认弹窗
+    setAlertContent({
+      title: '确认兑换',
+      message: '您正在兑换购物车内商品，是否确认兑换？'
+    })
+    setShowAlertModal(true)
+  }
+
+  const handleConfirmVerification = () => {
+    // 关闭AlertModal并显示EmailVerificationModal
+    setShowAlertModal(false)
+    setShowEmailModal(true)
+  }
+
+  const exchange = async (email: string, code: string) => {
+    try {
+      // 这里可以添加实际的兑换逻辑
+      console.log('Exchange with:', email, code)
+      
+      // 模拟API调用 - 在实际应用中替换为真实的API调用
+      // const response = await api.exchange(email, code);
+      
+      // 假设验证成功
+      const verificationSuccess = true; // 在实际应用中根据API响应设置
+      
+      if (verificationSuccess) {
+        if (hasGiftItems) {
+          // 有礼品商品，显示礼品成功弹窗
+          setShowGiftSuccessModal(true)
+        } else {
+          // 没有礼品商品，显示成功toast
+          Toast.show('兑换成功，请尽快到店使用')
+        }
+      } else {
+        // 验证失败
+        Toast.show('请求失败')
+      }
+      
+      setShowEmailModal(false)
+      
+    } catch (error) {
+      // API调用失败
+      console.error('Exchange failed:', error)
+      Toast.show('请求失败')
+      setShowEmailModal(false)
+    }
+  }
+
+  const handleDeleteItem = (id: string | number) => {
+    setItemToDelete(id)
+    setAlertContent({
+      title: '确认删除',
+      message: '您正在删除购物车内商品，是否确认删除？'
+    })
+    setShowAlertModal(true)
+  }
+
+  const handleConfirmDelete = () => {
+    if (itemToDelete) {
+      removeItem(itemToDelete)
+      setItemToDelete(null)
+    }
+    setShowAlertModal(false)
+  }
+
+  const handleAddItemWithConflictCheck = (product: Omit<CartItem, 'id'> & { quantity?: number }) => {
+    const result = useCartStore.getState().addItem(product)
+    
+    if (result.hasConflict) {
+      // 显示互斥规则确认弹窗
+      setItemToAdd(product)
+      setAlertContent({
+        title: '加入购物车',
+        message: '购物车已有同类券,该类型券单次消费限用1张,是否继续加购?'
+      })
+      setShowAddConfirmModal(true)
+    }
+  }
+
+  const handleConfirmAdd = () => {
+    if (itemToAdd) {
+      // 用户确认继续加购，强制添加商品（跳过冲突检查）
+      useCartStore.getState().addItem(itemToAdd, true)
+      setItemToAdd(null)
+    }
+    setShowAddConfirmModal(false)
+  }
+
+  const handleCancelAdd = () => {
+    setItemToAdd(null)
+    setShowAddConfirmModal(false)
   }
 
   return (
@@ -92,7 +199,7 @@ const CartPage = () => {
                   {/* Delete Button (shown on swipe) */}
                   <div
                     className="absolute right-0 top-0 h-full w-[100px] bg-[#E60012] flex items-center justify-center text-white z-10"
-                    onClick={() => removeItem(item.id)}
+                    onClick={() => handleDeleteItem(item.id)}
                   >
                     删除
                   </div>
@@ -153,7 +260,14 @@ const CartPage = () => {
                             <div className="text-xxxs">{item.quantity}</div>
                             <div
                               className="w-[22px] h-[22px] rounded-full bg-[#E60012] text-white text-xxs flex items-center justify-center"
-                              onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                              onClick={() => {
+                                // 创建要添加的商品对象（模拟增加数量的操作）
+                                const productToAdd = {
+                                  ...item,
+                                  quantity: 1 // 每次点击+按钮增加1个数量
+                                }
+                                handleAddItemWithConflictCheck(productToAdd)
+                              }}
                             >
                               +
                             </div>
@@ -168,7 +282,7 @@ const CartPage = () => {
                     className="absolute right-[10px] top-1 w-2 h-2 flex items-center justify-center z-20"
                     onClick={(e) => {
                       e.stopPropagation();
-                      removeItem(item.id);
+                      handleDeleteItem(item.id);
                     }}
                   >
                     <Trash2 size={20} className="text-[#E60012]" />
@@ -211,6 +325,47 @@ const CartPage = () => {
           <FontAwesomeIcon icon={faAngleRight} className={styles['arrow-icon']} />
         </div>
       </div>
+
+
+
+       <EmailVerificationModal
+        visible={showEmailModal}
+        onClose={() => setShowEmailModal(false)}
+        onConfirm={(email, code) => {
+          exchange(email, code)
+          setShowEmailModal(false)
+        }}
+        confirmText="继续兑换"
+        cancelText="取消"
+        userInfo={user || { email: undefined, mobile: undefined }}
+      />
+      <AlertModal
+        visible={showAlertModal}
+        onClose={() => setShowAlertModal(false)}
+        onConfirm={itemToDelete ? handleConfirmDelete : handleConfirmVerification}
+        title={alertContent.title}
+        message={alertContent.message}
+        confirmText="确认"
+        cancelText="取消"
+      />
+      <AlertModal
+        visible={showGiftSuccessModal}
+        onClose={() => setShowGiftSuccessModal(false)}
+        onConfirm={() => setShowGiftSuccessModal(false)}
+        title="兑换成功"
+        message="周边礼品请联系服务员领取"
+        confirmText="知道了"
+        showConfirmButton={false}
+      />
+      <AlertModal
+        visible={showAddConfirmModal}
+        onClose={handleCancelAdd}
+        onConfirm={handleConfirmAdd}
+        title={alertContent.title}
+        message={alertContent.message}
+        confirmText="确认"
+        cancelText="取消"
+      />
     </div>
   )
 }

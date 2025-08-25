@@ -25,7 +25,7 @@ interface ProductInfo {
   level: number
   nextLevel: string
   nextPoints: number
-  rules: string
+  rules?: string
   redeemPeriod: string
   type: "coupon" | "meal" | "gift"
   details: string
