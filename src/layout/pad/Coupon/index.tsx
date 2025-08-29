@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import ProductCard from '@/components/ProductCard';
 import { Checkbox } from 'antd-mobile';
 import DropdownSort from '@/components/Select';
 import styles from './index.module.less';
 import Sort from '@/components/Sort';
+import { useAuthModel } from '@/model/useAuthModel';
+import { useTranslation } from 'react-i18next';
 
 interface CouponContentProps {
   carouselItems: Array<{
@@ -19,32 +21,84 @@ interface CouponContentProps {
     points: number;
     sales: number;
     originalPrice: number;
-    memberLevel?: string;
+    memberLevel: string;
+    isAvailable: boolean;
+    availableTime?: string;
+    conflictRule?: string;
   }>;
   productName: string;
   checkboxName: string;
   sortOptions: Array<{
     label: string;
     value: string;
-  }>;
+  }>; 
 }
 const CouponContent: React.FC<CouponContentProps> = ({ products, checkboxName, sortOptions }) => {
-  const [memberLevel, setMemberLevel] = useState<string | null>(null);
+  const [level, setLevel] = useState<string | null>(null);
   const [sortOption, setSortOption] = useState<string>('default');
+  const [showRedeemableOnly, setShowRedeemableOnly] = useState(false);
+  // 判断用户等级是否满足兑换条件
+  const { user } = useAuthModel()
+  const currentUserLevel = parseInt(user?.localLevel || "1")
+  const { t } = useTranslation('common');
 
   const filteredAndSortedProducts = useMemo(() => {
     if (!products) return [];
     
     // 先筛选
     let result = [...products];
-    if (memberLevel && memberLevel !== 'all') {
-      result = result.filter(product => product.memberLevel === memberLevel);
+    
+    // 先按会员等级筛选
+    if (level && level !== 'all') {
+      result = result.filter(product => {
+        if (product.memberLevel === undefined) return false;
+        return parseInt(product.memberLevel) <= parseInt(level);
+      });
     }
 
-    // 再排序
+    // 如果"我可兑"复选框选中，再进行积分和会员等级筛选
+    if (showRedeemableOnly) {
+      result = result.filter(product => {
+        const userPoints = user?.points || 0;
+        const memberLevel = parseInt(product.memberLevel || "1");
+        return userPoints >= product.points && 
+               currentUserLevel >= memberLevel &&
+               product.isAvailable !== false;
+      });
+    }
+
+    // 计算每个商品的禁用状态
+    const productsWithDisabled = result.map(product => {
+      // Coupon类型：只看isAvailable
+      const disabled = !product.isAvailable || 
+        (level && level !== 'all' && currentUserLevel < parseInt(product.memberLevel));
+      
+      return {
+        ...product,
+        disabled: !!disabled // 确保是boolean类型
+      };
+    });
+
+    // 再排序 - 先将禁用的商品放在后面，再按指定字段排序
     const [field, order] = sortOption.split('-');
+    
+    let sortedProducts = [...productsWithDisabled];
+    
+    // 首先按禁用状态排序（不禁用的在前，禁用的在后）
+    sortedProducts.sort((a, b) => {
+      if (a.disabled && !b.disabled) return 1; // a禁用，b不禁用，a排在后面
+      if (!a.disabled && b.disabled) return -1; // a不禁用，b禁用，a排在前面
+      return 0; // 禁用状态相同，保持原顺序
+    });
+
+    // 然后按指定字段排序（只对不禁用的商品排序）
     if (field !== 'default') {
-      result.sort((a, b) => {
+      sortedProducts.sort((a, b) => {
+        // 如果有一个商品是禁用的，保持禁用商品在后面的顺序
+        if (a.disabled && !b.disabled) return 1;
+        if (!a.disabled && b.disabled) return -1;
+        
+        // 两个商品都不禁用，按指定字段排序
         if (field === 'points') {
           return order === 'asc' ? a.points - b.points : b.points - a.points;
         } else if (field === 'sales') {
@@ -56,16 +110,16 @@ const CouponContent: React.FC<CouponContentProps> = ({ products, checkboxName, s
       });
     }
 
-    return result;
-  }, [products, memberLevel, sortOption]);
+    return sortedProducts;
+  }, [products, level, sortOption, currentUserLevel, showRedeemableOnly, user?.points]);
 
   const handleSortChange = (value: string) => {
     setSortOption(value);
   };
   const handleLevelChange = (value: string) => {
-    setMemberLevel(value);
+    setLevel(value);
   };
-
+  console.log(products)
   return (
     <div className={styles.contentWrapper}
       style={{
@@ -78,12 +132,18 @@ const CouponContent: React.FC<CouponContentProps> = ({ products, checkboxName, s
           onChange={handleLevelChange}
         />
         <Sort 
-          defaultLabel="综合排序"
-          pointsLabel="积分高低"
-          salesLabel="销量优先"
+          defaultLabel= {t("filter.default")}
+          pointsLabel= {t("product.requiredPoints")} 
+          salesLabel= {t("product.sales")} 
           onChange={handleSortChange}
         />
-        <Checkbox className={styles.check}>{checkboxName}</Checkbox>
+        <Checkbox 
+          className={styles.check}
+          checked={showRedeemableOnly}
+          onChange={(checked) => setShowRedeemableOnly(checked)}
+        >
+          {checkboxName}
+        </Checkbox>
       </div>
 
       <div className="grid grid-cols-2">

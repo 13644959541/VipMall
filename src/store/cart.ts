@@ -12,7 +12,7 @@ export type CartItem = {
   points: number
   details: string
   rules:string
-  redeemPeriod:string
+  availableTime:string
   type:string
 }
 
@@ -25,7 +25,6 @@ type CartState = {
   clearCart: () => void
   totalItems: () => number
   totalPrice: () => number
-  totalPoints: () => number
 }
 
 export const useCartStore = create<CartState>()(
@@ -42,43 +41,55 @@ export const useCartStore = create<CartState>()(
             item => item.rules && item.rules.trim() !== '' && item.rules === product.rules
           )
           
+          console.log('Conflict check - hasConflictRule:', hasConflictRule)
+          console.log('Conflict check - existingConflictItem:', existingConflictItem)
+          
           if (existingConflictItem) {
             // 返回冲突状态，不实际添加商品
+            console.log('Conflict detected, not adding item')
             return { hasConflict: true, item: undefined }
           }
         }
         
-        // 没有冲突，正常添加商品
-        const newItem = {
-          ...product,
-          id: Date.now(),
-          quantity: product.quantity || 1,
-          selected: true
-        }
+        console.log('No conflict, proceeding to add item')
         
         set((state) => {
-          const existingItem = state.items.find(
+          const existingItemIndex = state.items.findIndex(
             (item) => item.productId === product.productId
           )
-          if (existingItem) {
-            return {
-              items: state.items.map((item) =>
-                item.productId === product.productId
-                  ? { 
-                      ...item, 
-                      quantity: product.quantity ? item.quantity + product.quantity : item.quantity + 1,
-                    }
-                  : item
-              ),
+          
+          console.log('Existing item index:', existingItemIndex)
+          console.log('Current items:', state.items)
+          console.log('Adding product:', product)
+          
+          if (existingItemIndex !== -1) {
+            // 商品已存在，增加数量
+            const updatedItems = [...state.items]
+            const newQuantity = updatedItems[existingItemIndex].quantity + (product.quantity || 1)
+            console.log('Updating quantity from', updatedItems[existingItemIndex].quantity, 'to', newQuantity)
+            
+            updatedItems[existingItemIndex] = {
+              ...updatedItems[existingItemIndex],
+              quantity: newQuantity
             }
-          }
-          return {
-            items: [...state.items, newItem],
+            return { items: updatedItems }
+          } else {
+            // 商品不存在，创建新项
+            const newItem = {
+              ...product,
+              id: Date.now(),
+              quantity: product.quantity || 1,
+              selected: true
+            }
+            console.log('Creating new item:', newItem)
+            return { items: [...state.items, newItem] }
           }
         })
         
-        // 返回成功状态
-        return { hasConflict: false, item: newItem }
+        // 返回成功状态，这里需要重新获取状态来返回正确的item
+        const updatedState = get()
+        const updatedItem = updatedState.items.find(item => item.productId === product.productId)
+        return { hasConflict: false, item: updatedItem }
       },
       removeItem: (id) =>
         set((state) => ({
@@ -97,18 +108,8 @@ export const useCartStore = create<CartState>()(
           ),
         })),
       clearCart: () => set({ items: [] }),
-      totalItems: () => get().items.reduce((sum, item) => sum + item.quantity, 0),
-      totalPrice: () => 
-        get().items.reduce(
-          (sum, item) => sum + (item.selected ? item.points * item.quantity : 0), 
-          0
-        ),
-      totalPoints: () => 
-        get().items.reduce(
-          (sum, item) => sum + (item.selected ? item.points * item.quantity : 0), 
-          0
-        ),
-    }),
+      totalItems: () => get().items.reduce((sum, item) => sum + (item.selected ? item.quantity : 0), 0),
+      totalPrice: () => get().items.reduce((sum, item) => sum + (item.selected ? item.points * item.quantity : 0), 0),}),
     {
       name: 'cart-storage',
       storage: {

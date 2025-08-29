@@ -4,6 +4,7 @@ import { Image as AntdImage, Toast } from 'antd-mobile'
 import DropdownSort from '@/components/Select';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuthModel } from '../../../model/useAuthModel'
+import { useTranslation } from 'react-i18next';
 interface HeaderProps {
   className?: string;
 }
@@ -14,58 +15,28 @@ const Header: React.FC<HeaderProps> = ({ className }) => {
   const [navigationHistory, setNavigationHistory] = React.useState<string[]>([]);
   const canGoBack = navigationHistory.length > 1;
   const { user } = useAuthModel()
-  //多语言
-  // "KR ""韩国""
-  // SG ""新加坡""
-  // TW ""台湾地区""
-  // HK ""香港地区""
-  // MO ""澳门地区""
-  // US ""美国""
-  // GB ""英国""
-  // JP ""日本""
-  // CA ""加拿大""
-  // AU ""澳大利亚""
-  // VN ""越南""
-  // MY ""马来西亚""
-  // ID ""印度尼西亚""
-  // TH ""泰国""
-  // UAE ""阿联酋""
-  // PH ""菲律宾""
-  // KHM ""柬埔寨""
+  const { i18n, t } = useTranslation('common');
+  // 语言选项映射到 i18next 的语言代码
   const languageOptions = [
-    { label: "简体中文", value: "ZH" },
-    { label: "English", value: "US" },
-    { label: "繁體中文", value: "TW" },
-    { label: "한국어", value: "KR" },
-    { label: "日本語", value: "JP" },
-    { label: "ไทย", value: "TH" },
-    { label: "新加坡", value: "SG" },
-    { label: "香港地区", value: "HK" },
-    { label: "澳门地区", value: "MO" },
-    { label: "英国", value: "GB" },
-    { label: "加拿大", value: "CA" },
-    { label: "澳大利亚", value: "AU" },
-    { label: "越南", value: "VN" },
-    { label: "马来西亚", value: "MY" },
-    { label: "印度尼西亚", value: "ID" },
-    { label: "阿联酋", value: "UAE" },
-    { label: "菲律宾", value: "PH" },
-    { label: "柬埔寨", value: "KHM" }
+    { label: "简体中文", value: "zh-CN" },
+    { label: "English", value: "en-US" }
   ]
+  
   const languageChange = (value: string) => {
-    console.log(value);
+    i18n.changeLanguage(value);
+  };
+  
+  // 获取当前语言的显示标签
+  const getCurrentLanguageLabel = () => {
+    const currentLang = languageOptions.find(option => option.value === i18n.language);
+    return currentLang?.label || "简体中文";
   };
   const back = () => {
     if (canGoBack) {
       // 从历史记录中移除当前页面，然后导航到上一个页面
       setNavigationHistory(prev => prev.slice(0, -1));
       navigate(-1);
-    } else {
-      Toast.show({
-        content: '已经是第一页了',
-        duration: 1000,
-      });
-    }
+    } 
   }
   
   const pad = (
@@ -81,13 +52,13 @@ const Header: React.FC<HeaderProps> = ({ className }) => {
           <DropdownSort
             options={languageOptions}
             onChange={languageChange}
-            defaultLabel="简体中文"
+            defaultLabel={getCurrentLanguageLabel()}
           />
         </div>
       }
       left ={
           <div className={`${styles['header']} flex items-center justify-between `}>
-          <div className={`${styles['table']} `}>桌号: {user?.tableNo}</div>
+          <div className={`${styles['table']} `}>{t('home.tableNumber')}: {user?.tableNo}</div>
         </div>
       }>
       

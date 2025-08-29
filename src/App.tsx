@@ -4,7 +4,6 @@ import { library } from '@fortawesome/fontawesome-svg-core';
 import { fas } from '@fortawesome/free-solid-svg-icons';
 import { far } from '@fortawesome/free-regular-svg-icons';
 import { initializeAuth } from '@/model/useAuthModel';
-import TestAuthComponent from '@/test-auth';
 
 // 初始化FontAwesome
 library.add(fas, far);
@@ -18,7 +17,6 @@ const App = () => {
     <>
       <Router>
         <RouteRender />
-        <TestAuthComponent />
       </Router>
     </>
   );

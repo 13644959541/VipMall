@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { DownOutline, UpOutline } from "antd-mobile-icons";
 import styles from './index.module.less'
+import { useTranslation } from "react-i18next";
 
 interface SelectProps {
   options?: Array<{ label: string, value: string }>;
@@ -9,17 +10,17 @@ interface SelectProps {
   // title?: string;
   onChange?: (value: string) => void;
 }
-
 export default function Select({
   options = [],
-  defaultLabel = '会员专区',
+  defaultLabel ,
   // title = '推荐',
   onChange
 }: SelectProps) {
   const [open, setOpen] = useState(false);
+  const { t } = useTranslation('common'); // 这里指定命名空间
+  defaultLabel = t('product.memberZone')
   const [selected, setSelected] = useState(defaultLabel);
   const dropdownRef = useRef<HTMLDivElement>(null);
-
   const handleSelect = (value: string) => {
     const item = options.find((opt) => opt.value === value)!;
     setSelected(item.label);

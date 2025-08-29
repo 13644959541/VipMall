@@ -5,14 +5,30 @@ import HomeContent from '@/layout/pad/HomeContent'
 import GiftContent from '@/layout/pad/Gift'
 import MealContent from '@/layout/pad/Meal'
 import CouponContent from '@/layout/pad/Coupon'
+import { useTranslation } from 'react-i18next';
 const HomePad = () => {
+  const { t } = useTranslation('common'); // 这里指定命名空间
   const [activeIndex, setActiveIndex] = useState(0)
   // 模拟标签数据
   const tabItems = [
-    { key: 'first', title: '首页' },
-    { key: 'second', title: '代金券专区' },
-    { key: 'third', title: '菜品券专区' },
-    { key: 'fourth', title: '周边礼品' },
+    { key: 'first', title: t('header.home') },
+    { key: 'second', title: t('home.voucherZone') },
+    { key: 'third', title: t('home.dishCouponZone') },
+    { key: 'fourth', title: t('home.merchandise') },
+  ]
+    // 多语言变量
+  const i18n = {
+    productName: t('home.recommended'),
+    checkboxName: t('filter.redeemableOnly')
+  };
+
+  //排序
+  const sortOptions = [
+    { label: t('product.all'), value: "all" },
+    { label: t('product.redeemableForRedMembers'), value: "1" },
+    { label: t('product.redeemableForSilverMembers'), value: "2" },
+    { label: t('product.redeemableForGoldMembers'), value: "3" },
+    { label: t('product.redeemableForPremiumMembers'), value: "4" }
   ]
   // 模拟商品数据
   const products = [
@@ -26,7 +42,7 @@ const HomePad = () => {
       sales: 89,
       originalPrice: 58,
       isAvailable: true,
-      memberLevel: 'red'
+      memberLevel: '1'
     },
     {
       id: 2,
@@ -38,36 +54,61 @@ const HomePad = () => {
       points: 2500,
       originalPrice: 58,
       isAvailable: true,
-      memberLevel: 'silver'
+      memberLevel: '2'
     }
   ]
   const coupon = [{
     id: 1,
     type: 'coupon',
     image: '/taro-paste.png',
-    name: '100元代金券',
+    name: '1元代金券',
     description: '累计兑换 156 份',
     sales: 156,
-    points: 5000,
+    points: 1,
     originalPrice: 100,
-    redeemPeriod: '8/12-8/31 可兑换',
+    availableTime: '8/12-8/31 可兑换',
     conflictRule: '不可与其他优惠券同时使用，一桌只可使用一次，具体规则请咨询门店服务员。',
     isAvailable: true,
-    isRedeemable: true,
-    memberLevel: 'red'
+    memberLevel: '1'
   }, {
     id: 2,
     type: 'coupon',
     image: '/taro-paste.png',
     name: '50元代金券',
     description: '累计兑换 342 份',
-    points: 2500,
+    points: 50,
     sales: 342,
     originalPrice: 50,
     conflictRule: '一桌只可使用一次',
     isAvailable: true,
-    memberLevel: 'silver'
-  },]
+    memberLevel: '2'
+  },
+{
+    id: 3,
+    type: 'coupon',
+    image: '/taro-paste.png',
+    name: '100元代金券',
+    description: '累计兑换 156 份',
+    sales: 156,
+    points: 100,
+    originalPrice: 100,
+    availableTime: '9/12-9/31 可兑换',
+    conflictRule: '不可与其他优惠券同时使用，一桌只可使用一次，具体规则请咨询门店服务员。',
+    isAvailable: false,
+    memberLevel: '3'
+  }, {
+    id: 4,
+    type: 'coupon',
+    image: '/taro-paste.png',
+    name: '500元代金券',
+    description: '累计兑换 342 份',
+    points: 500,
+    sales: 342,
+    originalPrice: 50,
+    conflictRule: '一桌只可使用一次',
+    isAvailable: true,
+    memberLevel: '4'
+  }]
   const meal = [{
     id: 1,
     type: 'meal',
@@ -77,9 +118,9 @@ const HomePad = () => {
     sales: 203,
     points: 8000,
     originalPrice: 198,
-    redeemPeriod: '10:00-22:00',
+    availableTime: '10:00-22:00',
     isAvailable: true,
-    isRedeemable: false
+    memberLevel: '1'
   },]
   const gift = [{
     id: 1,
@@ -91,7 +132,8 @@ const HomePad = () => {
     points: 12000,
     originalPrice: 299,
     remainingStock: 5,
-    isAvailable: true
+    isAvailable: true,
+    memberLevel: '1'
   },
   {
     id: 2,
@@ -103,7 +145,8 @@ const HomePad = () => {
     points: 6000,
     originalPrice: 168,
     remainingStock: 12,
-    isAvailable: true
+    isAvailable: true,
+    memberLevel: '2'
   }]
   // 模拟轮播图数据
   const carouselItems = [
@@ -126,20 +169,7 @@ const HomePad = () => {
       )
     },
   ]
-  // 多语言变量
-  const i18n = {
-    productName: "热门推荐",
-    checkboxName: "可兑换"
-  };
 
-  //排序
-  const sortOptions = [
-    { label: "全部", value: "all" },
-    { label: "红海会员可兑", value: "red" },
-    { label: "银海会员可兑", value: "silver" },
-    { label: "金海会员可兑", value: "gold" },
-    { label: "黑海会员可兑", value: "black" }
-  ]
   //useTitle('主页');
   return (
     <div className={styles['pad-home']}>

@@ -44,11 +44,13 @@ const SwipeTabs: React.FC<SwipeTabsProps> = ({
         }}
         style={{ flex: 1 }}
       >
+      
         {React.Children.map(children as React.ReactElement[], (child, index) => (
           <Swiper.Item key={index}>
-            {child}
+            {index === activeIndex ? child : null}
           </Swiper.Item>
         ))}
+
       </Swiper>
     </>
   )

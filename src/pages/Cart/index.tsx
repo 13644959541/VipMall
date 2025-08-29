@@ -1,7 +1,7 @@
 import React, { useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Button, Image as AntdImage, Space, Toast, Checkbox } from 'antd-mobile'
-import { ArrowLeft, Star, Trash2 } from 'lucide-react'
+import { Image as AntdImage, Space, Toast, Checkbox } from 'antd-mobile'
+import { Trash2 } from 'lucide-react'
 import { useCartStore, type CartItem } from '@/store/cart'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faAngleRight } from '@fortawesome/free-solid-svg-icons'
@@ -9,16 +9,15 @@ import AlertModal from '@/components/AlertModal'
 import EmailVerificationModal from '@/components/EmailVerificationModal'
 import { useAuthModel } from '@/model/useAuthModel'
 import styles from './index.module.less'
+import { useTranslation } from 'react-i18next'
 
 const CartPage = () => {
-  const navigate = useNavigate()
   const swipeRefs = useRef<(HTMLDivElement | null)[]>([])
   const {
     items,
     removeItem,
     updateQuantity,
     toggleSelect,
-    clearCart,
     totalItems,
     totalPrice
   } = useCartStore()
@@ -31,6 +30,7 @@ const CartPage = () => {
   const [itemToDelete, setItemToDelete] = useState<string | number | null>(null)
   const [itemToAdd, setItemToAdd] = useState<Omit<CartItem, 'id'> & { quantity?: number } | null>(null)
   const [showAddConfirmModal, setShowAddConfirmModal] = useState(false)
+  const { t } = useTranslation('common');
 
   // 初始化时取消所有选中
   React.useEffect(() => {
@@ -76,8 +76,8 @@ const CartPage = () => {
     
     // 显示确认弹窗
     setAlertContent({
-      title: '确认兑换',
-      message: '您正在兑换购物车内商品，是否确认兑换？'
+      title: t('modal.confirmRedemption'),
+      message: t('modal.confirmCartRedemption')
     })
     setShowAlertModal(true)
   }
@@ -105,11 +105,11 @@ const CartPage = () => {
           setShowGiftSuccessModal(true)
         } else {
           // 没有礼品商品，显示成功toast
-          Toast.show('兑换成功，请尽快到店使用')
+          Toast.show(t('modal.redeemSoon'))
         }
       } else {
         // 验证失败
-        Toast.show('请求失败')
+        Toast.show(t('modal.requestFailed'))
       }
       
       setShowEmailModal(false)
@@ -117,7 +117,7 @@ const CartPage = () => {
     } catch (error) {
       // API调用失败
       console.error('Exchange failed:', error)
-      Toast.show('请求失败')
+      Toast.show(t('modal.requestFailed'))
       setShowEmailModal(false)
     }
   }
@@ -125,8 +125,8 @@ const CartPage = () => {
   const handleDeleteItem = (id: string | number) => {
     setItemToDelete(id)
     setAlertContent({
-      title: '确认删除',
-      message: '您正在删除购物车内商品，是否确认删除？'
+      title: t('modal.confirmDeletion'),
+      message: t('modal.confirmCartDeletion')
     })
     setShowAlertModal(true)
   }
@@ -146,8 +146,8 @@ const CartPage = () => {
       // 显示互斥规则确认弹窗
       setItemToAdd(product)
       setAlertContent({
-        title: '加入购物车',
-        message: '购物车已有同类券,该类型券单次消费限用1张,是否继续加购?'
+        title: t('productDetail.addToCart'),
+        message: t('modal.similarCouponWarning') 
       })
       setShowAddConfirmModal(true)
     }
@@ -174,15 +174,16 @@ const CartPage = () => {
         {items.length === 0 && (
           <div className="flex flex-col items-center justify-center h-full">
             <AntdImage src="/empty.svg" width={200} height={200} />
-            <div className={styles['cart-msg']}>购物车还是空的，快去加购商品吧</div>
+            <div className={styles['cart-msg']}>{t('cart.emptyCart')}</div>
           </div>
         )}
 
         {/* Cart Items */}
         {items.length > 0 && (
-          <div className="flex items-center mt-1">
+          <div className="flex flex-col  ">
             {items.map((item, index) => (
               <React.Fragment key={item.id}>
+                <div className="flex items-center mt-1">
                 <div className="ml-1 mr-1">
                   <Checkbox
                     checked={items.length > 0 && items.every(item => item.selected)}
@@ -195,13 +196,13 @@ const CartPage = () => {
                     }}
 
                   /></div>
-                <div className="relative overflow-hidden bg-white rounded-lg w-full mr-1">
+                <div className="relative overflow-hidden bg-white rounded-[20px] w-full mr-1">
                   {/* Delete Button (shown on swipe) */}
                   <div
-                    className="absolute right-0 top-0 h-full w-[100px] bg-[#E60012] flex items-center justify-center text-white z-10"
+                    className="absolute rounded-[25px] right-0 top-0 h-full w-[100px] bg-[#E60012] flex items-center justify-center text-white z-10"
                     onClick={() => handleDeleteItem(item.id)}
                   >
-                    删除
+                    {t('cart.delete')}
                   </div>
 
                   {/* Swipeable Content */}
@@ -288,6 +289,7 @@ const CartPage = () => {
                     <Trash2 size={20} className="text-[#E60012]" />
                   </div>
                 </div>
+                </div>
               </React.Fragment>
             ))}
           </div>
@@ -309,10 +311,10 @@ const CartPage = () => {
           />
           <div className={styles['font']}>
             <div >
-              合计积分: <span >{totalPrice()}</span>
+              {t('cart.totalPoints')}: <span >{totalPrice()}</span>
             </div>
             <div className={styles['span']} >
-              积分所兑的商品不支持退换货
+               {t('cart.nonReturnable')}
             </div>
           </div>
         </div>
@@ -321,7 +323,7 @@ const CartPage = () => {
           onClick={handleCheckout}
           className={`${styles['font']} mr-5`}
         >
-          立即兑换({totalItems()})
+          {t('cart.redeemNow')}({totalItems()})
           <FontAwesomeIcon icon={faAngleRight} className={styles['arrow-icon']} />
         </div>
       </div>
@@ -335,8 +337,8 @@ const CartPage = () => {
           exchange(email, code)
           setShowEmailModal(false)
         }}
-        confirmText="继续兑换"
-        cancelText="取消"
+        confirmText= {t('modal.continueRedemption')}
+        cancelText= {t('modal.cancel')}
         userInfo={user || { email: undefined, mobile: undefined }}
       />
       <AlertModal
@@ -345,16 +347,16 @@ const CartPage = () => {
         onConfirm={itemToDelete ? handleConfirmDelete : handleConfirmVerification}
         title={alertContent.title}
         message={alertContent.message}
-        confirmText="确认"
-        cancelText="取消"
+        confirmText= {t('modal.confirm')}
+        cancelText= {t('modal.cancel')}
       />
       <AlertModal
         visible={showGiftSuccessModal}
         onClose={() => setShowGiftSuccessModal(false)}
         onConfirm={() => setShowGiftSuccessModal(false)}
-        title="兑换成功"
-        message="周边礼品请联系服务员领取"
-        confirmText="知道了"
+        title = {t('modal.redemptionSuccessful')}
+        message=  {t('modal.merchandiseContactStaff')}
+        confirmText= {t('modal.gotIt')}
         showConfirmButton={false}
       />
       <AlertModal
@@ -363,8 +365,8 @@ const CartPage = () => {
         onConfirm={handleConfirmAdd}
         title={alertContent.title}
         message={alertContent.message}
-        confirmText="确认"
-        cancelText="取消"
+        confirmText= {t('modal.confirm')}
+        cancelText= {t('modal.cancel')}
       />
     </div>
   )

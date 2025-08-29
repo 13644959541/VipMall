@@ -5,6 +5,7 @@ import { createRoot } from 'react-dom/client';
 import { GlobalProvider } from 'rmox';
 import App from '@/App';
 import { setWindowHeight } from './utils';
+import '@/locales'; // 导入多语言配置
 
 setWindowHeight();
 window.onresize = () => {

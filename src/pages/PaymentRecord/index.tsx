@@ -7,6 +7,7 @@ import AlertModal from '../../components/AlertModal'
 import EmailVerificationModal from '../../components/EmailVerificationModal'
 import { useAuthModel } from '../../model/useAuthModel'
 import styles from './index.module.less'
+import { useTranslation } from 'react-i18next'
 
 interface PaymentRecordItem {
   id: string
@@ -31,11 +32,12 @@ const PaymentRecordPage = () => {
   const [currentRecordId, setCurrentRecordId] = useState<string>('')
   const [currentRecordStatus, setCurrentRecordStatus] = useState<string>('')
   const { user } = useAuthModel()
-
+  
+   const { t } = useTranslation('common');
   // 标签项配置
   const tabItems = [
-    { key: 'gift', title: '周边礼品' },
-    { key: 'coupon', title: '优惠券' }
+    { key: 'gift', title: t('header.gift') },
+    { key: 'coupon', title: t('header.coupon') }
   ]
 
   // 模拟兑换记录数据
@@ -124,8 +126,8 @@ const PaymentRecordPage = () => {
 
     // 显示确认核销的AlertModal
     setAlertContent({
-      title: '确认核销',
-      message: '您正在领取周边礼品，是否确认核销？'
+      title: t('modal.confirmVerification') ,
+      message:  t('modal.confirmMerchandiseVerification') 
     })
     setShowAlertModal(true)
   }
@@ -139,20 +141,20 @@ const PaymentRecordPage = () => {
   const exchange = async (email: string, code: string) => {
     try {
       // 验证输入
-      if (!email || !email.trim()) {
-        Toast.show({ icon: 'fail', content: '请输入邮箱地址' });
-        return;
-      }
+      // if (!email || !email.trim()) {
+      //   Toast.show({ icon: 'fail', content: '请输入邮箱地址' });
+      //   return;
+      // }
 
-      // 简单的邮箱格式验证
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailRegex.test(email)) {
-        Toast.show({ icon: 'fail', content: '请输入有效的邮箱地址' });
-        return;
-      }
+      // // 简单的邮箱格式验证
+      // const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      // if (!emailRegex.test(email)) {
+      //   Toast.show({ icon: 'fail', content: '请输入有效的邮箱地址' });
+      //   return;
+      // }
 
       if (!code || !code.trim()) {
-        Toast.show({ icon: 'fail', content: '请输入验证码' });
+        Toast.show({ icon: 'fail', content: t('modal.enterVerificationCode') });
         return;
       }
 
@@ -171,19 +173,18 @@ const PaymentRecordPage = () => {
         updatedRecord!.status = 'completed'
         setRecords([...records])
         Toast.show({
-          content: '核销成功',
+          content: t('modal.verificationSuccessful') ,
           position: 'center',
           duration: 3000
         })
 
       } else {
-        throw new Error('兑换失败');
+        throw new Error(t('modal.requestFailed'));
       }
     } catch (error) {
-      console.error('兑换失败:', error);
       Toast.show({
         icon: 'fail',
-        content: '请求失败',
+        content: t('modal.requestFailed'),
         position: 'center',
         duration: 3000
       });
@@ -247,8 +248,8 @@ const PaymentRecordPage = () => {
           exchange(email, code)
           setShowEmailModal(false)
         }}
-        confirmText="继续核销"
-        cancelText="取消"
+        confirmText= {t('modal.continueVerification')}
+        cancelText= {t('modal.cancel')}
         userInfo={user || { email: undefined, mobile: undefined }}
       />
       <AlertModal
@@ -257,8 +258,8 @@ const PaymentRecordPage = () => {
         onConfirm={handleConfirmVerification}
         title={alertContent.title}
         message={alertContent.message}
-        confirmText="确认"
-        cancelText="取消"
+        confirmText= {t('modal.confirm')}
+        cancelText= {t('modal.cancel')}
       />
     </div>
   )

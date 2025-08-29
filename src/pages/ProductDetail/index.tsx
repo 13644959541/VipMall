@@ -1,12 +1,13 @@
 import type React from "react"
 import { useState, useEffect, useRef } from "react"
-import { useParams, useNavigate } from "react-router-dom"
+import { useParams, useLocation } from "react-router-dom"
 import { Image as AntdImage, Toast, Badge } from "antd-mobile"
 import { useCartStore } from "@/store/cart"
 import EmailVerificationModal from "@/components/EmailVerificationModal"
 import AlertModal from "@/components/AlertModal"
 import { useAuthModel } from "@/model/useAuthModel"
 import styles from './index.module.less'
+import { useTranslation } from "react-i18next"
 
 interface ProductDetailProps {
   id?: string
@@ -26,7 +27,7 @@ interface ProductInfo {
   nextLevel: string
   nextPoints: number
   rules?: string
-  redeemPeriod: string
+  availableTime: string
   type: "coupon" | "meal" | "gift"
   details: string
   features: string[]
@@ -35,11 +36,15 @@ interface ProductInfo {
     validStore: string,
     validTime: string
   }
+  disabled?: boolean
+  isAvailable?: boolean
+  memberLevel?: string
+  remainingStock?: number
 }
 
 const ProductDetail: React.FC<ProductDetailProps> = () => {
   const { id } = useParams<{ id: string }>()
-  const navigate = useNavigate()
+  const location = useLocation()
   const [product, setProduct] = useState<ProductInfo | null>(null)
   const [showEmailModal, setShowEmailModal] = useState(false)
   const [showAlertModal, setShowAlertModal] = useState(false)
@@ -47,40 +52,94 @@ const ProductDetail: React.FC<ProductDetailProps> = () => {
   const [alertContent, setAlertContent] = useState({ title: '', message: '' })
   const [alertTriggerType, setAlertTriggerType] = useState<'addToCart' | 'redeem'>('addToCart')
   const { user } = useAuthModel()
-
+  const currentUserLevel = parseInt(user?.localLevel || "1")
+  const { t } = useTranslation('common');
 
   useEffect(() => {
-    const mockProduct: ProductInfo = {
-      id: Number(id) || 1,
-      name: "海底捞火锅代金券",
-      description: "全国门店通用，节假日可用",
-      imgUrl: "/hot-pot-banner.png",
-      points: 5000,
-      originalPrice: 100,
-      sales: 1234,
-      stock: 99,
-      level: 3,
-      nextLevel: "银海会员",
-      nextPoints: 1500,
-      redeemPeriod: "周一至周五 11:00-22:00",
-      rules: "不可与xx折扣同时使用",
-      type: "gift",
-      details: "海底捞火锅代金券，全国门店通用，享受正宗川渝火锅美味。本券面值100元，可在海底捞任意门店使用，节假日不加价。",
-      features: ["全国门店通用", "节假日可用", "不限消费金额", "有效期12个月"],
-      usage: "1. 到店出示兑换码即可使用\n2. 不可找零，不可转让\n3. 请在有效期内使用\n4. 如有疑问请联系客服",
-      exchangeDesc: {
-        "validStore": "全国门店",
-        "validTime": "2025-09-01至2026-08-01"
+    // 优先使用从路由状态传递过来的product对象
+    if (location.state?.product) {
+      const passedProduct = location.state.product;
+      
+      // 计算禁用状态
+      const isAvailable = passedProduct.isAvailable !== false;
+      const memberLevel = parseInt(passedProduct.memberLevel || "1");
+      const remainingStock = passedProduct.remainingStock;
+      
+      // 根据商品类型计算禁用状态
+      let disabled = false;
+      if (!isAvailable) {
+        disabled = true;
+      } else if (currentUserLevel < memberLevel) {
+        disabled = true;
+      } else if (passedProduct.type === "gift" && remainingStock !== undefined && remainingStock === 0) {
+        disabled = true;
       }
+
+      // 将传递的product转换为ProductInfo类型
+      const productInfo: ProductInfo = {
+        id: Number(passedProduct.id) || Number(id) || 1,
+        name: passedProduct.name || "海底捞火锅代金券",
+        description: passedProduct.description || "全国门店通用，节假日可用",
+        imgUrl: passedProduct.image || "/hot-pot-banner.png",
+        points: passedProduct.points || 5000,
+        originalPrice: passedProduct.originalPrice || 100,
+        sales: passedProduct.sales || 1234,
+        stock: passedProduct.remainingStock || 99,
+        level: passedProduct.level || 3,
+        nextLevel: "银海会员",
+        nextPoints: 1500,
+        availableTime: passedProduct.availableTime || "周一至周五 11:00-22:00",
+        rules: passedProduct.conflictRule || "不可与xx折扣同时使用",
+        type: passedProduct.type as "coupon" | "meal" | "gift",
+        details: "海底捞火锅代金券，全国门店通用，享受正宗川渝火锅美味。本券面值100元，可在海底捞任意门店使用，节假日不加价。",
+        features: ["全国门店通用", "节假日可用", "不限消费金额", "有效期12个月"],
+        usage: "1. 到店出示兑换码即可使用\n2. 不可找零，不可转让\n3. 请在有效期内使用\n4. 如有疑问请联系客服",
+        exchangeDesc: {
+          "validStore": "全国门店",
+          "validTime": "2025-09-01至2026-08-01"
+        },
+        disabled,
+        isAvailable: passedProduct.isAvailable,
+        memberLevel: passedProduct.memberLevel,
+        remainingStock: passedProduct.remainingStock
+      }
+      setProduct(productInfo);
+    } else {
+      // 如果没有传递product，使用mock数据
+      const mockProduct: ProductInfo = {
+        id: Number(id) || 1,
+        name: "海底捞火锅代金券",
+        description: "全国门店通用，节假日可用",
+        imgUrl: "/hot-pot-banner.png",
+        points: 5000,
+        originalPrice: 100,
+        sales: 1234,
+        stock: 99,
+        level: 3,
+        nextLevel: "银海会员",
+        nextPoints: 1500,
+        availableTime: "周一至周五 11:00-22:00",
+        rules: "不可与xx折扣同时使用",
+        type: "gift",
+        details: "海底捞火锅代金券，全国门店通用，享受正宗川渝火锅美味。本券面值100元，可在海底捞任意门店使用，节假日不加价。",
+        features: ["全国门店通用", "节假日可用", "不限消费金额", "有效期12个月"],
+        usage: "1. 到店出示兑换码即可使用\n2. 不可找零，不可转让\n3. 请在有效期内使用\n4. 如有疑问请联系客服",
+        exchangeDesc: {
+          "validStore": "全国门店",
+          "validTime": "2025-09-01至2026-08-01"
+        },
+        isAvailable: true,
+        memberLevel: "1"
+      }
+      setProduct(mockProduct)
     }
-    setProduct(mockProduct)
-  }, [id])
+  }, [id, location.state, currentUserLevel])
 
   const addToCart = useCartStore((state) => state.addItem)
   const cartItems = useCartStore((state) => state.items)
 
   const handleAddToCart = () => {
-    if (!product) return
+    if (!product || product.disabled) return
     // 检查 rules 字段是否存在且有内容（不为空字符串）
     const hasRules = cartItems.some(item => {
       return item.rules && item.rules.trim() !== "";
@@ -88,8 +147,8 @@ const ProductDetail: React.FC<ProductDetailProps> = () => {
     if (hasRules) {
       setAlertTriggerType('addToCart');
       setAlertContent({
-        title: '加入购物车',
-        message: '购物车已有同类券,该类型券单次消费限用1张,是否继续加购?'
+        title: t('productDetail.addToCart'),
+        message: t('modal.similarCouponWarning')
       })
       setShowAlertModal(true)
       return
@@ -99,8 +158,8 @@ const ProductDetail: React.FC<ProductDetailProps> = () => {
     if (quantity > 1) {
       setAlertTriggerType('addToCart');
       setAlertContent({
-        title: '加入购物车',
-        message: '该券单次消费限用1张,是否继续加购?'
+        title: t('productDetail.addToCart'),
+        message: t('modal.singleCouponWarning')
       })
       setShowAlertModal(true)
       return
@@ -121,24 +180,24 @@ const ProductDetail: React.FC<ProductDetailProps> = () => {
         points: product.points,
         details: product.details,
         rules: product.rules || "",
-        redeemPeriod: product.redeemPeriod || "",
+        availableTime: product.availableTime || "",
         type: product.type,
         quantity: quantity,
         selected: true
       };
       console.log('Adding to cart:', cartItem);
-      addToCart(cartItem);
+      addToCart(cartItem, true); // 第二次添加时跳过冲突检查
       Toast.show({
         duration: 3000,
         icon: 'success',
-        content: '已加入购物车',
+        content: t('modal.addedToCart'),
         position: 'center',
       })
     } catch (error) {
       console.error('Failed to add to cart:', error);
       Toast.show({
         icon: 'fail',
-        content: '请求失败',
+        content: t('modal.requestFailed'),
         position: 'center',
         duration: 3000
       })
@@ -146,16 +205,16 @@ const ProductDetail: React.FC<ProductDetailProps> = () => {
   }
 
   const handleRedeem = () => {
-    if (!product || !user) return;
+    if (!product || !user || product.disabled) return;
 
     // 检查用户积分是否足够
     const userPoints = user.points || 0;
-    const requiredPoints = product.points;
+    const requiredPoints = product.points * quantity;
     // 积分不足，显示提示
     if (userPoints < requiredPoints) {
       Toast.show({
         icon: 'fail',
-        content: '积分不足，请重新选择',
+        content: t('modal.insufficientPoints'), 
         position: 'center',
         duration: 3000
       });
@@ -166,39 +225,48 @@ const ProductDetail: React.FC<ProductDetailProps> = () => {
     if (hasRules && quantity > 1) {
       setAlertTriggerType('redeem');
       setAlertContent({
-        title: '确认兑换',
-        message: '该券单次消费限用1张,是否继续加购?'
+        title: t('modal.confirmRedemption'),
+        message: t('modal.singleCouponWarning')
       })
+       
       setShowAlertModal(true)
       return
     }else{
       setAlertTriggerType('redeem');
       setAlertContent({
-        title: '确认兑换',
-        message: '您正在兑换 '+ product.type +'，是否确认兑换？'
+        title: t('modal.confirmRedemption'),
+        message: getRedeemMessage(product.type)
       })
+      
       setShowAlertModal(true)
     }
-
   }
+  const getRedeemMessage = (type: string) => {
+    const messageMap = {
+      coupon: t('modal.confirmVoucher'),
+      meal: t('modal.confirmDishCoupon'), 
+      gift: t('modal.confirmMerchandise')
+    };
+    return messageMap[type as keyof typeof messageMap] || t('modal.confirmRedemption');
+  };
 
   const exchange = async (email: string, code: string) => {
     try {
       // 验证输入
-      if (!email || !email.trim()) {
-        Toast.show({ icon: 'fail', content: '请输入邮箱地址' });
-        return;
-      }
+      // if (!email || !email.trim()) {
+      //   Toast.show({ icon: 'fail', content: '请输入邮箱地址' });
+      //   return;
+      // }
       
       // 简单的邮箱格式验证
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailRegex.test(email)) {
-        Toast.show({ icon: 'fail', content: '请输入有效的邮箱地址' });
-        return;
-      }
+      // if (!emailRegex.test(email)) {
+      //   Toast.show({ icon: 'fail', content: '请输入有效的邮箱地址' });
+      //   return;
+      // }
       
       if (!code || !code.trim()) {
-        Toast.show({ icon: 'fail', content: '请输入验证码' });
+        Toast.show({ icon: 'fail', content: t('modal.enterVerificationCode') });
         return;
       }
 
@@ -218,50 +286,50 @@ const ProductDetail: React.FC<ProductDetailProps> = () => {
         } else {
           // Show Toast for coupons and meals
           Toast.show({
-            content: '兑换成功，请尽快到店使用',
+            content: t('modal.redeemSoon'),
             position: 'center',
             duration: 3000
           });
         }
       } else {
-        throw new Error('兑换失败');
+        throw new Error(t('modal.requestFailed'));
       }
     } catch (error) {
-      console.error('兑换失败:', error);
       Toast.show({
         icon: 'fail',
-        content: '请求失败',
+        content: t('modal.requestFailed'),
         position: 'center',
         duration: 3000
       });
     }
   }
   const memberLevels = [
-    { level: 1, name: "红海会员", color: "#E60012" },
-    { level: 2, name: "银海会员", color: "#9B9B9E" },
-    { level: 3, name: "金海会员", color: "#D3A24E" },
-    { level: 4, name: "黑海会员", color: "#101820" }
+    { level: 1, name: t('home.redMember'), color: "#E60012" },
+    { level: 2, name: t('home.silverMember'), color: "#9B9B9E" },
+    { level: 3, name: t('home.goldMember'), color: "#D3A24E" },
+    { level: 4, name: t('home.premiumMember'), color: "#101820" }
   ]
 
   const contentRef = useRef<HTMLDivElement>(null)
   const [quantity, setQuantity] = useState(1)
+
+  // 计算数量按钮的禁用状态
+  const canDecrease = quantity > 1 && !product?.disabled;
+  const canIncrease = product && !product.disabled && quantity < (product.stock || 1);
   const TEXT = {
-    ADD_TO_CART: "加入购物车",
-    REDEEM_NOW: "立即兑换",
-    PRODUCT_INFO: "商品详情",
-    REDEMPTION_RULES: {
-      TITLE: "兑换说明",
-      ITEMS: [
-        { key: "票券类型", value: "满100可用" },
-        { key: "限购等级", value: "红海 银海 金海 黑海" },
-        { key: "可用门店", value: "全部" },
-        { key: "有效日期", value: "2023-12-31 23:59:59" },
-        { key: "可用时间", value: "周一到周五" },
-        { key: "捞币兑换", value: "红海会员:2000 银海会员:1500 金海会员:1000 黑海会员:500" },
-        { key: "是否可转赠", value: "不可转赠(仅限本人使用)" },
-        { key: "使用说明", value: "兑换成功后，请在有效期内使用" }
-      ]
-    },
+    ADD_TO_CART: t('productDetail.addToCart'),
+    REDEEM_NOW: t('productDetail.redeemNow'),
+    PRODUCT_INFO: t('productDetail.productDetails'),
+    REDEMPTION_TITLE: t('productDetail.redemptionInstructions'),//兑换说明
+    REDEMPTION_couponType: t('productDetail.couponType'),//票券类型
+    REDEMPTION_purchaseRestrictionLevel: t('productDetail.purchaseRestrictionLevel'),//限购等级
+    REDEMPTION_availableStores: t('productDetail.availableStores'),//可用门店
+    REDEMPTION_validityPeriod: t('productDetail.validityPeriod'),//有效日期
+    REDEMPTION_availableTime: t('productDetail.availableTime'),//可用日期
+    REDEMPTION_coinRedemption: t('productDetail.coinRedemption'),//捞币兑换
+    REDEMPTION_transferable: t('productDetail.transferable'),//是否可转赠
+    REDEMPTION_usageInstructions: t('productDetail.usageInstructions'),//使用说明
+  
     MEMBER_LEVEL: "限购等级",
     STOCK: "剩余库存",
     REDEEMED: "已换购",
@@ -341,31 +409,31 @@ const ProductDetail: React.FC<ProductDetailProps> = () => {
           <div className={`relative`}>
             <div className="absolute right-0 -top-[50px] flex items-center gap-1">
               <div
-                className="w-[22px] h-[22px] rounded-full bg-gray-200 text-black flex items-center justify-center"
-                onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                className={`w-[22px] h-[22px] rounded-full ${canDecrease ? 'bg-gray-200 text-black cursor-pointer hover:bg-gray-300' : 'bg-gray-100 text-gray-400 cursor-not-allowed'} flex items-center justify-center transition-colors select-none active:scale-95 touch-manipulation`}
+                onClick={canDecrease ? () => setQuantity(Math.max(1, quantity - 1)) : undefined}
               >
                 -
               </div>
               <div className="text-xxxs">{quantity}</div>
               <div
-                className="w-[22px] h-[22px] rounded-full bg-[#E60012] text-white flex items-center justify-center"
-                onClick={() => setQuantity(quantity + 1)}
+                className={`w-[22px] h-[22px] rounded-full ${canIncrease ? 'bg-[#E60012] text-white cursor-pointer hover:bg-[#ff0018]' : 'bg-gray-100 text-gray-400 cursor-not-allowed'} flex items-center justify-center transition-colors select-none active:scale-95 touch-manipulation`}
+                onClick={canIncrease ? () => setQuantity(quantity + 1) : undefined}
               >
                 +
               </div>
             </div>
           </div>
-          <div className={`${styles['font']}`} >{product.redeemPeriod} </div>
+          <div className={`${styles['font']}`} >{product.availableTime} </div>
           <div className={`${styles['font']} ${styles['rule']}`} >* {product.rules}</div>
           <div className="flex items-end justify-end h-1 gap-1">
             <div
-              className={styles['cartButton']}
+              className={`${styles['cartButton']} ${product.disabled ? styles['disabledButton'] : ''}`}
               onClick={handleAddToCart}
             >
               {TEXT.ADD_TO_CART}
             </div>
             <div
-              className={styles['redeemButton']}
+              className={`${styles['redeemButton']} ${product.disabled ? styles['disabledButton'] : ''}`}
               onClick={handleRedeem}
             >
               {TEXT.REDEEM_NOW}
@@ -378,19 +446,41 @@ const ProductDetail: React.FC<ProductDetailProps> = () => {
         </div>
         <div className="flex-1 min-w-0 bg-white mt-1 p-1 rounded-lg space-y-1">
           <div className={`${styles['name']} mb-1`}>
-            {TEXT.REDEMPTION_RULES.TITLE}
+            {TEXT.REDEMPTION_TITLE}
           </div>
           <div className="space-y-1">
-            {TEXT.REDEMPTION_RULES.ITEMS.map((rule) => {
-              const keyStr = rule.key?.toString() || '';
-              const valueStr = rule.value?.toString() || '';
-              return (
-                <div key={`${keyStr}-${valueStr}`} className="flex space-y-1 flex-col text-xxxs">
-                  <div className={styles['font']}>{keyStr}</div>
-                  <div className={styles['value']}>{valueStr}</div>
-                </div>
-              );
-            })}
+              <div className="flex space-y-1 flex-col text-xxxs">
+                <div className={styles['font']}>{TEXT.REDEMPTION_couponType}</div>
+                <div className={styles['value']}>{TEXT.REDEMPTION_couponType}</div>
+              </div>
+              <div className="flex space-y-1 flex-col text-xxxs">
+                <div className={styles['font']}>{TEXT.REDEMPTION_purchaseRestrictionLevel}</div>
+                <div className={styles['value']}>{TEXT.REDEMPTION_purchaseRestrictionLevel}</div>
+              </div>
+              <div className="flex space-y-1 flex-col text-xxxs">
+                <div className={styles['font']}>{TEXT.REDEMPTION_availableStores}</div>
+                <div className={styles['value']}>{TEXT.REDEMPTION_availableStores}</div>
+              </div>
+              <div className="flex space-y-1 flex-col text-xxxs">
+                <div className={styles['font']}>{TEXT.REDEMPTION_validityPeriod}</div>
+                <div className={styles['value']}>{TEXT.REDEMPTION_validityPeriod}</div>
+              </div>
+              <div className="flex space-y-1 flex-col text-xxxs">
+                <div className={styles['font']}>{TEXT.REDEMPTION_availableTime}</div>
+                <div className={styles['value']}>{TEXT.REDEMPTION_availableTime}</div>
+              </div>
+              <div className="flex space-y-1 flex-col text-xxxs">
+                <div className={styles['font']}>{TEXT.REDEMPTION_coinRedemption}</div>
+                <div className={styles['value']}>{TEXT.REDEMPTION_coinRedemption}</div>
+              </div>
+              <div className="flex space-y-1 flex-col text-xxxs">
+                <div className={styles['font']}>{TEXT.REDEMPTION_transferable}</div>
+                <div className={styles['value']}>{TEXT.REDEMPTION_transferable}</div>
+              </div>
+              <div className="flex space-y-1 flex-col text-xxxs">
+                <div className={styles['font']}>{TEXT.REDEMPTION_usageInstructions}</div>
+                <div className={styles['value']}>{TEXT.REDEMPTION_usageInstructions}</div>
+              </div>
           </div>
         </div>
       </div>
@@ -401,8 +491,8 @@ const ProductDetail: React.FC<ProductDetailProps> = () => {
           exchange(email, code)
           setShowEmailModal(false)
         }}
-        confirmText="继续兑换"
-        cancelText="取消"
+        confirmText={t('modal.continueRedemption')}
+        cancelText={t('modal.cancel')}
         userInfo={user || { email: undefined, mobile: undefined }}
       />
       <AlertModal
@@ -418,16 +508,16 @@ const ProductDetail: React.FC<ProductDetailProps> = () => {
         }}
         title={alertContent.title}
         message={alertContent.message}
-        confirmText="确认"
-        cancelText="取消"
+        confirmText={t('modal.confirm')}
+        cancelText={t('modal.cancel')}
       />
       <AlertModal
         visible={showGiftSuccessModal}
         onClose={() => setShowGiftSuccessModal(false)}
         onConfirm={() => setShowGiftSuccessModal(false)}
-        title="兑换成功"
-        message="请联系服务员领取"
-        confirmText="知道了"
+        title= {t('modal.redemptionSuccessful')}
+        message={t('modal.contactStaff')}
+        confirmText={t('modal.gotIt')}
         showConfirmButton={false}
       />
     </div>

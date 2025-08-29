@@ -1,51 +1,53 @@
 import type React from "react"
 import { Card, Image as AntdImage } from "antd-mobile"
 import { Link, useNavigate } from "react-router-dom"
+import { useAuthModel } from "@/model/useAuthModel"
 import styles from './index.module.less'
+import { useTranslation } from "react-i18next"
 
-type ProductType = "coupon" | "meal" | "gift" | "other"
+type ProductType = "coupon" | "meal" | "gift" 
 
 interface ProductCardProps {
-  type?: ProductType
+  id: number 
+  type: string;
   image: string
   name: string
   description: string
   points: number
   sales?: number
   originalPrice: number
-  redeemPeriod?: string
+  availableTime?: string
   conflictRule?: string
   remainingStock?: number
   isAvailable?: boolean
-  isRedeemable?: boolean
-  level?: number
+  disabled?: boolean
+  memberLevel?: string
   onClick?: () => void
-  onRedeem?: () => void
-  productId?: number | string
 }
 
 const ProductCard: React.FC<ProductCardProps> = ({
+  id,
   type,
   image,
   name,
   description,
   points,
   originalPrice,
-  redeemPeriod,
+  availableTime,
   conflictRule,
   remainingStock,
-  isAvailable = true,
-  isRedeemable = true,
+  isAvailable,
   sales,
-  level,
+  memberLevel,
+  disabled,
   onClick,
-  onRedeem,
-  productId = 1,
 }) => {
   const navigate = useNavigate();
+  const { t } = useTranslation('common');
+
 
   const handleClick = (e: React.MouseEvent) => {
-    console.log("ProductCard clicked, productId:", productId)
+    console.log("ProductCard clicked, productId:", id)
 
     if (onClick) {
       e.preventDefault()
@@ -53,19 +55,34 @@ const ProductCard: React.FC<ProductCardProps> = ({
     } else {
       // 直接通过URL参数控制导航栏状态
       e.preventDefault()
-      if (window.innerWidth < 768) { // 移动端
-        navigate(`/product/${productId}?resetTab=true`, { replace: true })
-      } else { // iPad/桌面端
-        navigate(`/product/${productId}`)
-      }
+      navigate(`/product/${id}`, {
+        state: {
+          product: {
+            id,
+            name,
+            description,
+            points,
+            originalPrice,
+            image,
+            sales,
+            availableTime,
+            conflictRule,
+            remainingStock,
+            isAvailable,
+            memberLevel,
+            type,
+            disabled
+          }
+        }
+      })
     }
   }
 
-  const disabled = !isAvailable || (redeemPeriod && !isRedeemable)
-  const showStock = type === "gift" && remainingStock !== undefined && !redeemPeriod && !conflictRule
+  // 判断是否显示库存信息，仅在类型为"gift"且剩余库存不为undefined时显示
+  const showStock = type === "gift" && remainingStock !== undefined && !availableTime && !conflictRule
 
   return (
-    <Link to={`/product/${productId}`} onClick={handleClick}>
+    <Link to={`/product/${id}`} onClick={handleClick}>
       <Card
         className={`rounded-md shadow-sm bg-white cursor-pointer hover:shadow-md transition-shadow ${disabled ? "opacity-50" : ""}`}
       >
@@ -81,10 +98,10 @@ const ProductCard: React.FC<ProductCardProps> = ({
               {description}
             </span>
             <div className="text-[14px] h-[80px] space-y-1 mt-1">
-              {showStock && <span className="text-gray-400 block truncate">剩余: {remainingStock}件</span>}
-              {redeemPeriod ? (
-                <span className="text-[#E60012] block truncate" title={redeemPeriod}>
-                  * {redeemPeriod}
+              {showStock && <span className="text-gray-400 block truncate">{t('productDetail.itemsRemaining')}: {remainingStock}件</span>}
+              {availableTime ? (
+                <span className="text-[#E60012] block truncate" title={availableTime}>
+                  {availableTime}
                 </span>
               ) : (
                 <span className="text-transparent">*</span>
