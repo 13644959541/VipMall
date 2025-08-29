@@ -72,9 +72,29 @@ export default async ({ command, mode }: ConfigEnv): Promise<UserConfig> => {
       manifest: false,
       rollupOptions: {
         output: {
-          manualChunks: {
-            react: ['react'],
-            'antd-mobile': ['antd-mobile'],
+          manualChunks: (id) => {
+            // 路由页面代码分割
+            if (id.includes('/src/pages/')) {
+              const pageName = id.split('/src/pages/')[1].split('/')[0];
+              if (pageName) {
+                return `page-${pageName.toLowerCase()}`;
+              }
+            }
+            
+            // 第三方库代码分割
+            if (id.includes('node_modules')) {
+              if (id.includes('antd-mobile')) {
+                return 'vendor-antd-mobile';
+              }
+              if (id.includes('react') || id.includes('react-dom')) {
+                return 'vendor-react';
+              }
+              if (id.includes('axios') || id.includes('i18next')) {
+                return 'vendor-utils';
+              }
+              // 其他第三方库
+              return 'vendor';
+            }
           },
         },
       },

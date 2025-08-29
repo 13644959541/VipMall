@@ -1,4 +1,4 @@
-@import '../../assets/css/variables.less';
+@import url('../../assets/css/variables.less');
 
 .cart {
   padding: 20px;
@@ -25,10 +25,12 @@
 
       .info {
         flex: 1;
+
         h3 {
-          margin: 0 0 5px 0;
+          margin: 0 0 5px;
           font-size: 16px;
         }
+
         p {
           margin: 0;
           color: @primary-color;
@@ -92,7 +94,7 @@
   }
 }
 
-@media (min-width: 768px) {
+@media (width >= 768px) {
   .cart {
     padding: 30px;
 

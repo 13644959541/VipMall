@@ -16,7 +16,7 @@
     "lint-staged:js": "eslint --ext .js,.jsx,.ts,.tsx ",
     "lint:fix": "eslint --cache --ext .js,.jsx,.ts,.tsx --no-error-on-unmatched-pattern --quiet --fix ./src",
     "lint:prettier": "prettier --check 'src/*' --end-of-line auto",
-    "lint:style": "stylelint --fix \"src/**/*.less\" --syntax less",
+    "lint:style": "stylelint --fix \"src/**/*.less\"  less",
     "pre": "vite --mode pre",
     "precommit": "lint-staged",
     "precommit-msg": "echo 'Pre-commit checks...' && exit 0",

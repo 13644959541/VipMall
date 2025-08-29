@@ -30,7 +30,7 @@ const UserProfile: React.FC<UserProfileProps> = ({
       <div className="flex flex-col items-center justify-center space-y-1">
         <AntdImage
           src={avatar}
-          alt="用户头像"
+          alt="avatar-icon"
           width="60px"
           height="60px"
           fit="cover"

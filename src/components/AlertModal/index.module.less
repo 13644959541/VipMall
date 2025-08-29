@@ -18,7 +18,7 @@
   height: 200px;
   position: absolute;
   top: -70px;
-  right: 0px;
+  right: 0;
   z-index: 5;
 }
 
@@ -52,11 +52,11 @@
 .sendCodeButton {
   position: absolute;
   color: #101820;
-  font-family: SF Pro;
+  font-family: "SF Pro";
   font-weight: 400;
   font-size: 16px;
   line-height: 20px;
-  letter-spacing: 0px;
+  letter-spacing: 0;
   right: 35px;
   text-decoration: underline !important; 
   
@@ -70,11 +70,11 @@
 .userInfo {
   color: #101820;
   text-align: center;
-  font-family: SF Pro;
+  font-family: "SF Pro";
   font-weight: 860;
   font-size: 18px;
   line-height: 22px;
-  letter-spacing: 0px;
+  letter-spacing: 0;
   padding: 10px;
 }
 
@@ -86,12 +86,11 @@
 .toggleButton {
   color: #9B9B9E;
   cursor: pointer;
-  text-decoration: underline;
-  font-family: SF Pro;
+  font-family: "SF Pro";
   font-weight: 400;
   font-size: 16px;
   line-height: 20px;
-  letter-spacing: 0px;
+  letter-spacing: 0;
   text-decoration: underline !important;
   text-decoration-style: solid !important;
   text-decoration-color: #9B9B9E;
@@ -112,20 +111,22 @@
 .cancelButton {
   width: 160px;
   height: 56px;
-  font-family: SF Pro;
+  font-family: "SF Pro";
   font-weight: 700;
   font-size: 16px;
   line-height: 24px;
-  letter-spacing: 0px;
+  letter-spacing: 0;
   text-align: center;
   vertical-align: middle;
   color: #F33434;
   border: 1px solid #F33434;
-  background-color: #FFFFFF;
+  background-color: #FFF;
   display: flex;
   justify-content: center;
+
   /* 在主轴上居中 */
   align-items: center;
+
   /* 在交叉轴上居中 */
   border-radius: 12px;
 }
@@ -133,20 +134,22 @@
 .confirmButton {
   width: 160px;
   height: 56px;
-  font-family: SF Pro;
+  font-family: "SF Pro";
   font-weight: 700;
   font-size: 16px;
   line-height: 24px;
-  letter-spacing: 0px;
+  letter-spacing: 0;
   text-align: center;
   vertical-align: middle;
-  color: #FFFFFF;
+  color: #FFF;
   border: 1px solid #F33434;
   background-color: #F33434;
   display: flex;
   justify-content: center;
+
   /* 在主轴上居中 */
   align-items: center;
+
   /* 在交叉轴上居中 */
   border-radius: 12px;
 }
@@ -156,27 +159,27 @@
     padding: 0 12px;
     font-size: 20px;
     font-weight: 860;
-    line-height: 25px;
     text-align: center;
     background-color: #3F3E42;
-    color: #FFFFFF;
-    font-family: SF Pro;
+    color: #FFF;
+    font-family: "SF Pro";
     line-height: 24px;
-    letter-spacing: 0px;
+    letter-spacing: 0;
 }
+
 :global(.adm-modal-body ){
    background-color: #3F3E42;
    overflow: visible !important;
    border-radius: 0.375rem !important
 }
+
 :global(.adm-modal-content) {
-    background-color: #ffffff;
+    background-color: #fff;
     padding: 10px;
     max-height: 70vh;
-    overflow-x: visible;
-    overflow-y: auto;
+    overflow: visible auto;
     font-size: 14px;
-    font-family: SF Pro;
+    font-family: "SF Pro";
     z-index: 10;
     width: 581px;
     height: 320px;
@@ -184,18 +187,17 @@
 }
 
 :global(.adm-modal-footer-empty) {
-   height: 0px !important;
+   height: 0 !important;
 }
 
 :global(.adm-input-element) {
   border: 1px solid #EBEDF0;
   font-size: 14px !important;
   padding: 10px;
-  margin: 0px 10px;
-  font-family: SF Pro;
+  margin: 0 10px;
+  font-family: "SF Pro";
   font-weight: 400;
-  font-size: 16px;
   line-height: 20px;
-  letter-spacing: 0px;
+  letter-spacing: 0;
   color: #6F6F72;
 }

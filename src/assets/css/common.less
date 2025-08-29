@@ -1,4 +1,4 @@
-@import './tailwind.css';
+@import url('./tailwind.css');
 
 /* 字体定义 */
 @font-face {
@@ -23,7 +23,7 @@
 body {
   margin: 0;
   padding: 0;
-  font-family: SF Pro !important;
+  font-family: "SF Pro" !important;
   width: 100vw;
   overflow: hidden;
 }
@@ -38,7 +38,7 @@ body {
 }
 
 i {
-  font-family: 'white-icon';
+  font-family: white-icon;
   font-style: normal !important;
 }
 
@@ -77,15 +77,14 @@ i {
   position: absolute;
   left: 0;
   top: 0;
-  overflow-x: hidden;
-  overflow-y: auto;
+  overflow: hidden auto;
 
   >div:first-child {
     height: 100%;
     width: 100%;
   }
 
-  @media (min-width: 768px) {
+  @media (width >= 768px) {
     position: static;
     height: auto;
     width: auto;
@@ -110,7 +109,7 @@ i {
 }
 
 /* Pad适配 (768px~1024px) */
-@media (min-width: 768px) {
+@media (width >= 768px) {
   html {
     font-size: calc(100vw / 7.68); /* 基于vw动态计算 */
     max-width: 1024px;
@@ -129,6 +128,7 @@ i {
     html {
      font-size: calc(100vw / 10.24); /* 横屏更小字号 */
     }
+
     .tabbar {
       width: 120px;
       height: 100vh;
@@ -168,6 +168,6 @@ i {
   .card {
     border-radius: 0.2rem;
     margin: 0.4rem;
-    box-shadow: 0 0.1rem 0.3rem rgba(0,0,0,0.1);
+    box-shadow: 0 0.1rem 0.3rem rgb(0 0 0 / 10%);
   }
 }
