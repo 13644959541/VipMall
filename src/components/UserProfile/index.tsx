@@ -19,7 +19,7 @@ const UserProfile: React.FC<UserProfileProps> = ({
 }) => {
   
   const { t } = useTranslation('common'); // 这里指定命名空间
-  const memberLevels = [
+  const membershipLevels = [
     { level: 1, name:  t('home.redMember'), color: "#E60012",url:'/badge-1.svg'},
     { level: 2, name:  t('home.silverMember'), color: "#9B9B9E",url:'/badge-2.svg' },
     { level: 3, name:  t('home.goldMember'), color: "#D3A24E",url:'/badge-3.svg' },
@@ -39,14 +39,14 @@ const UserProfile: React.FC<UserProfileProps> = ({
         <div className={`${styles['profile']} relative`}>
           <Badge
             content={
-              memberLevels.find(level => level.level === parseInt(localLevel))?.name ||  t('home.redMember')
+              membershipLevels.find(level => level.level === parseInt(localLevel))?.name ||  t('home.redMember')
             }
-            color={memberLevels.find(level => level.level === parseInt(localLevel))?.color || '#E60012'}
+            color={membershipLevels.find(level => level.level === parseInt(localLevel))?.color || '#E60012'}
             style={{ width: '66px', height:'20px', justifyContent: 'center', alignItems: 'center' }}
           />
-          {memberLevels.find(data => data.level === parseInt(localLevel))?.url && (
+          {membershipLevels.find(data => data.level === parseInt(localLevel))?.url && (
             <img 
-              src={memberLevels.find(data => data.level === parseInt(localLevel))?.url}
+              src={membershipLevels.find(data => data.level === parseInt(localLevel))?.url}
               className="absolute top-[5px] right-4 h-1 w-1 z-10" 
               alt="badge-icon"
             />

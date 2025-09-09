@@ -6,32 +6,20 @@ import styles from './index.module.less';
 import Sort from '@/components/Sort';
 import { useAuthModel } from '@/model/useAuthModel';
 import { useTranslation } from 'react-i18next';
-
+import { Product } from '../../../services/productService';
 interface CouponContentProps {
   carouselItems: Array<{
     image: string;
     alt: string;
     fallback: React.ReactNode;
   }>;
-  products: Array<{
-    id: number;
-    image: string;
-    name: string;
-    description: string;
-    points: number;
-    sales: number;
-    originalPrice: number;
-    memberLevel: string;
-    isAvailable: boolean;
-    availableTime?: string;
-    conflictRule?: string;
-  }>;
+  products: Array<Product>;
   productName: string;
   checkboxName: string;
   sortOptions: Array<{
     label: string;
     value: string;
-  }>; 
+  }>;
 }
 const CouponContent: React.FC<CouponContentProps> = ({ products, checkboxName, sortOptions }) => {
   const [level, setLevel] = useState<string | null>(null);
@@ -39,40 +27,37 @@ const CouponContent: React.FC<CouponContentProps> = ({ products, checkboxName, s
   const [showRedeemableOnly, setShowRedeemableOnly] = useState(false);
   // 判断用户等级是否满足兑换条件
   const { user } = useAuthModel()
-  const currentUserLevel = parseInt(user?.localLevel || "1")
+  const currentUserLevel = user?.localLevel || "1"
   const { t } = useTranslation('common');
 
   const filteredAndSortedProducts = useMemo(() => {
     if (!products) return [];
-    
+
     // 先筛选
     let result = [...products];
-    
+
     // 先按会员等级筛选
     if (level && level !== 'all') {
       result = result.filter(product => {
-        if (product.memberLevel === undefined) return false;
-        return parseInt(product.memberLevel) <= parseInt(level);
+        if (product.membershipLevel === undefined) return false;
+        return parseInt(product.membershipLevel) <= parseInt(level);
       });
     }
-
+    const userPoints = user?.points || 0;
     // 如果"我可兑"复选框选中，再进行积分和会员等级筛选
     if (showRedeemableOnly) {
       result = result.filter(product => {
-        const userPoints = user?.points || 0;
-        const memberLevel = parseInt(product.memberLevel || "1");
-        return userPoints >= product.points && 
-               currentUserLevel >= memberLevel &&
-               product.isAvailable !== false;
+        return userPoints >= parseInt(product.pointsRequired || "0") &&
+          product.membershipLevel?.includes(currentUserLevel) &&
+          product.isExpired !== 1;
       });
     }
 
     // 计算每个商品的禁用状态
     const productsWithDisabled = result.map(product => {
-      // Coupon类型：只看isAvailable
-      const disabled = !product.isAvailable || 
-        (level && level !== 'all' && currentUserLevel < parseInt(product.memberLevel));
-      
+      const disabled = !product.isExpired ||
+        (level && level !== 'all' && product.membershipLevel?.includes(currentUserLevel)
+          || userPoints < Number(product.pointsRequired));
       return {
         ...product,
         disabled: !!disabled // 确保是boolean类型
@@ -81,9 +66,9 @@ const CouponContent: React.FC<CouponContentProps> = ({ products, checkboxName, s
 
     // 再排序 - 先将禁用的商品放在后面，再按指定字段排序
     const [field, order] = sortOption.split('-');
-    
+
     let sortedProducts = [...productsWithDisabled];
-    
+
     // 首先按禁用状态排序（不禁用的在前，禁用的在后）
     sortedProducts.sort((a, b) => {
       if (a.disabled && !b.disabled) return 1; // a禁用，b不禁用，a排在后面
@@ -97,14 +82,14 @@ const CouponContent: React.FC<CouponContentProps> = ({ products, checkboxName, s
         // 如果有一个商品是禁用的，保持禁用商品在后面的顺序
         if (a.disabled && !b.disabled) return 1;
         if (!a.disabled && b.disabled) return -1;
-        
+
         // 两个商品都不禁用，按指定字段排序
         if (field === 'points') {
-          return order === 'asc' ? a.points - b.points : b.points - a.points;
+          return order === 'asc' ? parseInt(a.pointsRequired || "0") - parseInt(b.pointsRequired || "0") : parseInt(b.pointsRequired || "0") - parseInt(a.pointsRequired || "0");
         } else if (field === 'sales') {
-          return order === 'asc' 
-            ? (a.sales || 0) - (b.sales || 0) 
-            : (b.sales || 0) - (a.sales || 0);
+          return order === 'asc'
+            ? (a.salesCount || 0) - (b.salesCount || 0)
+            : (b.salesCount || 0) - (a.salesCount || 0);
         }
         return 0;
       });
@@ -131,13 +116,13 @@ const CouponContent: React.FC<CouponContentProps> = ({ products, checkboxName, s
           options={sortOptions}
           onChange={handleLevelChange}
         />
-        <Sort 
-          defaultLabel= {t("filter.default")}
-          pointsLabel= {t("product.requiredPoints")} 
-          salesLabel= {t("product.sales")} 
+        <Sort
+          defaultLabel={t("filter.default")}
+          pointsLabel={t("product.requiredPoints")}
+          salesLabel={t("product.sales")}
           onChange={handleSortChange}
         />
-        <Checkbox 
+        <Checkbox
           className={styles.check}
           checked={showRedeemableOnly}
           onChange={(checked) => setShowRedeemableOnly(checked)}
@@ -149,8 +134,7 @@ const CouponContent: React.FC<CouponContentProps> = ({ products, checkboxName, s
       <div className="grid grid-cols-2">
         {filteredAndSortedProducts.map(product => (
           <ProductCard
-            type='coupon'
-            key={product.id}
+            key={product.productId}
             {...product}
           />
         ))}

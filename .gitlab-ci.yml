@@ -1,0 +1,135 @@
+# GitLab CI/CD Configuration for VipMall React Project
+# 支持多环境构建和部署
+
+image: node:18-alpine
+
+stages:
+  - test
+  - build
+  - deploy
+
+variables:
+  NODE_ENV: production
+  CI: 'true'
+  # 缓存配置
+  NODE_MODULES_CACHE_KEY: $CI_COMMIT_REF_SLUG
+  NODE_MODULES_PATH: node_modules
+
+# 缓存node_modules加速构建
+cache:
+  key: $NODE_MODULES_CACHE_KEY
+  paths:
+    - $NODE_MODULES_PATH
+  policy: pull-push
+
+# 所有作业的before_script
+.before_script: &before_script
+  - echo "Starting CI/CD pipeline for $CI_COMMIT_REF_NAME"
+  - npm ci --cache .npm --prefer-offline
+
+# 代码质量检查
+lint:
+  stage: test
+  script:
+    - *before_script
+    - npm run lint
+  only:
+    - merge_requests
+    - master
+    - pre
+    - dev
+
+# 构建开发环境
+build:dev:
+  stage: build
+  script:
+    - *before_script
+    - npm run build:dev
+  artifacts:
+    paths:
+      - build/
+    expire_in: 1 week
+  only:
+    - dev
+    - merge_requests
+
+# 构建预发布环境
+build:pre:
+  stage: build
+  script:
+    - *before_script
+    - npm run build:pre
+  artifacts:
+    paths:
+      - build/
+    expire_in: 1 week
+  only:
+    - pre
+    - merge_requests
+
+# 构建生产环境
+build:prod:
+  stage: build
+  script:
+    - *before_script
+    - npm run build:prod
+  artifacts:
+    paths:
+      - build/
+    expire_in: 1 week
+  only:
+    - master
+    - tags
+
+# 部署到开发环境 (示例 - 需要根据实际部署目标配置)
+deploy:dev:
+  stage: deploy
+  script:
+    - echo "Deploying to development environment"
+    # 这里需要根据实际部署方式配置，例如：
+    # - scp -r build/* user@dev-server:/path/to/www
+    # 或者使用rsync、FTP等
+  environment:
+    name: development
+    url: https://dev.example.com
+  needs:
+    - build:dev
+  only:
+    - dev
+
+# 部署到预发布环境
+deploy:pre:
+  stage: deploy
+  script:
+    - echo "Deploying to pre-production environment"
+    # 部署脚本需要根据实际情况配置
+  environment:
+    name: pre-production
+    url: https://pre.example.com
+  needs:
+    - build:pre
+  only:
+    - pre
+
+# 部署到生产环境
+deploy:prod:
+  stage: deploy
+  script:
+    - echo "Deploying to production environment"
+    # 部署脚本需要根据实际情况配置
+  environment:
+    name: production
+    url: https://example.com
+  needs:
+    - build:prod
+  only:
+    - master
+    - tags
+  when: manual  # 生产环境部署需要手动触发
+
+# 清理缓存（可选）
+clean-cache:
+  stage: .pre
+  script:
+    - npm cache clean --force
+  when: manual

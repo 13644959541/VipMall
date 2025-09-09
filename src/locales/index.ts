@@ -5,6 +5,16 @@ import LanguageDetector from 'i18next-browser-languagedetector';
 // 导入语言资源
 import zhCNCommon from './zh-CN/common.json';
 import enUSCommon from './en-US/common.json';
+import koKRCommon from './ko-KR/common.json';
+import jaJPCommon from './ja-JP/common.json';
+import frFRCommon from './fr-FR/common.json';
+import viVNCommon from './vi-VN/common.json';
+import idIDCommon from './id-ID/common.json';
+import thTHCommon from './th-TH/common.json';
+import arAECommon from './ar-AE/common.json';
+import kmKHCommon from './km-KH/common.json';
+import zhHKCommon from './zh-HK/common.json';
+import zhTWCommon from './zh-TW/common.json';
 
 // 资源类型定义
 export interface Resources {
@@ -66,6 +76,8 @@ export interface Resources {
     premiumMemberPoints: string;
     purchaseRestrictionLevel: string;
     itemsRedeemed: string;
+    countsType: string;
+    countType: string;
     itemsRemaining: string;
     redeemableTime: string;
     notYetAvailable: string;
@@ -182,6 +194,36 @@ i18n
       },
       'en-US': {
         common: enUSCommon
+      },
+      'ko-KR': {
+        common: koKRCommon
+      },
+      'ja-JP': {
+        common: jaJPCommon
+      }, 
+      'fr-FR': {
+        common: frFRCommon
+      }, 
+      'vi-VN': {
+        common: viVNCommon
+      }, 
+      'id-ID': {
+        common: idIDCommon
+      }, 
+      'th-TH': {
+        common: thTHCommon
+      }, 
+      'ar-AE': {
+        common: arAECommon
+      }, 
+      'km-KH': {
+        common: kmKHCommon
+      }, 
+      'zh-HK': {
+        common: zhHKCommon
+      }, 
+      'zh-TW': {
+        common: zhTWCommon
       }
     },
     lng: 'zh-CN', // 默认语言

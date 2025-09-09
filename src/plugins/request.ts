@@ -2,6 +2,8 @@ import { Toast } from 'antd-mobile';
 import axios, { AxiosRequestConfig } from 'axios';
 import { getAuth, setAuth } from './../utils/index';
 
+const API_BASE_URL = import.meta.env.VITE_HTTP_API;
+
 axios.defaults.timeout = 1000 * 10;
 interface AxiosErrorInterface {
   message: string;
@@ -25,7 +27,7 @@ axios.interceptors.response.use(
         Toast.show({ icon: 'fail', content: response.data.message });
       return Promise.reject(response);
     }
-    return Promise.resolve(response.data.data);
+    return Promise.resolve(response.data.data);         
   },
   (error: AxiosErrorInterface) => {
     if (~`${error.message}`.indexOf('timeout')) {
@@ -53,7 +55,7 @@ const baseRequest = (config: any): Promise<any> => {
     headers: {
       Authorization: `Bearer ${getAuth()}`,
     },
-    url: `${process.env.VITE_HTTP_API}${config.url}`,
+    url: `${API_BASE_URL ? API_BASE_URL : ''}/api${config.url}`,
   };
   return axios.request(config);
 };

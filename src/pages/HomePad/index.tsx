@@ -1,4 +1,4 @@
-import React, { memo, useState } from 'react'
+import React, { memo, useState, useEffect } from 'react'
 import styles from './index.module.less'
 import SwipeTabs from '../../components/SwipeTabs'
 import HomeContent from '@/layout/pad/HomeContent'
@@ -6,18 +6,42 @@ import GiftContent from '@/layout/pad/Gift'
 import MealContent from '@/layout/pad/Meal'
 import CouponContent from '@/layout/pad/Coupon'
 import { useTranslation } from 'react-i18next';
+import useAxios from '../../hooks/useAxios';
+import { getHotProductList, getProductList, Product } from '../../services/productService';
+import LoadingView from '../../components/LoadingView';
+import { useAuthModel } from '@/model/useAuthModel';
+
+ // 根据类型筛选商品
+  // {
+  // 		  id:0,
+  // 		  name:'周边礼品'
+  // },{
+  // 		  id:1,
+  // 		  name:'代金券'
+  // },{
+  // 		  id:2,
+  // 		  name:'菜品券'
+  // }
 const HomePad = () => {
-  const { t } = useTranslation('common'); // 这里指定命名空间
+  const { t, i18n } = useTranslation('common'); // 这里指定命名空间
+  const { user } = useAuthModel();
   const [activeIndex, setActiveIndex] = useState(0)
+  const [hot, setHotProducts] = useState<Product[]>([]);
+  const [coupon, couponProducts] = useState<Product[]>([]);
+  const [meal, mealProducts] = useState<Product[]>([]);
+  const [gift, giftProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
   // 模拟标签数据
   const tabItems = [
-    { key: 'first', title: t('header.home') },
+    { key: 'first', title: t('home.home') },
     { key: 'second', title: t('home.voucherZone') },
     { key: 'third', title: t('home.dishCouponZone') },
     { key: 'fourth', title: t('home.merchandise') },
   ]
     // 多语言变量
-  const i18n = {
+  const i18nVars = {
     productName: t('home.recommended'),
     checkboxName: t('filter.redeemableOnly')
   };
@@ -30,147 +54,79 @@ const HomePad = () => {
     { label: t('product.redeemableForGoldMembers'), value: "3" },
     { label: t('product.redeemableForPremiumMembers'), value: "4" }
   ]
-  // 模拟商品数据
-  const products = [
-    {
-      id: 1,
-      type: 'meal',
-      image: '/taro-paste.png',
-      name: '特色芋泥甜品特色芋泥甜品特色芋泥甜品特色芋泥甜品特色芋泥甜品特色芋泥甜品特色芋泥甜品',
-      description: '累计兑换 89 份',
-      points: 2500,
-      sales: 89,
-      originalPrice: 58,
-      isAvailable: true,
-      memberLevel: '1'
-    },
-    {
-      id: 2,
-      type: 'coupon',
-      image: '/taro-paste.png',
-      name: '特色毛肚',
-      description: '累计兑换 11189 份',
-      sales: 11189,
-      points: 2500,
-      originalPrice: 58,
-      isAvailable: true,
-      memberLevel: '2'
-    }
-  ]
-  const coupon = [{
-    id: 1,
-    type: 'coupon',
-    image: '/taro-paste.png',
-    name: '1元代金券',
-    description: '累计兑换 156 份',
-    sales: 156,
-    points: 1,
-    originalPrice: 100,
-    availableTime: '8/12-8/31 可兑换',
-    conflictRule: '不可与其他优惠券同时使用，一桌只可使用一次，具体规则请咨询门店服务员。',
-    isAvailable: true,
-    memberLevel: '1'
-  }, {
-    id: 2,
-    type: 'coupon',
-    image: '/taro-paste.png',
-    name: '50元代金券',
-    description: '累计兑换 342 份',
-    points: 50,
-    sales: 342,
-    originalPrice: 50,
-    conflictRule: '一桌只可使用一次',
-    isAvailable: true,
-    memberLevel: '2'
-  },
-{
-    id: 3,
-    type: 'coupon',
-    image: '/taro-paste.png',
-    name: '100元代金券',
-    description: '累计兑换 156 份',
-    sales: 156,
-    points: 100,
-    originalPrice: 100,
-    availableTime: '9/12-9/31 可兑换',
-    conflictRule: '不可与其他优惠券同时使用，一桌只可使用一次，具体规则请咨询门店服务员。',
-    isAvailable: false,
-    memberLevel: '3'
-  }, {
-    id: 4,
-    type: 'coupon',
-    image: '/taro-paste.png',
-    name: '500元代金券',
-    description: '累计兑换 342 份',
-    points: 500,
-    sales: 342,
-    originalPrice: 50,
-    conflictRule: '一桌只可使用一次',
-    isAvailable: true,
-    memberLevel: '4'
-  }]
-  const meal = [{
-    id: 1,
-    type: 'meal',
-    image: '/taro-paste.png',
-    name: '双人火锅套餐',
-    description: '累计兑换 203 份',
-    sales: 203,
-    points: 8000,
-    originalPrice: 198,
-    availableTime: '10:00-22:00',
-    isAvailable: true,
-    memberLevel: '1'
-  },]
-  const gift = [{
-    id: 1,
-    type: 'gift',
-    image: '/taro-paste.png',
-    name: '限量版熊猫玩偶',
-    description: '累计兑换 56 份',
-    sales: 56,
-    points: 12000,
-    originalPrice: 299,
-    remainingStock: 5,
-    isAvailable: true,
-    memberLevel: '1'
-  },
-  {
-    id: 2,
-    type: 'gift',
-    image: '/taro-paste.png',
-    name: '火锅底料礼盒',
-    description: '累计兑换 78 份',
-    sales: 78,
-    points: 6000,
-    originalPrice: 168,
-    remainingStock: 12,
-    isAvailable: true,
-    memberLevel: '2'
-  }]
-  // 模拟轮播图数据
+
+  // 获取商品数据
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        //setLoading(true);
+        // 取热销商品列表 周边礼品列表 代金券列表 菜品券列表
+        const hotProducts = await getHotProductList({
+          productType: 0,
+          language: i18n.language,
+          storeId: user?.shopNo,
+          localLevel: user?.localLevel
+        });
+        setHotProducts(hotProducts);
+        
+        // 获取代金券列表
+        const couponProductsData = await getProductList({
+          productType: 1,
+          language: i18n.language,
+          storeId: user?.shopNo,
+          localLevel: user?.localLevel
+        });
+        couponProducts(couponProductsData);
+        
+        // 获取菜品券列表
+        const mealProductsData = await getProductList({
+          productType: 2,
+          language: i18n.language,
+          storeId: user?.shopNo,
+          localLevel: user?.localLevel
+        });
+        mealProducts(mealProductsData);
+        
+        // 获取周边礼品列表
+        const giftProductsData = await getProductList({
+          productType: 0,
+          language: i18n.language,
+          storeId: user?.shopNo,
+          localLevel: user?.localLevel
+        });
+        giftProducts(giftProductsData);
+
+      } catch (err) {
+        Toast.show(t('modal.requestFailed'))
+        console.error('获取商品数据失败:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, []);
+
+  
   const carouselItems = [
     {
-      image: "/hot-pot-banner.png",
+      image: "/hot-pot-banner.jpg",
       alt: "纯纯纯牛油锅 NEW",
       fallback: (
         <div className="w-full h-48 bg-[#E60012] flex items-center justify-center text-white text-xl font-bold">
           纯纯纯牛油锅 NEW<br />BEEF TALLOW<br />HOT POT SOUP BASE
         </div>
       )
-    },
-    {
-      image: "/hot-pot-promotion.png",
-      alt: "火锅促销",
-      fallback: (
-        <div className="w-full h-48 bg-orange-500 flex items-center justify-center text-white text-xl font-bold">
-          火锅促销活动
-        </div>
-      )
-    },
+    }
   ]
 
   //useTitle('主页');
+  
+  // 显示加载状态
+  // if (loading) {
+  //   return <LoadingView />;
+  // }
+
   return (
     <div className={styles['pad-home']}>
       <div className={styles['main-content']}>
@@ -186,12 +142,12 @@ const HomePad = () => {
                   <div
                     className={styles.contentWrapper}
                   >
-                    <HomeContent
-                      carouselItems={carouselItems}
-                      products={products}
-                      productName={i18n.productName}
-                      checkboxName={i18n.checkboxName}
-                    />
+        <HomeContent
+          carouselItems={carouselItems}
+          products={hot}
+          productName={i18nVars.productName}
+          checkboxName={i18nVars.checkboxName}
+        />
                   </div>
                 )}
                 {index === 1 && (
@@ -205,8 +161,8 @@ const HomePad = () => {
                     <CouponContent
                       carouselItems={carouselItems}
                       products={coupon}
-                      productName={i18n.productName}
-                      checkboxName={i18n.checkboxName}
+                      productName={i18nVars.productName}
+                      checkboxName={i18nVars.checkboxName}
                       sortOptions={sortOptions}
                     />
                   </div>
@@ -222,8 +178,8 @@ const HomePad = () => {
                     <MealContent
                       carouselItems={carouselItems}
                       products={meal}
-                      productName={i18n.productName}
-                      checkboxName={i18n.checkboxName}
+                      productName={i18nVars.productName}
+                      checkboxName={i18nVars.checkboxName}
                       sortOptions={sortOptions}
                     />
                   </div>
@@ -239,8 +195,8 @@ const HomePad = () => {
                     <GiftContent
                       carouselItems={carouselItems}
                       products={gift}
-                      productName={i18n.productName}
-                      checkboxName={i18n.checkboxName}
+                      productName={i18nVars.productName}
+                      checkboxName={i18nVars.checkboxName}
                       sortOptions={sortOptions}
                     />
                   </div>

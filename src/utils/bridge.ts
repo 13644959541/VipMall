@@ -71,13 +71,13 @@ export const NativeBridge = {
       monthGrowth: 106,
       loginType: "1",
       areaCode: "+86",
-      localLevel: "3",
+      localLevel: "1",
       unsubscribe: false,
       loginStyle: "3",
       isRemoteLogin: "false",
       customerKey: "n-148281478871424",
       posPushFlag: "false",
-      points: 50,
+      points: 10,
       sex: "",
       RealName: "",
       memberLevelConfigList: [
@@ -109,9 +109,9 @@ export const NativeBridge = {
       defaultLoginType: "3",
       solarBirth: "",
       email: "123456789@qq.com",
-      country: "",
+      country: "SG",
       tableNo: "55",
-      shopNo: "",
+      shopNo: "280104",
       avatar: "/user.svg" // Added avatar field for UI compatibility
     };
     

@@ -66,6 +66,9 @@ export const useAuthModel = create<AuthState>((set, get) => ({
       if (userInfo) {
         console.log('用户信息有效，设置用户状态');
         set({ user: userInfo, loading: false });
+        // 触发认证初始化完成事件
+        authInitialized = true;
+        window.dispatchEvent(new CustomEvent('authInitialized'));
       } else {
         console.log('用户信息为空或未获取到');
         set({ loading: false });
@@ -78,4 +81,20 @@ export const useAuthModel = create<AuthState>((set, get) => ({
 export const initializeAuth = () => {
   const { fetchUserInfo } = useAuthModel.getState();
   fetchUserInfo();
+};
+
+// 添加事件监听机制
+let authInitialized = false;
+
+// 监听用户信息初始化完成
+export const onAuthInitialized = (callback: () => void) => {
+  if (authInitialized) {
+    callback();
+  } else {
+    const handleAuthInitialized = () => {
+      callback();
+      window.removeEventListener('authInitialized', handleAuthInitialized);
+    };
+    window.addEventListener('authInitialized', handleAuthInitialized);
+  }
 };

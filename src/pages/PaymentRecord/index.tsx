@@ -44,7 +44,7 @@ const PaymentRecordPage = () => {
   const initialPaymentRecords: PaymentRecordItem[] = [
     {
       id: '1',
-      image: '/hot-pot-banner.png',
+      image: '/hot-pot-banner.jpg',
       name: '海底捞经典牛油火锅底料',
       points: 1200,
       quantity: 1,
@@ -57,7 +57,7 @@ const PaymentRecordPage = () => {
     },
     {
       id: '2',
-      image: '/hot-pot-banner.png',
+      image: '/hot-pot-banner.jpg',
       name: '海底捞特色蘸料套装',
       points: 800,
       quantity: 2,
@@ -70,7 +70,7 @@ const PaymentRecordPage = () => {
     },
     {
       id: '3',
-      image: '/hot-pot-banner.png',
+      image: '/hot-pot-banner.jpg',
       name: '海底捞特色套装',
       points: 1500,
       quantity: 1,

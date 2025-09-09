@@ -8,9 +8,13 @@ import { themeVariables } from './config/theme';
 export default async ({ command, mode }: ConfigEnv): Promise<UserConfig> => {
   const isBuild = command === 'build';
   const root = process.cwd();
-  const env = loadEnv(mode, root);
+  const env = loadEnv(mode, root, ''); // 添加空字符串作为第三个参数
   const { VITE_PORT, VITE_HTTP_API } = env;
   const { default: proxy } = await import('./config/proxy');
+
+  // 检查环境变量是否正常加载
+  // console.log('所有环境变量:', env);
+  // console.log('VITE_HTTP_API:', VITE_HTTP_API);
 
   return {
     root: process.cwd(),
@@ -70,34 +74,6 @@ export default async ({ command, mode }: ConfigEnv): Promise<UserConfig> => {
       reportCompressedSize: true,
       emptyOutDir: true,
       manifest: false,
-      rollupOptions: {
-        output: {
-          manualChunks: (id) => {
-            // 路由页面代码分割
-            if (id.includes('/src/pages/')) {
-              const pageName = id.split('/src/pages/')[1].split('/')[0];
-              if (pageName) {
-                return `page-${pageName.toLowerCase()}`;
-              }
-            }
-            
-            // 第三方库代码分割
-            if (id.includes('node_modules')) {
-              if (id.includes('antd-mobile')) {
-                return 'vendor-antd-mobile';
-              }
-              if (id.includes('react') || id.includes('react-dom')) {
-                return 'vendor-react';
-              }
-              if (id.includes('axios') || id.includes('i18next')) {
-                return 'vendor-utils';
-              }
-              // 其他第三方库
-              return 'vendor';
-            }
-          },
-        },
-      },
       // 传递给 Terser 的更多 minify 选项。
       terserOptions: {
         compress: {

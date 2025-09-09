@@ -1,12 +1,4 @@
 {
-  "header": {
-    "home": "首页",
-    "coupon": "代金券",
-    "meal": "菜品券", 
-    "gift": "周边礼品",
-    "cart": "购物车",
-    "profile": "我的"
-  },
   "home": {
     "tableNumber": "桌号",
     "redMember": "红海会员",
@@ -56,7 +48,9 @@
     "goldMemberPoints": "金海会员仅需{{points}}捞币",
     "premiumMemberPoints": "黑海会员仅需{{points}}捞币",
     "purchaseRestrictionLevel": "限购等级",
-    "itemsRedeemed": "已换购{{count}}份",
+    "itemsRedeemed": "已换购",
+    "countsType": "份",
+    "countType": "份",
     "itemsRemaining": "剩余库存",
     "redeemableTime": "可兑换时间",
     "notYetAvailable": "未到兑换时间",
@@ -64,7 +58,7 @@
     "redeemNow": "立即兑换",
     "productDetails": "商品详情",
     "redemptionInstructions": "兑换说明",
-    "couponype": "票券类型",
+    "couponType": "票券类型",
     "availableStores": "可用门店",
     "validityPeriod": "有效日期",
     "availableTime": "可用时间",

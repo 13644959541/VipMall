@@ -4,6 +4,10 @@ import ProductCard from '@/components/ProductCard';
 import { Checkbox } from 'antd-mobile';
 import styles from './index.module.less';
 import { useAuthModel } from '@/model/useAuthModel';
+import { Product } from '@/services/productService';
+import { NativeBridge } from '@/utils/bridge';
+import { getCartDetails } from '@/services/cartSerivce';
+import { useCartStore } from '@/store/cart';
 
 interface HomeContentProps {
   carouselItems: Array<{
@@ -11,19 +15,7 @@ interface HomeContentProps {
     alt: string;
     fallback: React.ReactNode;
   }>;
-  products: Array<{
-    id: number;
-    type: string;
-    image: string;
-    name: string;
-    sales: number;
-    description: string;
-    points: number;
-    originalPrice: number;
-    memberLevel: string;
-    isAvailable: boolean;
-    remainingStock?: number;
-  }>;
+  products: Array<Product>;
   productName: string;
   checkboxName: string;
 }
@@ -31,26 +23,37 @@ interface HomeContentProps {
 const HomeContent: React.FC<HomeContentProps> = ({ carouselItems, products, productName, checkboxName }) => {
   const [showRedeemableOnly, setShowRedeemableOnly] = useState(false);
   const { user } = useAuthModel()
-  const currentUserLevel = parseInt(user?.localLevel || "1")
+  const currentUserLevel = user?.localLevel || "1"
 
   const filteredProducts = useMemo(() => {
     if (!products) return [];
-    
+    // 先筛选
+    let result = [...products];
+     const userPoints = user?.points || 0;
     // 如果"我可兑"复选框选中，进行积分和会员等级筛选
     if (showRedeemableOnly) {
-      return products.filter(product => {
-        const userPoints = user?.points || 0;
-        const memberLevel = parseInt(product.memberLevel || "1");
-        return userPoints >= product.points && 
-              currentUserLevel >= memberLevel &&
-              product.isAvailable !== false &&
-              // 只有礼品类型才检查库存
-              (product.type !== "gift" || (product.remainingStock !== undefined && product.remainingStock > 0))
-
+      result = result.filter(product => {
+          return userPoints >= Number(product.pointsRequired) &&
+          product.membershipLevel?.includes(currentUserLevel) &&
+          product.isExpired !== 1 &&
+          // 只有礼品类型才检查库存
+          (product.productType == 0 || (product.stockQuantity !== undefined && product.stockQuantity > 0))
       });
     }
 
-    return products;
+    // 计算每个商品的禁用状态
+    const productsWithDisabled = result.map(product => {
+      //isExpired 0 true, 1 false
+      const disabled = !!product.isExpired ||
+      (!product.membershipLevel?.includes(currentUserLevel) || userPoints < Number(product.pointsRequired))
+      || (product.productType == 0 && product.stockQuantity !== undefined && product.stockQuantity <= 0);
+
+      return {
+        ...product,
+        disabled: !!disabled // 确保是boolean类型
+      };
+    });
+    return [...productsWithDisabled];
   }, [products, showRedeemableOnly, currentUserLevel, user?.points]);
 
   return (
@@ -67,7 +70,7 @@ const HomeContent: React.FC<HomeContentProps> = ({ carouselItems, products, prod
       <div className="flex items-center justify-between mr-1">
         <h2 className="font-bold ml-1.5 mr-1.5">{productName}</h2>
         <div className="flex items-center gap-4">
-          <Checkbox 
+          <Checkbox
             className={styles.check}
             checked={showRedeemableOnly}
             onChange={(checked) => setShowRedeemableOnly(checked)}
@@ -80,7 +83,7 @@ const HomeContent: React.FC<HomeContentProps> = ({ carouselItems, products, prod
       <div className={`${styles.grid} grid grid-cols-2`}>
         {filteredProducts.map(product => (
           <ProductCard
-            key={product.id}
+            key={product.productId}
             {...product}
           />
         ))}
