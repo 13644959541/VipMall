@@ -1,5 +1,6 @@
 import useCartModel, { CartItem } from '../../model/useCartModel';
 import styles from './index.module.less';
+import { useTranslation } from "react-i18next"
 
 const Cart = () => {
   const {
@@ -9,13 +10,14 @@ const Cart = () => {
     totalItems,
     totalPrice
   } = useCartModel();
-
+  const { t } = useTranslation('common');
+  
   return (
     <div className={styles.cart}>
-      <h2>购物车 ({totalItems})</h2>
+      <h2>t('home.shoppingCart') ({totalItems})</h2>
       
       {cartItems.length === 0 ? (
-        <div className={styles.empty}>购物车为空</div>
+        <div className={styles.empty}>t('cart.emptyCart')</div>
       ) : (
         <>
           <ul className={styles.list}>
@@ -40,7 +42,7 @@ const Cart = () => {
                     className={styles.remove}
                     onClick={() => removeFromCart(item.id)}
                   >
-                    删除
+                    t('cart.delete')
                   </button>
                 </div>
               </li>
@@ -48,8 +50,8 @@ const Cart = () => {
           </ul>
 
           <div className={styles.summary}>
-            <div>总计: ¥{totalPrice.toFixed(2)}</div>
-            <button className={styles.checkout}>结算</button>
+            <div>t('cart.totalPoints'): ¥{totalPrice.toFixed(2)}</div>
+            <button className={styles.checkout}>t('cart.redeemNow')</button>
           </div>
         </>
       )}

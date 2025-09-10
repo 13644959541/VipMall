@@ -57,52 +57,59 @@ const HomePad = () => {
 
   // 获取商品数据
   useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        //setLoading(true);
-        // 取热销商品列表 周边礼品列表 代金券列表 菜品券列表
-        const hotProducts = await getHotProductList({
-          productType: 0,
-          language: i18n.language,
-          storeId: user?.shopNo,
-          localLevel: user?.localLevel
-        });
-        setHotProducts(hotProducts);
-        
-        // 获取代金券列表
-        const couponProductsData = await getProductList({
-          productType: 1,
-          language: i18n.language,
-          storeId: user?.shopNo,
-          localLevel: user?.localLevel
-        });
-        couponProducts(couponProductsData);
-        
-        // 获取菜品券列表
-        const mealProductsData = await getProductList({
-          productType: 2,
-          language: i18n.language,
-          storeId: user?.shopNo,
-          localLevel: user?.localLevel
-        });
-        mealProducts(mealProductsData);
-        
-        // 获取周边礼品列表
-        const giftProductsData = await getProductList({
-          productType: 0,
-          language: i18n.language,
-          storeId: user?.shopNo,
-          localLevel: user?.localLevel
-        });
-        giftProducts(giftProductsData);
-
-      } catch (err) {
-        Toast.show(t('modal.requestFailed'))
-        console.error('获取商品数据失败:', err);
-      } finally {
-        setLoading(false);
-      }
-    };
+   const fetchProducts = async () => {
+  setLoading(true);
+  try {
+    const hotProducts = await getHotProductList({
+      productType: 0,
+      language: i18n.language,
+      storeId: user?.shopNo,
+      localLevel: user?.localLevel
+    });
+    setHotProducts(hotProducts);
+  } catch (err) {
+    console.error('获取热销商品失败:', err);
+    // 可以在这里设置错误状态或显示提示
+  }
+  
+  try {
+    const couponProductsData = await getProductList({
+      productType: 1,
+      language: i18n.language,
+      storeId: user?.shopNo,
+      localLevel: user?.localLevel,
+    });
+    couponProducts(couponProductsData);
+  } catch (err) {
+    console.error('获取代金券失败:', err);
+  }
+  
+  try {
+    const mealProductsData = await getProductList({
+      productType: 2,
+      language: i18n.language,
+      storeId: user?.shopNo,
+      localLevel: user?.localLevel
+    });
+    mealProducts(mealProductsData);
+  } catch (err) {
+    console.error('获取菜品券失败:', err);
+  }
+  
+  try {
+    const giftProductsData = await getProductList({
+      productType: 0,
+      language: i18n.language,
+      storeId: user?.shopNo,
+      localLevel: user?.localLevel
+    });
+    giftProducts(giftProductsData);
+  } catch (err) {
+    console.error('获取周边礼品失败:', err);
+  }
+  
+  setLoading(false);
+};
 
     fetchProducts();
   }, []);
@@ -142,12 +149,12 @@ const HomePad = () => {
                   <div
                     className={styles.contentWrapper}
                   >
-        <HomeContent
-          carouselItems={carouselItems}
-          products={hot}
-          productName={i18nVars.productName}
-          checkboxName={i18nVars.checkboxName}
-        />
+                  <HomeContent
+                    carouselItems={carouselItems}
+                    products={hot}
+                    productName={i18nVars.productName}
+                    checkboxName={i18nVars.checkboxName}
+                  />
                   </div>
                 )}
                 {index === 1 && (

@@ -31,7 +31,8 @@ const ProductCard: React.FC<ProductCardProps> = ({
       e.preventDefault()
       navigate(`/product/${product.productId}`, {
         state: {
-          disabled
+          disabled,
+          product: {...product}
         }
       })
     }

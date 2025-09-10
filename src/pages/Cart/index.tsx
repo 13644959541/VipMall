@@ -10,6 +10,7 @@ import { useAuthModel } from '@/model/useAuthModel'
 import styles from './index.module.less'
 import { useTranslation } from 'react-i18next'
 import { cartAddOrUpdate, getCartDetails } from '@/services/cartSerivce'
+import { exchangeCartRequest } from '@/services/exchangeService'
 import { NativeBridge } from '@/utils/bridge'
 import { useNavigate } from 'react-router-dom'
 
@@ -86,35 +87,69 @@ const CartPage = () => {
 
   const exchange = async (email: string, code: string) => {
     try {
-      // 这里可以添加实际的兑换逻辑
-      console.log('Exchange with:', email, code)
-
-      // 模拟API调用 - 在实际应用中替换为真实的API调用
-      // const response = await api.exchange(email, code);
-
-      // 假设验证成功
-      const verificationSuccess = true; // 在实际应用中根据API响应设置
-
-      if (verificationSuccess) {
-        if (hasGiftItems) {
-          // 有礼品商品，显示礼品成功弹窗
-          setShowGiftSuccessModal(true)
-        } else {
-          // 没有礼品商品，显示成功toast
-          Toast.show(t('modal.redeemSoon'))
-        }
-      } else {
-        // 验证失败
-        Toast.show(t('modal.requestFailed'))
+      if (!code || !code.trim()) {
+        Toast.show({ icon: 'fail', content: t('modal.enterVerificationCode') });
+        return;
       }
 
-      setShowEmailModal(false)
+      if (!user) {
+        Toast.show({ icon: 'fail', content: t('modal.requestFailed') });
+        return;
+      }
+
+      const selectedItems = items.filter(item => item.isSelected);
+      if (selectedItems.length === 0) {
+        Toast.show(t('redemptionRecord.noItemsRedeemed'));
+        return;
+      }
+
+      // 构建购物车兑换请求参数
+      const exchangeData = {
+        countryCode: user.country || 'CN',
+        exchangeType: 'CART',
+        memberId: user.customerKey || '',
+        productItems: selectedItems.map(item => ({
+          memberId: user.customerKey || '',
+          productId: item.productId,
+          productName: item.productName,
+          productType: item.productType?.toString() || '0',
+          quantity: item.quantity || 1,
+          storeId: user.shopNo || '',
+          unitPoints: item.unitPoints || 0,
+          totalPoints: (item.unitPoints || 0) * (item.quantity || 1),
+          templateId: (item.productType === 1 || item.productType === 2) ? item?.templateId : undefined,
+        })),
+        storeId: user.shopNo || '',
+        terminalType: 'PAD'
+      };
+
+      // 调用购物车兑换API
+      await exchangeCartRequest(exchangeData);
+
+      // 兑换成功
+      if (hasGiftItems) {
+        // 有礼品商品，显示礼品成功弹窗
+        setShowGiftSuccessModal(true);
+      } else {
+        // 没有礼品商品，显示成功toast
+        Toast.show({
+          content: t('modal.redeemSoon'),
+          position: 'center',
+          duration: 3000
+        });
+      }
+
+      setShowEmailModal(false);
 
     } catch (error) {
-      // API调用失败
-      console.error('Exchange failed:', error)
-      Toast.show(t('modal.requestFailed'))
-      setShowEmailModal(false)
+      console.error('购物车兑换失败:', error);
+      Toast.show({
+        icon: 'fail',
+        content: t('modal.requestFailed'),
+        position: 'center',
+        duration: 3000
+      });
+      setShowEmailModal(false);
     }
   }
 
@@ -231,9 +266,14 @@ const CartPage = () => {
     };
   }, []);
 
-  const handleClick = (e: React.MouseEvent, productId: string | number) => {
+  const handleClick = (e: React.MouseEvent, product: any) => {
     e.preventDefault()
-    navigate(`/product/${productId}`)
+    navigate(`/product/${product.productId}`, {
+        state: {
+          disabled: true,
+          product: {...product}
+        }
+      })
   }
 
   return (
@@ -266,16 +306,16 @@ const CartPage = () => {
 
                     />
                   </div>
-                  <div onClick={(e) => handleClick(e, item.productId)} className="w-full cursor-pointer">
-                    <div className="relative overflow-hidden bg-white rounded-[20px] w-full mr-1">
-                      {/* Delete Button (shown on swipe) */}
-                      <div
-                        className="absolute rounded-[25px] right-0 top-0 h-full w-[113px] bg-[#E60012] flex items-center justify-center text-white z-10"
-                        onClick={() => handleDeleteItem(item.productId)}
-                      >
-                        {t('cart.delete')}
-                      </div>
 
+                  <div className="relative overflow-hidden bg-white rounded-[20px] w-full mr-1">
+                    {/* Delete Button (shown on swipe) */}
+                    <div
+                      className="absolute rounded-[25px] right-0 top-0 h-full w-[113px] bg-[#E60012] flex items-center justify-center text-white z-10"
+                      onClick={() => handleDeleteItem(item.productId)}
+                    >
+                      {t('cart.delete')}
+                    </div>
+                    <div onClick={(e) => handleClick(e, item)} className="w-full cursor-pointer">
                       {/* Swipeable Content */}
                       <div
                         ref={(el) => {
@@ -347,19 +387,19 @@ const CartPage = () => {
                           </div>
                         </div>
                       </div>
-
-                      {/* Fixed Delete Icon (保留原有删除图标) */}
-                      <div
-                        className="absolute right-[10px] top-1 w-2 h-2 flex items-center justify-center z-20"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleDeleteItem(item.productId);
-                        }}
-                      >
-                        <Trash2 size={20} className="text-[#E60012]" />
-                      </div>
+                    </div>
+                    {/* Fixed Delete Icon (保留原有删除图标) */}
+                    <div
+                      className="absolute right-[10px] top-1 w-2 h-2 flex items-center justify-center z-20"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDeleteItem(item.productId);
+                      }}
+                    >
+                      <Trash2 size={20} className="text-[#E60012]" />
                     </div>
                   </div>
+
                 </div>
 
               </React.Fragment>

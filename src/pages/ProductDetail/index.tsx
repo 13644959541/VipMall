@@ -9,6 +9,8 @@ import { useAuthModel } from "@/model/useAuthModel"
 import styles from './index.module.less'
 import { useTranslation } from "react-i18next"
 import { ProductDetails, getProductDetails } from "@/services/productService"
+import { exchangeRequest } from "@/services/exchangeService"
+import i18n from "@/locales"
 
 
 interface ExtendedProductDetails extends ProductDetails {
@@ -31,8 +33,18 @@ const ProductDetail: React.FC = () => {
   useEffect(() => {
     const fetchProductDetails = async () => {
       if (id) {
+        const product = location.state?.product;
+        
         try {
-          const productData = await getProductDetails(id);
+          // 构建查询参数
+          const params = {
+            productType: product?.productType,
+            language: i18n.language, 
+            storeId: user?.shopNo,
+            localLevel: user?.localLevel,
+            templateId: (product.productType === 1 || product.productType === 2) ? product?.templateId : undefined
+          };
+          const productData = await getProductDetails(id, params);
           // 合并API返回的数据和路由传递的disabled状态
           const productWithDisabled = {
             ...productData,
@@ -94,10 +106,11 @@ const ProductDetail: React.FC = () => {
         unitPoints: product.currentLevelPoints || 0,
         productCode: product.productDetail || "",
         exclusionText: product.exclusionText || "",
-        applicableStores: product.applicableStores || [],
+        applicableStores: product.applicableStoresNameList || [],
         productType: product.productType || 0,
         quantity: quantity,
-        isSelected: true
+        isSelected: true,
+        templateId: (product.productType === 1 || product.productType === 2) ? product?.couponDetailDataByCountryCode?.templateId  : undefined, //券类型需要传入
       };
       console.log('Adding to cart:', cartItem);
       addToCart(cartItem, true); // 第二次添加时跳过冲突检查
@@ -166,49 +179,56 @@ const ProductDetail: React.FC = () => {
 
   const exchange = async (email: string, code: string) => {
     try {
-      // 验证输入
-      // if (!email || !email.trim()) {
-      //   Toast.show({ icon: 'fail', content: '请输入邮箱地址' });
-      //   return;
-      // }
-
-      // 简单的邮箱格式验证
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      // if (!emailRegex.test(email)) {
-      //   Toast.show({ icon: 'fail', content: '请输入有效的邮箱地址' });
-      //   return;
-      // }
-
       if (!code || !code.trim()) {
         Toast.show({ icon: 'fail', content: t('modal.enterVerificationCode') });
         return;
       }
 
-      // 模拟 API 请求 - 这里应该替换为实际的 API 调用
-      // 例如: const response = await api.post('/exchange', { email, code, productId: product?.id, quantity });
-
-      // 模拟请求延迟
-      await new Promise(resolve => setTimeout(resolve, 1000));
-
-      // 模拟成功响应
-      const success = Math.random() > 0.3; // 70% 成功率用于演示
-
-      if (success) {
-        if (product?.productType === 0) {
-          // Show AlertModal for gifts
-          setShowGiftSuccessModal(true);
-        } else {
-          // Show Toast for coupons and meals
-          Toast.show({
-            content: t('modal.redeemSoon'),
-            position: 'center',
-            duration: 3000
-          });
-        }
-      } else {
-        throw new Error(t('modal.requestFailed'));
+      if (!product || !user) {
+        Toast.show({ icon: 'fail', content: t('modal.requestFailed') });
+        return;
       }
+
+      // 构建兑换请求参数
+      const exchangeData = {
+        countryCode: user.country || 'CN',
+        exchangeType: 'DIRECT',
+        memberId: user.customerKey || '',
+        productItems: [
+          {
+            memberId: user.customerKey || '',
+            productId: product.productId,
+            productName: product.productName,
+            productType: product.productType?.toString() || '0',
+            quantity: quantity,
+            storeId: user.shopNo || '',
+            templateId: (product.productType === 1 || product.productType === 2) ? product?.couponDetailDataByCountryCode?.templateId  : undefined,
+            unitPoints: product.currentLevelPoints || 0,
+            totalPoints: (product.currentLevelPoints || 0) * quantity
+          }
+        ],
+        storeId: user.shopNo || '',
+        terminalType: 'PAD'
+      };
+
+      // 调用兑换API
+      await exchangeRequest(exchangeData);
+
+      // 兑换成功
+      if (product?.productType === 0) {
+        // 周边礼品显示成功弹窗
+        setShowGiftSuccessModal(true);
+      } else {
+        // 券类商品显示成功提示
+        Toast.show({
+          content: t('modal.redeemSoon'),
+          position: 'center',
+          duration: 3000
+        });
+      }
+      
     } catch (error) {
+      console.error('兑换失败:', error);
       Toast.show({
         icon: 'fail',
         content: t('modal.requestFailed'),
@@ -229,8 +249,6 @@ const ProductDetail: React.FC = () => {
   const contentRef = useRef<HTMLDivElement>(null)
   const [quantity, setQuantity] = useState(1)
 
-  // 计算数量按钮的禁用状态
-  const canDecrease = quantity > 1 && !product?.disabled;
   const TEXT = {
     ADD_TO_CART: t('productDetail.addToCart'),
     REDEEM_NOW: t('productDetail.redeemNow'),
@@ -376,14 +394,14 @@ const ProductDetail: React.FC = () => {
           <div className={`relative`}>
             <div className="absolute right-0 -top-[50px] flex items-center gap-1">
               <div
-                className={`w-[22px] h-[22px] rounded-full ${canDecrease ? 'bg-gray-200 text-black cursor-pointer hover:bg-gray-300' : 'bg-gray-100 text-gray-400 cursor-not-allowed'} flex items-center justify-center transition-colors select-none active:scale-95 touch-manipulation`}
-                onClick={canDecrease ? () => setQuantity(Math.max(1, quantity - 1)) : undefined}
+                className={`w-[22px] h-[22px] rounded-full ${ !product.disabled ? 'bg-gray-200 text-black cursor-pointer hover:bg-gray-300' : 'bg-gray-100 text-gray-400 cursor-not-allowed'} flex items-center justify-center transition-colors select-none active:scale-95 touch-manipulation`}
+                onClick={product.disabled ? () => setQuantity(Math.max(1, quantity - 1)) : undefined}
               >
                 -
               </div>
               <div className="text-xxxs">{quantity}</div>
               <div
-                className={`w-[22px] h-[22px] rounded-full ${product.disabled  ? 'bg-[#E60012] text-white cursor-pointer hover:bg-[#ff0018]' : 'bg-gray-100 text-gray-400 cursor-not-allowed'} flex items-center justify-center transition-colors select-none active:scale-95 touch-manipulation`}
+                className={`w-[22px] h-[22px] rounded-full ${!product.disabled  ? 'bg-[#E60012] text-white cursor-pointer hover:bg-[#ff0018]' : 'bg-gray-100 text-gray-400 cursor-not-allowed'} flex items-center justify-center transition-colors select-none active:scale-95 touch-manipulation`}
                 onClick={product.disabled  ? () => setQuantity(quantity + 1) : undefined}
               >
                 +
@@ -396,13 +414,13 @@ const ProductDetail: React.FC = () => {
             <div
               className={`${styles['cartButton']} ${product.disabled ? styles['disabledButton'] : ''}`}
               //onClick={handleAddToCart}
-              onClick={product.disabled  ? () => handleAddToCart : undefined}
+              onClick={ !product.disabled  ? () => handleAddToCart() : undefined}
             >
               {TEXT.ADD_TO_CART}
             </div>
             <div
               className={`${styles['redeemButton']} ${product.disabled ? styles['disabledButton'] : ''}`}
-              onClick={product.disabled  ? () => handleRedeem : undefined}
+              onClick={ !product.disabled  ? () => handleRedeem() : undefined}
             >
               {TEXT.REDEEM_NOW}
             </div>
@@ -438,10 +456,10 @@ const ProductDetail: React.FC = () => {
             <div className="flex space-y-1 flex-col text-xxxs">
               <div className={styles['font']}>{TEXT.REDEMPTION_availableStores}</div>
               <div className={styles['value']}>
-                {!product.applicableStores || product.applicableStores.length === 0 ? (
+                {!product.applicableStoresNameList || product.applicableStoresNameList.length === 0 ? (
                   <div>{t('product.all')}</div>
                 ) : (
-                  product.applicableStores.map((store, index) => (
+                  product.applicableStoresNameList.map((store, index) => (
                     <div key={index}>{store}</div>
                   ))
                 )}

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Modal } from 'antd-mobile';
 import styles from './index.module.less'
+import { useTranslation } from "react-i18next"
 
 interface AlertModalProps {
   visible: boolean;
@@ -23,6 +24,7 @@ const AlertModal: React.FC<AlertModalProps> = ({
   cancelText,
   showConfirmButton = true,
 }) => {
+  const { t } = useTranslation('common');
   return (
     <Modal
       visible={visible}

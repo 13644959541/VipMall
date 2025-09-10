@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, Input, Toast } from 'antd-mobile';
+import { useAuthModel } from "@/model/useAuthModel";
+import { sendVerifyCodeRequest, checkVerifyCodeRequest } from "@/services/verifySerivce";
 import styles from './index.module.less'
+import { useTranslation } from "react-i18next"
 
 interface EmailVerificationModalProps {
   visible: boolean;
@@ -28,7 +31,7 @@ const EmailVerificationModal: React.FC<EmailVerificationModalProps> = ({
   const [countdown, setCountdown] = useState(0);
   const [hasSent, setHasSent] = useState(false);
   const [emailSent, setEmailSent] = useState(false);
-
+  const { t } = useTranslation('common');
   useEffect(() => {
     // Set initial verification type based on available user info
     if (userInfo?.email) {
@@ -67,33 +70,72 @@ const EmailVerificationModal: React.FC<EmailVerificationModalProps> = ({
     return '';
   };
 
-  const handleSendCode = () => {
+  const handleSendCode = async () => {
     setSending(true);
     setCountdown(90);
     setHasSent(true);
-    
+
     // 如果是邮箱验证，标记邮箱验证码已发送
     if (verificationType === 'email') {
       setEmailSent(true);
     }
-    
-    // 模拟发送验证码请求
-    setTimeout(() => {
-      setSending(false);
-      const message = verificationType === 'email' 
-        ? '验证码已发送至邮箱' 
-        : '验证码已发送至手机';
+
+    try {
+      const { user } = useAuthModel.getState();
+
+      const requestData = {
+        areaCode: verificationType === 'mobile' ? user?.areaCode || '+86' : undefined,
+        country: user?.country || 'CN',
+        customerKey: (verificationType === 'email' ? user?.email : user?.mobile) || '',
+        deptName: user?.shopNo || '',
+        deviceSource: 'score_mall',
+        language: 'cn',
+        localTime: new Date().toISOString(),
+        storeId: user?.shopNo || '',
+        type: verificationType === 'email' ? 2 : 1,
+        verifyType: '6' // 6表示积分兑换
+      };
+
+      await sendVerifyCodeRequest(requestData);
+      const message = verificationType === 'email'
+        ? t('modal.codeSentToEmail')
+        : t('modal.codeSentToPhone');
       Toast.show(message);
-    },1000);
+    } catch (error) {
+      console.error('发送验证码失败:', error);
+      Toast.show(t('modal.codeSendFailed'));
+    } finally {
+      setSending(false);
+    }
   };
 
-  const handleVerify = () => {
+  const handleVerify = async () => {
     if (!code) {
-      Toast.show('请输入验证码');
+      Toast.show(t('modal.enterVerificationCode'));
       return;
     }
-    const contact = verificationType === 'email' ? userInfo?.email || '' : userInfo?.mobile || '';
-    onConfirm(contact, code);
+
+    try {
+      const { user } = useAuthModel.getState();
+      const customerKey = verificationType === 'email' ? userInfo?.email || '' : userInfo?.mobile || '';
+
+      const requestData = {
+        areaCode: verificationType === 'mobile' ? user?.areaCode || '+86' : undefined,
+        customerKey,
+        type: verificationType === 'email' ? 2 : 1,
+        verifyCode: code,
+        verifyType: '6' // 6表示积分兑换
+      };
+
+      await checkVerifyCodeRequest(requestData);
+
+      // 验证成功后调用父组件的onConfirm回调
+      onConfirm(customerKey, code);
+
+    } catch (error) {
+      console.error('验证码验证失败:', error);
+      Toast.show(t('modal.incorrectCode'));
+    }
   };
 
   const toggleVerificationType = () => {
@@ -106,7 +148,7 @@ const EmailVerificationModal: React.FC<EmailVerificationModalProps> = ({
       onClose={onClose}
       title={
         <div className={`${styles['modalTitle']}`}>
-          <span className='ml-1 mb-1 p-1'>{verificationType === 'email' ? '邮箱验证码' : '手机验证码'}</span>
+          <span className='ml-1 mb-1 p-1'>{verificationType === 'email' ? t('modal.emailVerificationCode') : t('modal.smsVerificationCode')}</span>
           <img
             src="/modal.svg"
             alt="icon-hdl"
@@ -119,7 +161,7 @@ const EmailVerificationModal: React.FC<EmailVerificationModalProps> = ({
           {/* Display formatted user information */}
           {userInfo && (userInfo.email || userInfo.mobile) && (
             <div className={styles.userInfo}>
-              发送验证码至: {formatUserInfo()}
+              {t('modal.sendVerificationCodeTo')}:{formatUserInfo()}
             </div>
           )}
 
@@ -128,7 +170,7 @@ const EmailVerificationModal: React.FC<EmailVerificationModalProps> = ({
             <Input
               id="verification-code"
               name="verificationCode"
-              placeholder="请输入验证码"
+              placeholder={t('modal.enterVerificationCode')}
               value={code}
               onChange={setCode}
               className={styles.codeInput}
@@ -137,17 +179,17 @@ const EmailVerificationModal: React.FC<EmailVerificationModalProps> = ({
               onClick={(sending || countdown > 0) ? undefined : handleSendCode}
               className={`${styles.sendCodeButton} ${(sending || countdown > 0) ? styles.disabled : ''}`}
             >
-              {countdown > 0 ? `${countdown}s` : (sending ? '发送中...' : (hasSent ? '再次发送' : '获取验证码'))}
+              {countdown > 0 ? `${countdown}s` : (sending ? 'send...' : (hasSent ? 'send' : t('modal.getCode')))}
             </a>
           </div>
           {/* Toggle button for switching verification type */}
           {userInfo?.email && userInfo?.mobile && (
             <div className={styles.toggleWrapper}>
-              <a 
-                onClick={(verificationType === 'email' && !emailSent) ? undefined : toggleVerificationType} 
+              <a
+                onClick={(verificationType === 'email' && !emailSent) ? undefined : toggleVerificationType}
                 className={`${styles.toggleButton} ${(verificationType === 'email' && !emailSent) ? styles.disabled : ''}`}
               >
-                {verificationType === 'email' ? '发送手机验证码' : '发送邮箱验证码'}
+                {verificationType === 'email' ? t('modal.sendSmsCode') : t('modal.sendEmailCode')}
               </a>
             </div>
           )}

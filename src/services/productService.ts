@@ -99,13 +99,30 @@ export interface Product{
  */
 export interface ProductDetails{
     /**
+     * 可用门店ID
+     */
+    applicableStore?: string;
+    /**
      * 可用门店
      */
-    applicableStores?: string[];
+    applicableStoresName?: string;
+    /**
+     * 可用门列表,给前端展示使用
+     */
+    applicableStoresNameList?: string[];
     /**
      * 可用时间
      */
     availableTime?: string;
+    /**
+     * 优惠券类商品专属信息（仅优惠券展示，从营销系统获取）对象
+     * 优惠券类商品专属信息（仅优惠券展示，从营销系统获取）
+     */
+    couponDetail?: CouponDetailData;
+    /**
+     * 优惠券类商品专属信息(根据当地语言返回对应语言的信息)
+     */
+    couponDetailDataByCountryCode?: CouponDetailDataByCountryCode;
     /**
      * 优惠券类商品专属信息（仅优惠券展示）
      * 票券类型
@@ -152,7 +169,7 @@ export interface ProductDetails{
     /**
      * 分会员等级积分详情
      */
-    levelPointsMap?: MapInteger;
+    levelPointsMap?: string;
     /**
      * 商品图片URL
      */
@@ -204,13 +221,13 @@ export interface ProductDetails{
      */
     status?: number;
     /**
-     * 门店信息
-     */
-    storeInfo?: StoreInfo;
-    /**
      * 累计兑换量
      */
     totalExchangeCount?: number;
+    /**
+     * 是否用保底语言
+     */
+    useBaseLanguage?: boolean;
     /**
      * 有效日期结束
      */
@@ -219,41 +236,206 @@ export interface ProductDetails{
      * 有效日期开始
      */
     validStartDate?: string;
-   // [property: string]: any;
+}
+
+
+/**
+ * 优惠券类商品专属信息（仅优惠券展示，从营销系统获取）对象
+ * 优惠券类商品专属信息（仅优惠券展示，从营销系统获取）
+ *
+ * CouponDetailData
+ */
+export interface CouponDetailData {
+    /**
+     * 活动ID
+     */
+    activityId?: string;
+    /**
+     * 活动名称
+     */
+    activityName?: string;
+    /**
+     * 是否可转赠
+     */
+    canTransfer?: number;
+    /**
+     * 国家代码(根据这个countryCode来判断返回前端 本地语言还是中文)
+     */
+    countryCode?: string;
+    /**
+     * 券内容
+     */
+    couponContent?: string;
+    /**
+     * 券内容（英文）
+     */
+    couponContentEn?: string;
+    /**
+     * 券说明
+     */
+    couponNote?: string;
+    /**
+     * 券说明（英文）
+     */
+    couponNoteEn?: string;
+    /**
+     * 券类型
+     */
+    couponType?: string;
+    /**
+     * 券类型名称
+     */
+    couponTypeName?: string;
+    /**
+     * 商品信息列表
+     */
+    itemVoList?: ItemInfo[];
+    /**
+     * 券名称
+     */
+    name?: string;
+    /**
+     * 券名称当地语言
+     */
+    nameInt?: string;
+    /**
+     * 券备注
+     */
+    note?: string;
+    /**
+     * 适用门店ID列表
+     */
+    storeIds?: string[];
+    /**
+     * 模板ID
+     */
+    templateId?: string;
+    /**
+     * 时间段名称
+     */
+    timeStrName?: string;
+    /**
+     * 时间段名称（英文）
+     */
+    timeStrNameEn?: string;
+    /**
+     * 使用说明
+     */
+    useInstruction?: string[];
+    /**
+     * 使用说明（英文）
+     */
+    useInstructionEn?: string[];
+    /**
+     * 使用时间
+     */
+    useTime?: UseTime[];
 }
 
 /**
- * 分会员等级积分详情
+ * 商品信息内部类
  *
- * MapInteger
+ * ItemInfo
  */
-export interface MapInteger {
-    key?: number;
+export interface ItemInfo {
+    /**
+     * 商品编码
+     */
+    itemCode?: string;
+    /**
+     * 商品名称
+     */
+    itemName?: string;
 }
 
 /**
- * 门店信息
+ * 使用时间内部类
  *
- * StoreInfo
+ * UseTime
  */
-export interface StoreInfo {
+export interface UseTime {
     /**
-     * 营业时间
+     * 时间维度
      */
-    businessHours?: string;
+    dimension?: string;
     /**
-     * 门店地址
+     * 结束时间
      */
-    storeAddress?: string;
+    endTime?: string;
     /**
-     * 门店ID
+     * 选择状态
      */
-    storeId?: string;
+    selectTrue?: string;
     /**
-     * 门店名称
+     * 开始时间
      */
-    storeName?: string;
+    startTime?: string;
+    /**
+     * 值
+     */
+    values?: string;
 }
+
+/**
+ * 优惠券类商品专属信息(根据当地语言返回对应语言的信息)
+ *
+ * CouponDetailDataByCountryCode
+ */
+export interface CouponDetailDataByCountryCode {
+    /**
+     * 活动ID
+     */
+    activityId?: string;
+    /**
+     * 活动名称
+     */
+    activityName?: string;
+    /**
+     * 是否可转赠
+     */
+    canTransfer?: number;
+    /**
+     * 优惠内容(优惠内容当地语言)
+     */
+    couponContent?: string;
+    /**
+     * 优惠说明(优惠说明当地语言)
+     */
+    couponNote?: string;
+    /**
+     * 券类型
+     */
+    couponType?: string;
+    /**
+     * 券类型名称
+     */
+    couponTypeName?: string;
+    /**
+     * 券名称(券名称当地语言)
+     */
+    name?: string;
+    /**
+     * 券备注
+     */
+    note?: string;
+    /**
+     * 适用门店ID列表
+     */
+    storeIds?: string[];
+    /**
+     * 模板ID
+     */
+    templateId?: string;
+    /**
+     * 有效期(有效期当地语言)
+     */
+    timeStrName?: string;
+    /**
+     * 使用说明(使用说明当地语言)
+     */
+    useInstruction?: string[];
+}
+
 
 // 商品查询参数接口
 export interface ProductQueryParams {
@@ -262,6 +444,7 @@ export interface ProductQueryParams {
   storeId?: string;          // 门店ID
   localLevel?: string;       // 会员等级
   isHot?: boolean;           // 是否热销
+  templateId?:string;
 }
 
 /**
@@ -287,7 +470,9 @@ const buildQueryString = (params?: ProductQueryParams): string => {
   if (params.isHot !== undefined) {
     queryParams.append('isHot', params.isHot.toString());
   }
-  
+  if (params.templateId !== undefined) {
+    queryParams.append('templateId', params.templateId.toString());
+  }
   return queryParams.toString();
 };
 

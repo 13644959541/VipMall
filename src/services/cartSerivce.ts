@@ -9,6 +9,7 @@ export const cartAddOrUpdate = async (data: {
     productId: string;
     quantity: number;
     isSelected: boolean;
+    templateId?:string;
   }>;
 }): Promise<any[]> => {
   try {
