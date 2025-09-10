@@ -15,6 +15,7 @@ interface EmailVerificationModalProps {
   };
   confirmText: string;
   cancelText: string;
+  verifyType: string; // '6'表示积分兑换，'9'表示核销
 }
 
 const EmailVerificationModal: React.FC<EmailVerificationModalProps> = ({
@@ -24,6 +25,7 @@ const EmailVerificationModal: React.FC<EmailVerificationModalProps> = ({
   userInfo,
   confirmText,
   cancelText,
+  verifyType,
 }) => {
   const [verificationType, setVerificationType] = useState<'email' | 'mobile'>('email');
   const [code, setCode] = useState('');
@@ -93,7 +95,7 @@ const EmailVerificationModal: React.FC<EmailVerificationModalProps> = ({
         localTime: new Date().toISOString(),
         storeId: user?.shopNo || '',
         type: verificationType === 'email' ? 2 : 1,
-        verifyType: '6' // 6表示积分兑换
+        verifyType: verifyType // 动态传递的验证类型
       };
 
       await sendVerifyCodeRequest(requestData);
@@ -124,7 +126,7 @@ const EmailVerificationModal: React.FC<EmailVerificationModalProps> = ({
         customerKey,
         type: verificationType === 'email' ? 2 : 1,
         verifyCode: code,
-        verifyType: '6' // 6表示积分兑换
+        verifyType: verifyType // 动态传递的验证类型
       };
 
       await checkVerifyCodeRequest(requestData);

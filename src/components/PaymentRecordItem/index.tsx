@@ -1,6 +1,7 @@
 import React from 'react'
 import { Image as AntdImage } from 'antd-mobile'
 import styles from './index.module.less'
+import { useTranslation } from 'react-i18next'
 
 interface PaymentRecordItemProps {
   record: {
@@ -21,6 +22,8 @@ interface PaymentRecordItemProps {
 }
 
 const PaymentRecordItem: React.FC<PaymentRecordItemProps> = ({ record, onRedeem }) => {
+  const { t } = useTranslation('common');
+
   return (
     <div className="flex items-center p-1 justify-center overflow-hidden bg-white rounded-lg">
       <div className='flex flex-col'>
@@ -43,12 +46,12 @@ const PaymentRecordItem: React.FC<PaymentRecordItemProps> = ({ record, onRedeem 
         <div className="space-y-1">
           {/* 优惠券类型显示有效期至 */}
           {record.type === 'coupon' && record.orderValidDate && (
-            <div className={`${styles['font']}`}>有效期至: {record.orderValidDate}</div>
+            <div className={`${styles['font']}`}>{t('redemptionRecord.validUntil')}: {record.orderValidDate}</div>
           )}
           
-          <div className={`${styles['font']}`}>使用规则: {record.orderRule}</div>
-          <div className={`${styles['font']}`}>实付: {record.points}</div>
-          <div className={`${styles['font']}`}>兑换渠道: {record.orderChannel}</div>
+          <div className={`${styles['font']}`}>{t('redemptionRecord.usageRules')}: {record.orderRule}</div>
+          <div className={`${styles['font']}`}>{t('redemptionRecord.actualPayment')}: {record.points}</div>
+          <div className={`${styles['font']}`}>{t('redemptionRecord.redemptionChannel')}: {record.orderChannel}</div>
           
           {/* 周边商城类型显示核销按钮 */}
           {record.type === 'gift' && onRedeem && (
@@ -57,7 +60,7 @@ const PaymentRecordItem: React.FC<PaymentRecordItemProps> = ({ record, onRedeem 
                 className={`${styles['redeemButton']} ${record.status === 'completed' ? styles['disabled'] : ''}`}
                 onClick={() => record.status === 'processing' && onRedeem(record.id, record.status)}
               >
-                {record.status === 'processing' ? '去核销' : '已核销'}
+                {record.status === 'processing' ? t('redemptionRecord.verifyNow'): t('redemptionRecord.verified')}
               </div>
             </div>
           )}

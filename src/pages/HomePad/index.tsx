@@ -1,4 +1,5 @@
 import React, { memo, useState, useEffect } from 'react'
+import { Swiper } from 'antd-mobile'
 import styles from './index.module.less'
 import SwipeTabs from '../../components/SwipeTabs'
 import HomeContent from '@/layout/pad/HomeContent'
@@ -8,6 +9,7 @@ import CouponContent from '@/layout/pad/Coupon'
 import { useTranslation } from 'react-i18next';
 import useAxios from '../../hooks/useAxios';
 import { getHotProductList, getProductList, Product } from '../../services/productService';
+import { getCountryBanners } from '../../services/HeaderService';
 import LoadingView from '../../components/LoadingView';
 import { useAuthModel } from '@/model/useAuthModel';
 
@@ -32,6 +34,41 @@ const HomePad = () => {
   const [gift, giftProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [carouselItems, setCarouselItems] = useState<any[]>([]);
+
+  // 获取横幅数据
+  useEffect(() => {
+    const fetchBanners = async () => {
+      if (!user?.country) {
+        // 如果没有国家信息，使用默认banner
+        setCarouselItems([{
+          image: "/hot-pot-banner.jpg",
+          alt: "banner",
+        }]);
+        return;
+      }
+      
+      try {
+        //横幅API调用暂时注释掉，使用默认banner
+        const banners = await getCountryBanners({ 
+          countryCode: user.country // 使用国家代码
+        });
+        setCarouselItems(banners.map((banner) => ({
+          image: banner.appImageUrl,
+          alt: banner.title || "banner",
+        })))
+      }catch (error) {
+        console.error('获取横幅数据失败:', error);
+        // 如果API失败，使用默认的carouselItems
+        setCarouselItems([{
+          image: "/hot-pot-banner.jpg",
+          alt: "banner",
+        }]);
+      }
+    };
+
+    fetchBanners();
+  }, [user?.country]); // 只依赖country变化
 
   // 模拟标签数据
   const tabItems = [
@@ -113,19 +150,6 @@ const HomePad = () => {
 
     fetchProducts();
   }, []);
-
-  
-  const carouselItems = [
-    {
-      image: "/hot-pot-banner.jpg",
-      alt: "纯纯纯牛油锅 NEW",
-      fallback: (
-        <div className="w-full h-48 bg-[#E60012] flex items-center justify-center text-white text-xl font-bold">
-          纯纯纯牛油锅 NEW<br />BEEF TALLOW<br />HOT POT SOUP BASE
-        </div>
-      )
-    }
-  ]
 
   //useTitle('主页');
   

@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Image as AntdImage, Toast, Swiper } from 'antd-mobile'
 import SwipeTabs from '../../components/SwipeTabs'
 import PaymentRecordItem from '../../components/PaymentRecordItem'
@@ -8,6 +8,8 @@ import EmailVerificationModal from '../../components/EmailVerificationModal'
 import { useAuthModel } from '../../model/useAuthModel'
 import styles from './index.module.less'
 import { useTranslation } from 'react-i18next'
+import { getOrderRequest, OrderItemRecordResponse } from '../../services/orderSerivce'
+import { submitOrderRequest } from '../../services/orderSerivce'
 
 interface PaymentRecordItem {
   id: string
@@ -36,8 +38,8 @@ const PaymentRecordPage = () => {
    const { t } = useTranslation('common');
   // 标签项配置
   const tabItems = [
-    { key: 'gift', title: t('header.gift') },
-    { key: 'coupon', title: t('header.coupon') }
+    { key: 'gift', title: t('home.merchandise') },
+    { key: 'coupon', title: t('redemptionRecord.coupon') }
   ]
 
   // 模拟兑换记录数据
@@ -111,11 +113,61 @@ const PaymentRecordPage = () => {
     }
   ]
 
-  const [records, setRecords] = useState<PaymentRecordItem[]>(initialPaymentRecords)
+  const [records, setRecords] = useState<PaymentRecordItem[]>([])
+  const [giftRecords, setGiftRecords] = useState<OrderItemRecordResponse[]>([])
+  const [couponRecords, setCouponRecords] = useState<OrderItemRecordResponse[]>([])
 
-  // 分别过滤礼品和优惠券记录
-  const giftRecords = records.filter(record => record.type === 'gift')
-  const couponRecords = records.filter(record => record.type === 'coupon')
+  // 加载订单数据
+  useEffect(() => {
+    const loadOrderData = async () => {
+      if (!user) return;
+      
+      try {
+        // 加载礼品订单
+        const giftData = await getOrderRequest({
+          language: 'zh-CN',
+          memberId: user.customerKey || '',
+          productType: 0, // 0-周边礼品
+          storeId: user.shopNo || ''
+        });
+        setGiftRecords(giftData);
+
+        // 加载优惠券订单
+        const couponData = await getOrderRequest({
+          language: 'zh-CN',
+          memberId: user.customerKey || '',
+          productType: 1, // 1-代金券
+          storeId: user.shopNo || ''
+        });
+        setCouponRecords(couponData);
+
+      } catch (error) {
+        console.error('加载订单数据失败:', error);
+        Toast.show({ icon: 'fail', content: t('modal.requestFailed') });
+      }
+    };
+
+    loadOrderData();
+  }, [user, t]);
+
+  // 转换API数据到组件需要的格式
+  const convertToPaymentRecord = (item: OrderItemRecordResponse): PaymentRecordItem => ({
+    id: item.itemId?.toString() || '',
+    image: item.productImage || '/hot-pot-banner.jpg',
+    name: item.productName || '',
+    points: item.totalPoints || 0,
+    quantity: item.quantity || 1,
+    status: item.verificationStatus === '1' ? 'completed' : 'processing',
+    orderDate: item.orderTime || '',
+    orderNumber: item.orderNo || '',
+    orderRule: item.exclusionText || '',
+    orderChannel: item.terminalType || 'App',
+    orderValidDate: item.validityPeriod,
+    type: item.productType === '1' ? 'coupon' : 'gift'
+  });
+
+  const convertedGiftRecords = giftRecords.map(convertToPaymentRecord);
+  const convertedCouponRecords = couponRecords.map(convertToPaymentRecord);
 
   const handleChangeStatus = (recordId: string, currentStatus: string) => {
     if (currentStatus === 'completed') return; // 已核销的不再处理
@@ -140,48 +192,31 @@ const PaymentRecordPage = () => {
 
   const exchange = async (email: string, code: string) => {
     try {
-      // 验证输入
-      // if (!email || !email.trim()) {
-      //   Toast.show({ icon: 'fail', content: '请输入邮箱地址' });
-      //   return;
-      // }
-
-      // // 简单的邮箱格式验证
-      // const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      // if (!emailRegex.test(email)) {
-      //   Toast.show({ icon: 'fail', content: '请输入有效的邮箱地址' });
-      //   return;
-      // }
-
       if (!code || !code.trim()) {
         Toast.show({ icon: 'fail', content: t('modal.enterVerificationCode') });
         return;
       }
 
-      // 模拟 API 请求 - 这里应该替换为实际的 API 调用
-      // 例如: const response = await api.post('/exchange', { email, code, productId: product?.id, quantity });
+      // 调用核销API - 使用短信验证码核销
+      const requestData = {
+        itemId: parseInt(currentRecordId), // 订单商品ID
+        verifyType: '9' // 9表示核销
+      };
+      await submitOrderRequest(requestData);
 
-      // 模拟请求延迟
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      // 更新记录状态为已核销
+      const updatedRecord = records.find(record => record.id === currentRecordId)!
+      updatedRecord!.status = 'completed'
+      setRecords([...records])
+      
+      Toast.show({
+        content: t('modal.verificationSuccessful'),
+        position: 'center',
+        duration: 3000
+      });
 
-      // 模拟成功响应
-      const success = Math.random() > 0.3; // 70% 成功率用于演示
-
-      if (success) {
-        // 更新记录状态为已核销
-        const updatedRecord = records.find(record => record.id === currentRecordId)!
-        updatedRecord!.status = 'completed'
-        setRecords([...records])
-        Toast.show({
-          content: t('modal.verificationSuccessful') ,
-          position: 'center',
-          duration: 3000
-        })
-
-      } else {
-        throw new Error(t('modal.requestFailed'));
-      }
     } catch (error) {
+      console.error('核销失败:', error);
       Toast.show({
         icon: 'fail',
         content: t('modal.requestFailed'),
@@ -202,14 +237,14 @@ const PaymentRecordPage = () => {
           {/* 周边礼品标签页 */}
           <Swiper.Item key="gift">
             {/* 礼品空状态 */}
-            {giftRecords.length === 0 && (
-              <EmptyState message="您尚未兑换任何周边礼品" />
+            {convertedGiftRecords.length === 0 && (
+              <EmptyState message={t('redemptionRecord.noItemsRedeemed')} />
             )}
 
             {/* 礼品记录列表 */}
-            {giftRecords.length > 0 && (
-              <div className="p-1 space-y-1">
-                {giftRecords.map(record => (
+            {convertedGiftRecords.length > 0 && (
+              <div className="p-1 space-y-1 pb-10">
+                {convertedGiftRecords.map(record => (
                   <PaymentRecordItem
                     key={record.id}
                     record={record}
@@ -223,14 +258,14 @@ const PaymentRecordPage = () => {
           {/* 优惠券标签页 */}
           <Swiper.Item key="coupon">
             {/* 优惠券空状态 */}
-            {couponRecords.length === 0 && (
-              <EmptyState message="您尚未兑换任何优惠券" />
+            {convertedCouponRecords.length === 0 && (
+              <EmptyState message={t('redemptionRecord.noItemsRedeemed')} />
             )}
 
             {/* 优惠券记录列表 */}
-            {couponRecords.length > 0 && (
-              <div className="p-1 space-y-1">
-                {couponRecords.map(record => (
+            {convertedCouponRecords.length > 0 && (
+              <div className="p-1 space-y-1 pb-10">
+                {convertedCouponRecords.map(record => (
                   <PaymentRecordItem
                     key={record.id}
                     record={record}
@@ -251,6 +286,7 @@ const PaymentRecordPage = () => {
         confirmText= {t('modal.continueVerification')}
         cancelText= {t('modal.cancel')}
         userInfo={user || { email: undefined, mobile: undefined }}
+        verifyType="9" // 9表示核销
       />
       <AlertModal
         visible={showAlertModal}

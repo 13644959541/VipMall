@@ -513,6 +513,7 @@ const ProductDetail: React.FC = () => {
           exchange(email, code)
           setShowEmailModal(false)
         }}
+        verifyType ="6"
         confirmText={t('modal.continueRedemption')}
         cancelText={t('modal.cancel')}
         userInfo={user || { email: undefined, mobile: undefined }}

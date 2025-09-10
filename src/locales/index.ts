@@ -18,14 +18,6 @@ import zhTWCommon from './zh-TW/common.json';
 
 // 资源类型定义
 export interface Resources {
-  header: {
-    home: string;
-    coupon: string;
-    meal: string;
-    gift: string;
-    cart: string;
-    profile: string;
-  };
   home: {
     tableNumber: string;
     redMember: string;

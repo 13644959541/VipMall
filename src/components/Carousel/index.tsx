@@ -16,6 +16,22 @@ interface CarouselProps {
 }
 
 const Carousel = ({ items, height, className = '' }: CarouselProps) => {
+  // 处理空数据情况，防止Swiper没有子元素
+  if (!items || items.length === 0) {
+    return (
+      <div style={{ 
+        height: `${height}px`, 
+        display: 'flex', 
+        alignItems: 'center', 
+        justifyContent: 'center',
+        backgroundColor: '#f5f5f5',
+        borderRadius: '10px'
+      }}>
+        暂无轮播图数据
+      </div>
+    )
+  }
+
   return (
     <Swiper
       autoplayInterval ={5000}

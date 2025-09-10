@@ -1,4 +1,5 @@
-export interface Request {
+import { get, post } from '../plugins/request';
+export interface getOrderQuery {
     /**
      * 语言代码 语言代码（必传）
      */
@@ -24,6 +25,14 @@ export interface Request {
      */
     storeId: string;
 }
+
+export interface submitOrderData {
+    /**
+     * 订单商品ID（主键） 订单商品ID（必传）
+     */
+    itemId: number;
+}
+
 
 /**
  * 订单商品记录响应DTO
@@ -141,3 +150,25 @@ export interface OrderItemRecordResponse {
      */
     verificationStatus?: string;
 }
+
+export const getOrderRequest= async (data:getOrderQuery): Promise<any[]> => {
+  try { 
+    const response = await get('/front/order/items', data);
+    return response.records || [];
+  } catch (error) {
+    console.error('发送失败:', error);
+    throw error;
+  }
+};
+
+export const submitOrderRequest = async (data:submitOrderData): Promise<any[]> => {
+  try {
+    const response = await post('/front/order/verify-coupon', data);
+    return response.items || [];
+  } catch (error) {
+   
+    throw error;
+  }
+};
+
+
