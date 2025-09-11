@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import styles from './index.module.less';
 import { Image as AntdImage, Toast } from 'antd-mobile'
 import DropdownSort from '@/components/Select';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuthModel } from '../../../model/useAuthModel'
 import { useTranslation } from 'react-i18next';
+import { getCountryLanguages, LanguageOption } from '../../../services/HeaderService';
 interface HeaderProps {
   className?: string;
 }
@@ -16,25 +17,34 @@ const Header: React.FC<HeaderProps> = ({ className }) => {
   const canGoBack = navigationHistory.length > 1;
   const { user } = useAuthModel()
   const { i18n, t } = useTranslation('common');
-  //语言选项映射到 i18next 的语言代码：简体中文	English	한국어	日本語	français	Tiếng Việt	Bahasa Indonesia	อักษรกลาง	اَلْعَرَبِيَّةُ	អក្ខរក្រមខេមរភាសា	繁體中文-香港	繁體中文-台灣
-  const languageOptions = [
-    { label: "简体中文", value: "zh-CN" },
-    { label: "English", value: "en-US" },
-    { label: "한국어", value: "ko-KR" },
-    { label: "日本語", value: "ja-JP" },
-    { label: "français", value: "fr-FR" },
-    { label: "Tiếng Việt", value: "vi-VN" },
-    { label: "Bahasa Indonesia", value: "id-ID" },
-    { label: "อักษรกลาง", value: "th-TH" },
-    { label: "اَلْعَرَبِيَّةُ", value: "ar-AE" },
-    { label: "អក្ខរក្រមខេមរភាសា", value: "km-KH" },
-    { label: "繁體中文-香港", value: "zh-HK" },
-    { label: "繁體中文-台灣", value: "zh-TW" },
-  ]
+  const [languageOptions, setLanguageOptions] = useState<any[]>([]);
 
   const languageChange = (value: string) => {
     i18n.changeLanguage(value);
   };
+
+  // 获取语言选项
+  useEffect(() => {
+    const fetchLanguages = async () => {
+      if (!user?.country) return;
+
+      try {
+        const languages = await getCountryLanguages({
+          countryCode: user.country
+        });
+        if (!languages.length || languages.length === 0) {
+          setLanguageOptions([{ label: "简体中文", value: "zh-CN" }]);
+          return;
+        }
+        setLanguageOptions(languages);
+      } catch (error) {
+        console.error('获取语言选项失败:', error);
+        Toast.show('获取语言选项失败');
+      }
+    };
+
+    fetchLanguages();
+  }, [user?.country]);
 
   // 获取当前语言的显示标签
   const getCurrentLanguageLabel = () => {

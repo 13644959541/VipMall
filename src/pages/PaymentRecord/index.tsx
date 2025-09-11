@@ -10,6 +10,7 @@ import styles from './index.module.less'
 import { useTranslation } from 'react-i18next'
 import { getOrderRequest, OrderItemRecordResponse } from '../../services/orderSerivce'
 import { submitOrderRequest } from '../../services/orderSerivce'
+import i18n from '@/locales'
 
 interface PaymentRecordItem {
   id: string
@@ -116,16 +117,18 @@ const PaymentRecordPage = () => {
   const [records, setRecords] = useState<PaymentRecordItem[]>([])
   const [giftRecords, setGiftRecords] = useState<OrderItemRecordResponse[]>([])
   const [couponRecords, setCouponRecords] = useState<OrderItemRecordResponse[]>([])
+  const [loading, setLoading] = useState(true)
 
   // 加载订单数据
   useEffect(() => {
     const loadOrderData = async () => {
       if (!user) return;
       
+      setLoading(true);
       try {
         // 加载礼品订单
         const giftData = await getOrderRequest({
-          language: 'zh-CN',
+          language: i18n.language,
           memberId: user.customerKey || '',
           productType: 0, // 0-周边礼品
           storeId: user.shopNo || ''
@@ -134,7 +137,7 @@ const PaymentRecordPage = () => {
 
         // 加载优惠券订单
         const couponData = await getOrderRequest({
-          language: 'zh-CN',
+          language: i18n.language,
           memberId: user.customerKey || '',
           productType: 1, // 1-代金券
           storeId: user.shopNo || ''
@@ -144,6 +147,8 @@ const PaymentRecordPage = () => {
       } catch (error) {
         console.error('加载订单数据失败:', error);
         Toast.show({ icon: 'fail', content: t('modal.requestFailed') });
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -200,7 +205,6 @@ const PaymentRecordPage = () => {
       // 调用核销API - 使用短信验证码核销
       const requestData = {
         itemId: parseInt(currentRecordId), // 订单商品ID
-        verifyType: '9' // 9表示核销
       };
       await submitOrderRequest(requestData);
 
@@ -236,13 +240,16 @@ const PaymentRecordPage = () => {
         >
           {/* 周边礼品标签页 */}
           <Swiper.Item key="gift">
-            {/* 礼品空状态 */}
-            {convertedGiftRecords.length === 0 && (
+            {loading ? (
+              // 加载中状态
+              <div className="flex justify-center items-center h-40">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+              </div>
+            ) : convertedGiftRecords.length === 0 ? (
+              // 空状态
               <EmptyState message={t('redemptionRecord.noItemsRedeemed')} />
-            )}
-
-            {/* 礼品记录列表 */}
-            {convertedGiftRecords.length > 0 && (
+            ) : (
+              // 礼品记录列表
               <div className="p-1 space-y-1 pb-10">
                 {convertedGiftRecords.map(record => (
                   <PaymentRecordItem
@@ -257,13 +264,16 @@ const PaymentRecordPage = () => {
 
           {/* 优惠券标签页 */}
           <Swiper.Item key="coupon">
-            {/* 优惠券空状态 */}
-            {convertedCouponRecords.length === 0 && (
+            {loading ? (
+              // 加载中状态
+              <div className="flex justify-center items-center h-40">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+              </div>
+            ) : convertedCouponRecords.length === 0 ? (
+              // 空状态
               <EmptyState message={t('redemptionRecord.noItemsRedeemed')} />
-            )}
-
-            {/* 优惠券记录列表 */}
-            {convertedCouponRecords.length > 0 && (
+            ) : (
+              // 优惠券记录列表
               <div className="p-1 space-y-1 pb-10">
                 {convertedCouponRecords.map(record => (
                   <PaymentRecordItem

@@ -163,10 +163,13 @@ export const getOrderRequest= async (data:getOrderQuery): Promise<any[]> => {
 
 export const submitOrderRequest = async (data:submitOrderData): Promise<any[]> => {
   try {
-    const response = await post('/front/order/verify-coupon', data);
+   const response = await post('/front/order/verify-coupon', data, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+   });
     return response.items || [];
   } catch (error) {
-   
     throw error;
   }
 };

@@ -36,39 +36,45 @@ const HomePad = () => {
   const [error, setError] = useState<string | null>(null);
   const [carouselItems, setCarouselItems] = useState<any[]>([]);
 
+  // 默认横幅配置
+  const DEFAULT_BANNER = {
+    image: "/hot-pot-banner.jpg",
+    alt: "banner"
+  };
+
+  // 设置默认横幅的辅助函数
+  const setDefaultBanner = () => setCarouselItems([DEFAULT_BANNER]);
+
   // 获取横幅数据
   useEffect(() => {
     const fetchBanners = async () => {
       if (!user?.country) {
-        // 如果没有国家信息，使用默认banner
-        setCarouselItems([{
-          image: "/hot-pot-banner.jpg",
-          alt: "banner",
-        }]);
+        setDefaultBanner();
         return;
       }
       
       try {
-        //横幅API调用暂时注释掉，使用默认banner
         const banners = await getCountryBanners({ 
-          countryCode: user.country // 使用国家代码
+          countryCode: user.country
         });
+        
+        if (!banners?.length) {
+          setDefaultBanner();
+          return;
+        }
+        
         setCarouselItems(banners.map((banner) => ({
           image: banner.appImageUrl,
           alt: banner.title || "banner",
-        })))
-      }catch (error) {
+        })));
+      } catch (error) {
         console.error('获取横幅数据失败:', error);
-        // 如果API失败，使用默认的carouselItems
-        setCarouselItems([{
-          image: "/hot-pot-banner.jpg",
-          alt: "banner",
-        }]);
+        setDefaultBanner();
       }
     };
 
     fetchBanners();
-  }, [user?.country]); // 只依赖country变化
+  }, [user?.country]);
 
   // 模拟标签数据
   const tabItems = [

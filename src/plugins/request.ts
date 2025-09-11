@@ -89,18 +89,17 @@ let baseRequest = async (config: RequestConfig): Promise<any> => {
   }
 };
 
-// 请求拦截器（模拟axios拦截器）
+// 请求拦截器
 const requestInterceptor = {
   use: (onFulfilled?: (config: RequestConfig) => RequestConfig) => {
     if (onFulfilled) {
-      // 简单的拦截器实现
       return (config: RequestConfig) => onFulfilled(config);
     }
     return (config: RequestConfig) => config;
   },
 };
 
-// 响应拦截器（模拟axios拦截器）
+// 响应拦截器
 const responseInterceptor = {
   use: (
     onFulfilled?: (response: any) => any,
@@ -114,28 +113,7 @@ const responseInterceptor = {
           const result = await originalRequest(config);
           return onFulfilled ? onFulfilled(result) : result;
         } catch (error) {
-          if (error instanceof RequestError) {
-            // 处理401未授权
-            if (error.response?.status === 401) {
-              setAuth('');
-              window.location.assign(`${window.location.origin}/login`);
-              return;
-            }
-
-            // 显示错误消息
-            if (error.response) {
-              error.response.json().then((errorData: any) => {
-                Toast.show({ 
-                  icon: 'fail', 
-                  content: errorData.message || '请求失败' 
-                });
-              }).catch(() => {
-                Toast.show({ icon: 'fail', content: '网络错误' });
-              });
-            } else {
-              Toast.show({ icon: 'fail', content: error.message });
-            }
-          }
+          console.error('请求失败: ', error);
           throw error;
         }
       };

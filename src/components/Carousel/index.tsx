@@ -27,7 +27,7 @@ const Carousel = ({ items, height, className = '' }: CarouselProps) => {
         backgroundColor: '#f5f5f5',
         borderRadius: '10px'
       }}>
-        暂无轮播图数据
+       
       </div>
     )
   }
