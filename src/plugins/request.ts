@@ -126,7 +126,7 @@ responseInterceptor.use(
   (response) => response,
   (error: RequestError) => {
     if (error.message.includes('timeout')) {
-      Toast.show({ icon: 'fail', content: '网络超时' });
+      console.error('请求超时');
     }
     return Promise.reject(error);
   }

@@ -20,6 +20,7 @@ interface CouponContentProps {
     label: string;
     value: string;
   }>;
+  loading?: boolean;
 }
 const CouponContent: React.FC<CouponContentProps> = ({ products, checkboxName, sortOptions }) => {
   const [level, setLevel] = useState<string | null>(null);

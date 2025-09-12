@@ -18,6 +18,7 @@ interface HomeContentProps {
   products: Array<Product>;
   productName: string;
   checkboxName: string;
+  loading?: boolean;
 }
 
 const HomeContent: React.FC<HomeContentProps> = ({ carouselItems, products, productName, checkboxName }) => {

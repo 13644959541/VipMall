@@ -18,40 +18,46 @@ const SwipeTabs: React.FC<SwipeTabsProps> = ({
 }) => {
   const swiperRef = useRef<SwiperRef>(null)
 
+
   return (
     <>
-      <Tabs
-        activeKey={tabItems[activeIndex].key}
-        onChange={key => {
-          const index = tabItems.findIndex(item => item.key === key)
-          setActiveIndex(index)
-          swiperRef.current?.swipeTo(index)
-        }}
-        className={styles.tabs}
-      >
-        {tabItems.map(item => (
-          <Tabs.Tab title={item.title} key={item.key} />
-        ))}
-      </Tabs>
-      <Swiper
-        direction="horizontal"
-        loop={false}
-        indicator={() => null}
-        ref={swiperRef}
-        defaultIndex={activeIndex}
-        onIndexChange={index => {
-          setActiveIndex(index)
-        }}
-        style={{ flex: 1 }}
-      >
+      {tabItems.length > 0 && (
+        <Tabs
+          activeKey={tabItems[activeIndex]?.key || ''}
+          onChange={key => {
+            const index = tabItems.findIndex(item => item.key === key)
+            if (index !== -1) {
+              setActiveIndex(index)
+              swiperRef.current?.swipeTo(index)
+            }
+          }}
+          className={styles.tabs}
+        >
+          {tabItems.map(item => (
+            <Tabs.Tab title={item.title} key={item.key} />
+          ))}
+        </Tabs>
+      )}
       
-        {React.Children.map(children as React.ReactElement[], (child, index) => (
-          <Swiper.Item key={index}>
-            {index === activeIndex ? child : null}
-          </Swiper.Item>
-        ))}
-
-      </Swiper>
+      {tabItems.length > 0 && (
+        <Swiper
+          direction="horizontal"
+          loop={false}
+          indicator={() => null}
+          ref={swiperRef}
+          defaultIndex={activeIndex}
+          onIndexChange={index => {
+            setActiveIndex(index)
+          }}
+          style={{ flex: 1 }}
+        >
+          {React.Children.map(children as React.ReactElement[], (child, index) => (
+            <Swiper.Item key={index}>
+              {index === activeIndex ? child : null}
+            </Swiper.Item>
+          ))}
+        </Swiper>
+      ) }
     </>
   )
 }

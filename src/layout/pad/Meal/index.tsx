@@ -20,6 +20,7 @@ interface MealContentProps {
     label: string;
     value: string;
   }>;
+  loading?: boolean;
 }
 
 const MealContent: React.FC<MealContentProps> = ({ products, sortOptions, checkboxName }) => {

@@ -29,6 +29,7 @@ interface UserInfo {
   localLevel: string;
   unsubscribe: boolean;
   loginStyle: string;
+  verifyType: string;
   isRemoteLogin: string;
   customerKey: string;
   posPushFlag: string;

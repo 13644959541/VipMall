@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { Image as AntdImage, Toast, Swiper } from 'antd-mobile'
 import SwipeTabs from '../../components/SwipeTabs'
 import PaymentRecordItem from '../../components/PaymentRecordItem'
@@ -6,7 +6,7 @@ import EmptyState from '../../components/EmptyState'
 import AlertModal from '../../components/AlertModal'
 import EmailVerificationModal from '../../components/EmailVerificationModal'
 import { useAuthModel } from '../../model/useAuthModel'
-import styles from './index.module.less'
+import { shouldShowVerification } from '../../utils/bridge'
 import { useTranslation } from 'react-i18next'
 import { getOrderRequest, OrderItemRecordResponse } from '../../services/orderSerivce'
 import { submitOrderRequest } from '../../services/orderSerivce'
@@ -41,77 +41,6 @@ const PaymentRecordPage = () => {
   const tabItems = [
     { key: 'gift', title: t('home.merchandise') },
     { key: 'coupon', title: t('redemptionRecord.coupon') }
-  ]
-
-  // 模拟兑换记录数据
-  const initialPaymentRecords: PaymentRecordItem[] = [
-    {
-      id: '1',
-      image: '/hot-pot-banner.jpg',
-      name: '海底捞经典牛油火锅底料',
-      points: 1200,
-      quantity: 1,
-      status: 'completed',
-      orderDate: '2024-01-15 14:30',
-      orderNumber: 'ORD20240115001',
-      type: 'gift',
-      orderRule: '兑换规则很长的描述...很长的描述...',
-      orderChannel: '门店',
-    },
-    {
-      id: '2',
-      image: '/hot-pot-banner.jpg',
-      name: '海底捞特色蘸料套装',
-      points: 800,
-      quantity: 2,
-      status: 'processing',
-      orderDate: '2024-01-16 10:15',
-      orderNumber: 'ORD20240116002',
-      type: 'gift',
-      orderRule: '兑换规则很长的描述...',
-      orderChannel: '门店'
-    },
-    {
-      id: '3',
-      image: '/hot-pot-banner.jpg',
-      name: '海底捞特色套装',
-      points: 1500,
-      quantity: 1,
-      orderDate: '2024-01-14 16:45',
-      orderNumber: 'ORD20240114003',
-      status: 'processing',
-      type: 'gift',
-      orderRule: '兑换规则很长的描述...',
-      orderChannel: '门店'
-    },
-    {
-      id: '4',
-      image: '/满减券-双字号.png',
-      name: '5元满减券',
-      points: 2000,
-      quantity: 1,
-      status: 'completed',
-      orderDate: '2024-01-17 09:20',
-      orderNumber: 'ORD20240117004',
-      type: 'coupon',
-      orderRule: '兑换规则很长的描述...',
-      orderChannel: 'App',
-      orderValidDate: '2025-01-31'
-    },
-    {
-      id: '5',
-      image: '/代金券-双字号.png',
-      name: '5元代金券',
-      points: 2500,
-      quantity: 2,
-      status: 'processing',
-      orderDate: '2024-01-18 15:40',
-      orderNumber: 'ORD20240118005',
-      type: 'coupon',
-      orderRule: '兑换规则很长的描述...',
-      orderChannel: 'App',
-      orderValidDate: '2027-02-15'
-    }
   ]
 
   const [records, setRecords] = useState<PaymentRecordItem[]>([])
@@ -190,14 +119,21 @@ const PaymentRecordPage = () => {
   }
 
   const handleConfirmVerification = () => {
-    // 关闭AlertModal并显示EmailVerificationModal
+    // 关闭AlertModal
     setShowAlertModal(false)
-    setShowEmailModal(true)
+    
+    // 检查是否需要验证
+    if (user && shouldShowVerification(user.loginStyle, user.verifyType, 'verification')) {
+      setShowEmailModal(true)
+    } else {
+      // 不需要验证，直接执行核销操作（跳过验证码检查）
+      exchange('', '', true)
+    }
   }
 
-  const exchange = async (email: string, code: string) => {
+  const exchange = async (email: string, code: string, skipCodeCheck = false) => {
     try {
-      if (!code || !code.trim()) {
+      if (!skipCodeCheck && (!code || !code.trim())) {
         Toast.show({ icon: 'fail', content: t('modal.enterVerificationCode') });
         return;
       }

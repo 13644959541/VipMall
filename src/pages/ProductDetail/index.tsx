@@ -6,6 +6,7 @@ import { useCartStore } from "@/store/cart"
 import EmailVerificationModal from "@/components/EmailVerificationModal"
 import AlertModal from "@/components/AlertModal"
 import { useAuthModel } from "@/model/useAuthModel"
+import { shouldShowVerification } from "@/utils/bridge"
 import styles from './index.module.less'
 import { useTranslation } from "react-i18next"
 import { ProductDetails, getProductDetails } from "@/services/productService"
@@ -177,9 +178,9 @@ const ProductDetail: React.FC = () => {
     return messageMap[type as keyof typeof messageMap] || t('modal.confirmRedemption');
   };
 
-  const exchange = async (email: string, code: string) => {
+  const exchange = async (email: string, code: string, skipCodeCheck = false) => {
     try {
-      if (!code || !code.trim()) {
+      if (!skipCodeCheck && (!code || !code.trim())) {
         Toast.show({ icon: 'fail', content: t('modal.enterVerificationCode') });
         return;
       }
@@ -525,7 +526,13 @@ const ProductDetail: React.FC = () => {
           if (alertTriggerType === 'addToCart') {
             addToCartDirectly()
           } else if (alertTriggerType === 'redeem') {
-            setShowEmailModal(true)
+            // 检查是否需要验证
+            if (user && shouldShowVerification(user.loginStyle, user.verifyType, 'exchange')) {
+              setShowEmailModal(true)
+            } else {
+              // 不需要验证，直接执行兑换操作（跳过验证码检查）
+              exchange('', '', true)
+            }
           }
           setShowAlertModal(false)
         }}

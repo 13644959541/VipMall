@@ -1,4 +1,4 @@
-import { get } from '../plugins/request';
+import { get, post } from '../plugins/request';
 
 // 国家请求参数
 export interface CountryRequest {
@@ -65,6 +65,40 @@ export interface LanguageOption {
     value?: string;
 }
 
+export interface CategoryResponse {
+    /**
+     * 分类ID
+     */
+    categoryId?: number;
+    /**
+     * 分类名称（根据语言返回对应文本）
+     */
+    categoryName?: string;
+    /**
+     * 子分类列表
+     */
+    children?: CategoryResponse[];
+    /**
+     * 适用国家代码
+     */
+    countryCode?: string;
+    /**
+     * 是否有子分类
+     */
+    hasChildren?: boolean;
+    /**
+     * 父分类ID
+     */
+    parentId?: number;
+    /**
+     * 状态（1-启用，0-禁用）
+     */
+    status?: number;
+    /**
+     * 适用终端类型（1-APP，2-小程序，3-H5）
+     */
+    terminalType?: string;
+}
 
 // 获取国家语言列表
 export const getCountryLanguages = async (params?: CountryRequest): Promise<LanguageOption[]> => {
@@ -103,3 +137,18 @@ export const getCountryBanners = async (params?: CountryRequest): Promise<Banner
     throw error;
   }
 };
+
+export const getCategoryTree = async (params: {
+    "countryCode": string,
+    "terminalType": string,
+    "language": string
+}): Promise<CategoryResponse[]> => {
+  try {
+    const response = await post('/front/category/tree', params);
+    return response || [];
+  } catch (error) {
+    console.error('获取分类失败:', error);
+    throw error;
+  }
+};
+

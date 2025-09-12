@@ -439,7 +439,7 @@ export interface CouponDetailDataByCountryCode {
 
 // 商品查询参数接口
 export interface ProductQueryParams {
-  productType?: number;      // 0:周边礼品, 1:代金券, 2:菜品券
+  categoryIds?: string;      // 0:周边礼品, 1:代金券, 2:菜品券
   language?: string;         // 'zh-CN', 'en-US'等
   storeId?: string;          // 门店ID
   localLevel?: string;       // 会员等级
@@ -455,8 +455,8 @@ const buildQueryString = (params?: ProductQueryParams): string => {
   
   const queryParams = new URLSearchParams();
   
-  if (params.productType !== undefined) {
-    queryParams.append('productType', params.productType.toString());
+  if (params.categoryIds !== undefined) {
+    queryParams.append('categoryIds', params.categoryIds.toString());
   }
   if (params.language) {
     queryParams.append('language', params.language);

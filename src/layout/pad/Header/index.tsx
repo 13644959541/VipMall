@@ -5,7 +5,7 @@ import DropdownSort from '@/components/Select';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuthModel } from '../../../model/useAuthModel'
 import { useTranslation } from 'react-i18next';
-import { getCountryLanguages, LanguageOption } from '../../../services/HeaderService';
+import { getCountryLanguages, LanguageOption } from '../../../services/headerService';
 interface HeaderProps {
   className?: string;
 }
@@ -39,7 +39,6 @@ const Header: React.FC<HeaderProps> = ({ className }) => {
         setLanguageOptions(languages);
       } catch (error) {
         console.error('获取语言选项失败:', error);
-        Toast.show('获取语言选项失败');
       }
     };
 

@@ -49,6 +49,30 @@ export function registerHandler(
   })
 }
 
+// 验证逻辑工具函数
+export function shouldShowVerification(
+  loginStyle: string, 
+  verifyType: string, 
+  operation: 'exchange' | 'verification'
+): boolean {
+  // 免密登录的特殊处理：verifyType "3" 等同于 "1"
+  if (loginStyle === "1" && verifyType === "3") {
+    verifyType = "1"; // 将 verifyType "3" 转换为 "1" 来处理
+  }
+  
+  // 通用规则
+  switch (verifyType) {
+    case "1": // 仅核销时验证
+      return operation === 'verification';
+    case "2": // 兑换、核销时验证
+      return true;
+    case "3": // 无需验证
+      return false;
+    default:
+      return false;
+  }
+}
+
 // 常用方法封装示例
 export const NativeBridge = {
   // 获取用户信息
@@ -110,7 +134,7 @@ export const NativeBridge = {
       defaultLoginType: "3",
       solarBirth: "",
       email: "120122190@qq.com",
-      country: "SG",
+      country: "HK",
       tableNo: "55",
       shopNo: "280104",
     };

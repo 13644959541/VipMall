@@ -20,6 +20,7 @@ interface GiftContentProps {
     label: string;
     value: string;
   }>;
+  loading?: boolean;
 }
 
 const GiftContent: React.FC<GiftContentProps> = ({ products, sortOptions, checkboxName }) => {

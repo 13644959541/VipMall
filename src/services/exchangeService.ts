@@ -112,7 +112,6 @@ export interface ExchangeCartequest {
      * 终端类型（APP:移动端, PAD:平板端）
      */
     terminalType: string;
-    [property: string]: any;
 }
 
 /**

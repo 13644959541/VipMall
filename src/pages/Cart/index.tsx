@@ -7,9 +7,10 @@ import { faAngleRight } from '@fortawesome/free-solid-svg-icons'
 import AlertModal from '@/components/AlertModal'
 import EmailVerificationModal from '@/components/EmailVerificationModal'
 import { useAuthModel } from '@/model/useAuthModel'
+import { shouldShowVerification } from '@/utils/bridge'
 import styles from './index.module.less'
 import { useTranslation } from 'react-i18next'
-import { cartAddOrUpdate, getCartDetails } from '@/services/cartSerivce'
+import { cartAddOrUpdate } from '@/services/cartSerivce'
 import { exchangeCartRequest } from '@/services/exchangeService'
 import { NativeBridge } from '@/utils/bridge'
 import { useNavigate } from 'react-router-dom'
@@ -80,14 +81,21 @@ const CartPage = () => {
   }
 
   const handleConfirmVerification = () => {
-    // 关闭AlertModal并显示EmailVerificationModal
+    // 关闭AlertModal
     setShowAlertModal(false)
-    setShowEmailModal(true)
+    
+    // 检查是否需要验证
+    if (user && shouldShowVerification(user.loginStyle, user.verifyType, 'exchange')) {
+      setShowEmailModal(true)
+    } else {
+      // 不需要验证，直接执行兑换操作（跳过验证码检查）
+      exchange('', '', true)
+    }
   }
 
-  const exchange = async (email: string, code: string) => {
+  const exchange = async (email: string, code: string, skipCodeCheck = false) => {
     try {
-      if (!code || !code.trim()) {
+      if (!skipCodeCheck && (!code || !code.trim())) {
         Toast.show({ icon: 'fail', content: t('modal.enterVerificationCode') });
         return;
       }
@@ -444,6 +452,7 @@ const CartPage = () => {
           exchange(email, code)
           setShowEmailModal(false)
         }}
+        verifyType="6"
         confirmText={t('modal.continueRedemption')}
         cancelText={t('modal.cancel')}
         userInfo={user || { email: undefined, mobile: undefined }}
