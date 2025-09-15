@@ -445,6 +445,8 @@ export interface ProductQueryParams {
   localLevel?: string;       // 会员等级
   isHot?: boolean;           // 是否热销
   templateId?:string;
+  productType?:number;
+  terminalType?:string;      //终端类型（APP和PAD
 }
 
 /**
@@ -472,6 +474,12 @@ const buildQueryString = (params?: ProductQueryParams): string => {
   }
   if (params.templateId !== undefined) {
     queryParams.append('templateId', params.templateId.toString());
+  } 
+  if (params.productType !== undefined) {
+    queryParams.append('productType', params.productType.toString());
+  }
+  if (params.terminalType !== undefined) {
+    queryParams.append('terminalType', params.terminalType.toString());
   }
   return queryParams.toString();
 };
@@ -517,6 +525,19 @@ export const getProductDetails = async (productId: string, params?: ProductQuery
     const url = `/front/product/store/${productId}${queryString ? `?${queryString}` : ''}`;
     const response = await get(url);
     return response || {} as ProductDetails;
+  } catch (error) {
+    console.error('获取商品详情失败:', error);
+    throw error;
+  }
+};
+
+
+export const getHotList = async (params?: ProductQueryParams):  Promise<any[]> => {
+  try {
+    const queryString = buildQueryString(params);
+    const url = `/front/product/store/hot-list${queryString ? `?${queryString}` : ''}`;
+    const response = await get(url);
+    return response.records || [];
   } catch (error) {
     console.error('获取商品详情失败:', error);
     throw error;

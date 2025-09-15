@@ -7,7 +7,7 @@ import GiftContent from '@/layout/pad/Gift'
 import MealContent from '@/layout/pad/Meal'
 import CouponContent from '@/layout/pad/Coupon'
 import { useTranslation } from 'react-i18next';
-import { getHotProductList, getProductList, Product } from '../../services/productService';
+import { getHotList, getHotProductList, getProductList, Product } from '../../services/productService';
 import { getCountryBanners, getCategoryTree, CategoryResponse } from '../../services/headerService';
 import LoadingView from '../../components/LoadingView';
 import { useAuthModel } from '@/model/useAuthModel';
@@ -97,11 +97,21 @@ const HomePad = () => {
         setCategoryIdStrings(categoryIds);
 
         // 更新tabItems
-        const newTabItems = categoryData.map(category => ({
-          key: `category-${category.categoryId}`,
-          title: category.categoryName || '',
-          categoryId: category.categoryId || 0
-        }));
+        const newTabItems = [
+          // 在最前面添加首页对象
+          {
+            key: "1",
+            title: t('home.home'),
+            categoryId: 0
+          },
+          // 原有的分类数据
+          ...categoryData.map(category => ({
+            key: `category-${category.categoryId}`,
+            title: category.categoryName || '',
+            categoryId: category.categoryId || 0
+          }))
+        ];
+
         setTabItems(newTabItems);
 
       } catch (error) {
@@ -134,17 +144,17 @@ const HomePad = () => {
     setLoadingStates(prev => ({ ...prev, [tabIndex]: true }));
     try {
       // 获取当前tab对应的分类ID字符串
-      const categoryIds = categoryIdStrings[tabIndex] || "";
 
       if (tabIndex === 0) { // 首页 - 热销商品
-        const hotProducts = await getHotProductList({
-          categoryIds: categoryIds,
+        const hotProducts = await getHotList({
+          terminalType: "PAD",
           language: i18n.language,
           storeId: user?.shopNo,
           localLevel: user?.localLevel
         });
         setHotProducts(hotProducts);
       } else { // 其他tab - 普通商品
+        const categoryIds = categoryIdStrings[tabIndex - 1] || "";
         const productsData = await getProductList({
           categoryIds: categoryIds,
           language: i18n.language,

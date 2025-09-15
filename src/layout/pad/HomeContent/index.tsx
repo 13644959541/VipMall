@@ -58,18 +58,14 @@ const HomeContent: React.FC<HomeContentProps> = ({ carouselItems, products, prod
   }, [products, showRedeemableOnly, currentUserLevel, user?.points]);
 
   return (
-    <div className={styles.contentWrapper}
-      style={{
-        WebkitOverflowScrolling: 'touch',
-        overscrollBehavior: 'contain'
-      }}>
+    <div className={styles.contentWrapper}>
       <Carousel
         items={carouselItems}
-        height={300}
+        height={258}
       />
 
       <div className="flex items-center justify-between mr-1">
-        <h2 className="font-bold ml-1.5 mr-1.5">{productName}</h2>
+        <h2 className= {`${styles.title}`}>{productName}</h2>
         <div className="flex items-center gap-4">
           <Checkbox
             className={styles.check}

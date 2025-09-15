@@ -56,7 +56,7 @@ const CouponContent: React.FC<CouponContentProps> = ({ products, checkboxName, s
 
     // 计算每个商品的禁用状态
     const productsWithDisabled = result.map(product => {
-      const disabled = !product.isExpired ||
+      const disabled = !!product.isExpired ||
         (level && level !== 'all' && product.membershipLevel?.includes(currentUserLevel)
           || userPoints < Number(product.pointsRequired));
       return {

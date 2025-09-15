@@ -68,8 +68,8 @@ const ProductCard: React.FC<ProductCardProps> = ({
               }
                 </span>}
               {product.exchangeTimeRange ? (
-                <span className="text-[#E60012] block truncate" title={product.exchangeTimeRange}>
-                  {product.exchangeTimeRange}
+               <span className="text-[#E60012] block truncate" title={product.exchangeTimeRange}>
+                   [{t('productDetail.notYetAvailable')}] {product.exchangeTimeRange}
                 </span>
               ) : (
                 <span className="text-transparent">*</span>

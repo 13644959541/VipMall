@@ -58,7 +58,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 
 
       {/*退出功能 */}
-       <div className="flex flex-row justify-center text-[#6F6F72] items-center mt-10" onClick={() => NativeBridge.closePage()}>
+       <div className="flex flex-row justify-center text-[#6F6F72] items-center mt-[250px]" onClick={() => NativeBridge.closePage()}>
         <LogOut className="icon-logout text-[#6F6F72]" size={16} />
         {t('home.exitPointsMall')}
       </div>

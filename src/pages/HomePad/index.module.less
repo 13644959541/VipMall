@@ -23,29 +23,8 @@
   overflow: visible; /* 允许内容溢出 */
   -webkit-overflow-scrolling: touch; /* 启用iOS惯性滚动 */
   touch-action: pan-y; /* 启用垂直滑动 */
+  width: 100%;
 }
-
-.tabs {
-  background: white;
-  border-bottom: 1px solid #f0f0f0;
-  padding: 0 24px;
-
-  :global(.adm-tabs-tab) {
-    padding: 16px 24px;
-    font-size: 16px;
-    font-weight: 500;
-    color: #666;
-    border-radius: 8px 8px 0 0;
-    margin-right: 8px;
-    
-    &:global(.adm-tabs-tab-active) {
-      color: #dc2626;
-      background: #fef2f2;
-      border-bottom: 2px solid #dc2626;
-    }
-  }
-}
-
 .content {
   width: 100%;
   height: 100%;
@@ -121,13 +100,6 @@
   
   .main-content {
     height: 100vh;
-    
-    .tabs {
-      :global(.adm-tabs-tab) {
-        font-size: 14px;
-        padding: 12px 20px;
-      }
-    }
   }
 
   .adm-swiper{

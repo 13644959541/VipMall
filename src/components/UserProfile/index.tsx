@@ -47,7 +47,7 @@ const UserProfile: React.FC<UserProfileProps> = ({
           {membershipLevels.find(data => data.level === parseInt(localLevel))?.url && (
             <img 
               src={membershipLevels.find(data => data.level === parseInt(localLevel))?.url}
-              className="absolute top-[5px] right-4 h-1 w-1 z-10" 
+              className="absolute -top-[0.01rem] right-[0.925rem] h-[0.425rem] w-[0.425rem] z-10" 
               alt="badge-icon"
             />
           )}

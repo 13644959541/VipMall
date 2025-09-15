@@ -1,19 +1,16 @@
-.tabs {
-  font-family: "SF Pro";
-  font-weight: 590;
-  font-size: 16px;
-  line-height: 20px;
-  letter-spacing: 0;
-
-  :global(.adm-tabs-header) {
-    margin-top: 2cqb;
-    margin-bottom: 0;
-    border-bottom: none;
-    place-items: center center;
-  }
-}
 
 :global(.adm-tabs) {
-  --active-line-color: red;
-  --active-title-color: red;
+  --active-line-color: #E60012;
+  --active-title-color: #E60012;
+   overflow-x: auto;  // 添加水平滚动
 }
+
+:global(.adm-tabs-tab) {
+    padding: 16px 24px;
+    font-size: 16px;
+    font-family: SF Pro;
+    font-weight: 590;
+    color: #6F6F72;
+    border-radius: 8px 8px 0 0;
+    margin-right: 8px;
+  }

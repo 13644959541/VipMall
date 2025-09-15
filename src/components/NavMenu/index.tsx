@@ -25,12 +25,13 @@ const NavMenu: React.FC<NavMenuProps> = ({ items, className = '' }) => {
             className={({isActive}) => {
               const shouldHighlight = isActive || 
                 (item.to === '/' && location.pathname.startsWith('/product/'));
-              return `rounded-sm py-1 px-1 gap-1 flex items-center transition-colors
-                ${shouldHighlight ? 'bg-[#E60012] text-white' : 'text-[#6F6F72]'}`;
+             return `rounded-sm pt-[8px] pb-[8px] pl-[8px] pr-[8px] gap-1 flex items-center transition-colors h-[40px] w-[260px]
+                 ${shouldHighlight ? 'bg-[#E60012] text-white' : 'text-[#6F6F72]'}`;
+
             }}
           >
-            <item.icon className="h-1 w-1 flex-shrink-0" />
-            <span className="flex-grow text-left text-[16px]">{item.text}</span>
+            <item.icon className="h-[33px] w-[33px] flex-shrink-0" />
+            <span className="flex-grow text-left text-[16px] no-underline">{item.text}</span>
           </NavLink>
         ))}
       </div>

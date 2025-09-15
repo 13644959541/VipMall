@@ -102,7 +102,7 @@ export const NativeBridge = {
       isRemoteLogin: "false",
       customerKey: "n-149405263605600",
       posPushFlag: "false",
-      points: 10,
+      points: 10000,
       sex: "",
       RealName: "",
       memberLevelConfigList: [
