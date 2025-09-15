@@ -12,6 +12,7 @@ import { useTranslation } from "react-i18next"
 import { ProductDetails, getProductDetails } from "@/services/productService"
 import { exchangeRequest } from "@/services/exchangeService"
 import i18n from "@/locales"
+import { devNull } from "os"
 
 
 interface ExtendedProductDetails extends ProductDetails {
@@ -100,6 +101,8 @@ const ProductDetail: React.FC = () => {
     try {
       if (!product) return
       const cartItem = {
+        categoryType: product.categoryType || 0,
+        categoryId: product.categoryId || "",
         productId: product.productId,
         productName: product.productName,
         productImage: product.mainImage || "",
@@ -205,7 +208,10 @@ const ProductDetail: React.FC = () => {
             storeId: user.shopNo || '',
             templateId: (product.productType === 1 || product.productType === 2) ? product?.couponDetailDataByCountryCode?.templateId  : undefined,
             unitPoints: product.currentLevelPoints || 0,
-            totalPoints: (product.currentLevelPoints || 0) * quantity
+            totalPoints: (product.currentLevelPoints || 0) * quantity,
+            productCode:product.productCode || '',
+            categoryId:product.categoryId || '',
+            categoryType:product.categoryType || 0
           }
         ],
         storeId: user.shopNo || '',

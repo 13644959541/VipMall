@@ -236,6 +236,10 @@ export interface ProductDetails{
      * 有效日期开始
      */
     validStartDate?: string;
+
+    categoryId?: string;
+
+    categoryType?: number;
 }
 
 

@@ -58,6 +58,10 @@ export type CartItem = {
      * 是否用保底语言
      */
     useBaseLanguage?: boolean;
+
+    categoryType:number;
+
+    categoryId:string;
 }
 
 type CartState = {

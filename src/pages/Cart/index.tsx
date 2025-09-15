@@ -126,6 +126,9 @@ const CartPage = () => {
           unitPoints: item.unitPoints || 0,
           totalPoints: (item.unitPoints || 0) * (item.quantity || 1),
           templateId: (item.productType === 1 || item.productType === 2) ? item?.templateId : undefined,
+          prodcutCode: item.productCode || '',
+          categoryType: item.categoryType || 0,
+          categoryId: item.categoryId?.toString() || '0'
         })),
         storeId: user.shopNo || '',
         terminalType: 'PAD'
@@ -251,7 +254,9 @@ const CartPage = () => {
               productType: item.productType,
               productId: item.productId,
               quantity: item.quantity || 1,
-              isSelected: item.isSelected
+              isSelected: item.isSelected,
+              categoryType: item.categoryType,
+              categoryId: item.categoryId
             }))
           };
 

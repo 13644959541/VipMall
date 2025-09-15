@@ -5,12 +5,14 @@ export const cartAddOrUpdate = async (data: {
     storeId: string;
     countryCode: string;
     products: Array<{
-    productType: number;
-    productId: string;
-    quantity: number;
-    isSelected: boolean;
-    templateId?:string;
-  }>;
+      productType: number;
+      productId: string;
+      quantity: number;
+      isSelected: boolean;
+      templateId?:string;
+      categoryType:number;
+      categoryId:string;
+    }>;
 }): Promise<any[]> => {
   try {
     const response = await post('/front/cart/addOrUpdate', data);

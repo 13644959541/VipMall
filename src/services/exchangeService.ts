@@ -29,6 +29,8 @@ export interface ExchangeRequest {
      * 终端类型（APP:移动端, PAD:平板端）
      */
     terminalType: string;
+
+
 }
 
 /**
@@ -38,6 +40,9 @@ export interface ExchangeRequest {
  * ProductExchangeItem
  */
 export interface ProductExchangeItem {
+    categoryType:number;
+
+    categoryId:string;
     /**
      * 会员 ID
      */
