@@ -59,51 +59,13 @@
   overscroll-behavior: contain !important;
   scrollbar-width: none !important;
   -ms-overflow-style: none !important;
-  height: calc(100vh - 200px) !important;
+  height: calc(100vh - 140px) !important;
   
   &::-webkit-scrollbar {
     display: none !important;
     width: 0 !important;
     height: 0 !important;
     background: transparent !important;
-  }
-}
-
-/* 响应式设计 - 手机端 */
-@media (width <= 767px) {
-  .pad-home {
-    flex-direction: column;
-  }
-  
-  .sidebar {
-    width: 100%;
-    height: auto;
-    padding: 16px;
-  }
-  
-  .main-content {
-    height: calc(100vh - 200px);
-  }
-}
-
-/* Pad适配 (768px-1024px) */
-@media (width >= 768px) and (width <= 1024px) {
-  .pad-home {
-    flex-direction: row;
-  }
-  
-  .sidebar {
-    width: 220px;
-    padding: 20px;
-    font-size: 14px;
-  }
-  
-  .main-content {
-    height: 100vh;
-  }
-
-  .adm-swiper{
-    overflow: visible !important;
   }
 }
 

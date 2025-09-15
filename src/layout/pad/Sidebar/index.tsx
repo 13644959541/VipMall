@@ -40,7 +40,7 @@ const Sidebar: React.FC<SidebarProps> = ({
     points: user.points || 0
   };
   return (
-    <div className={className}>
+    <div className={className + " relative"}>
       {/* 用户信息 */}
       <UserProfile 
         avatar={displayUserInfo.avatar}
@@ -57,8 +57,8 @@ const Sidebar: React.FC<SidebarProps> = ({
       ]} />
 
 
-      {/*退出功能 */}
-       <div className="flex flex-row justify-center text-[#6F6F72] items-center mt-[250px]" onClick={() => NativeBridge.closePage()}>
+      {/*退出功能 - 绝对定位在底部 */}
+      <div className="absolute bottom-9 left-0 right-0 flex flex-row justify-center text-[#6F6F72] items-center" onClick={() => NativeBridge.closePage()}>
         <LogOut className="icon-logout text-[#6F6F72]" size={16} />
         {t('home.exitPointsMall')}
       </div>
