@@ -40,24 +40,26 @@ const AlertModal: React.FC<AlertModalProps> = ({
         </div>
       }
       content={
-        <div className={`${styles['inputWrapper']} space-y-6`}>
-          {/* Message content */}
-          <div className={styles.messageContent}>
-            {message}
-          </div>
-
-          {/* Action buttons */}
-          <div className={styles.modalActions}>
-            {showConfirmButton && (
-              <div onClick={onClose} className={styles.cancelButton}>
-              {cancelText}
+       // <div className="flex flex-col items-center justify-center">
+          <div className={`${styles['inputWrapper']} `}>
+            {/* Message content */}
+            <div className={styles.messageContent}>
+              {message}
             </div>
-            )}
-            <div onClick={onConfirm} className={styles.confirmButton}>
-                {confirmText}
+
+            {/* Action buttons */}
+            <div className={styles.modalActions}>
+              {showConfirmButton && (
+                <div onClick={onClose} className={styles.cancelButton}>
+                {cancelText}
               </div>
+              )}
+              <div onClick={onConfirm} className={styles.confirmButton}>
+                  {confirmText}
+                </div>
+            </div>
           </div>
-        </div>
+        //</div>
       }
       className={styles.modalWrapper}
     />
