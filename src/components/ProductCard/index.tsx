@@ -52,7 +52,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
             <span className="text-[14px] font-black line-clamp-2 h-[60px] text-gray-900" title={product.productName}>
               {product.productName}
             </span>
-            <span className="text-[14px] text-gray-500 truncate mt-1">
+            <span className="text-[14px] text-gray-500 whitespace-normal mt-1">
               {t('productDetail.itemsRedeemed')}{product.salesCount}
               {product.salesCount || 0 <= 1 
                 ? t('productDetail.countType') 
@@ -60,7 +60,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
               }
             </span>
             <div className="text-[14px] space-y-1 mt-1">
-              {showStock && <span className="text-[#6F6F72] block truncate">
+              {showStock && <span className="text-[#6F6F72] block whitespace-normal">
                 {t('productDetail.itemsRemaining')}: {product.stockQuantity}
                   {product.stockQuantity || 0 <= 1 
                 ? t('productDetail.countType') 
@@ -69,17 +69,17 @@ const ProductCard: React.FC<ProductCardProps> = ({
                 </span>}
                 {product.exchangeTimeRange && (
                   product.isExpired === 1 ? (
-                    <span className="text-[#E60012] block truncate" title={product.exchangeTimeRange}>
+                    <span className="text-[#E60012] whitespace-normal" title={product.exchangeTimeRange}>
                       [{t('productDetail.notYetAvailable')}] {product.exchangeTimeRange}
                     </span>
                   ) : (
-                    <span className="block text-[#6F6F72] truncate" title={product.exchangeTimeRange}>
+                    <span className="text-[#6F6F72] whitespace-normal" title={product.exchangeTimeRange}>
                       [{t('productDetail.redeemableTime')}] {product.exchangeTimeRange}
                     </span>
                   )
                 )}
               {product.exclusionText ? (
-                <span className="text-[#E60012] block truncate" title={product.exclusionText}>
+                <span className="text-[#E60012] block whitespace-normal" title={product.exclusionText}>
                   * {product.exclusionText}
                 </span>
               ) : (

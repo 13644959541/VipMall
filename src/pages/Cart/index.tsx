@@ -41,7 +41,6 @@ const CartPage = () => {
   const handleSwipe = (index: number, dx: number) => {
     const element = swipeRefs.current[index]
     if (element) {
-      // 限制最大滑动距离为100px
       const translateX = Math.max(-100, dx)
       element.style.transform = `translateX(${translateX}px)`
     }
@@ -283,7 +282,7 @@ const CartPage = () => {
     e.preventDefault()
     navigate(`/product/${product.productId}`, {
         state: {
-          disabled: true,
+          disabled: false,
           product: {...product}
         }
       })
@@ -305,25 +304,20 @@ const CartPage = () => {
             <div className={`${styles['title-bar']} flex items-center justify-between`}>{t('home.shoppingCart')} ({items.length})</div>
             {items.map((item, index) => (
               <React.Fragment key={item.productId}>
-                <div className="flex w-full items-center">
+                <div className="flex w-full space-y-1 items-center mb-[10px]">
                   <div className="ml-1 mr-1">
                     <Checkbox
-                      checked={items.length > 0 && items.every(item => item.isSelected)}
+                      checked={item.isSelected}
                       onChange={(checked) => {
-                        items.forEach(item => {
-                          if (item.isSelected !== checked) {
-                            toggleSelect(item.productId)
-                          }
-                        })
+                        toggleSelect(item.productId)
                       }}
-
                     />
                   </div>
 
                   <div className="relative overflow-hidden bg-white rounded-[20px] w-full mr-1">
                     {/* Delete Button (shown on swipe) */}
                     <div
-                      className="absolute rounded-[25px] right-0 top-0 h-full w-[113px] bg-[#E60012] flex items-center justify-center text-white z-10"
+                      className="absolute rounded-[25px] right-0 top-0 h-full w-[81px] bg-[#E60012] flex items-center justify-center text-white z-10"
                       onClick={() => handleDeleteItem(item.productId)}
                     >
                       {t('cart.delete')}
@@ -336,7 +330,7 @@ const CartPage = () => {
                             swipeRefs.current[index] = el
                           }
                         }}
-                        className="flex items-center p-1 transition-transform duration-300 bg-white z-20 relative"
+                        className="flex items-center p-1  transition-transform duration-300 bg-white z-20 relative"
                         style={{ transform: 'translateX(0)' }}
                         onTouchStart={(e) => {
                           const touch = e.touches[0];
@@ -359,9 +353,11 @@ const CartPage = () => {
                         />
                         <div className="ml-3 flex-1 space-y-1">
                           <div className={styles.name}>{item.productName}</div>
-                          <div className="space-y-1">
-                            <div className={`${styles['font']} ${styles['rule']}`}>* {item.exclusionText || ''}</div>
-                          </div>
+                          {item.exclusionText && item.exclusionText.trim() !== '' && (
+                            <div className="space-y-1">
+                              <div className={`${styles['font']} ${styles['rule']}`}>* {item.exclusionText}</div>
+                            </div>
+                          )}
                           <div className="flex justify-between items-center mt-2">
                             <div className="flex items-center mr-2">
                               <img
@@ -375,25 +371,29 @@ const CartPage = () => {
 
                             <div className="flex flex-col items-end">
                               <div className="flex items-center gap-1">
+                                {/* 减号按钮 */}
                                 <div
-                                  className="w-[30px] h-[30px] rounded-full bg-gray-200 text-black text-xxs flex items-center justify-center"
-                                  onClick={() => updateQuantity(item.productId, Math.max(1, (item.quantity || 1) - 1))}
+                                  className="w-[24px] h-[24px] rounded-full bg-gray-200 text-black text-xxs flex items-center justify-center"
+                                  onClick={(e) => {
+                                    e.stopPropagation(); // 阻止事件冒泡
+                                    updateQuantity(item.productId, Math.max(1, (item.quantity || 1) - 1))
+                                  }}
                                 >
-                                  -
+                                  <img src="/sub.svg" className="" alt="减号" />
                                 </div>
                                 <div className="text-xxxs">{item.quantity || 1}</div>
                                 <div
-                                  className="w-[22px] h-[22px] rounded-full bg-[#E60012] text-white text-xxs flex items-center justify-center"
-                                  onClick={() => {
-                                    // 创建要添加的商品对象（模拟增加数量的操作）
+                                  className="w-[24px] h-[24px] rounded-full bg-[#E60012] text-white text-xxs flex items-center justify-center"
+                                  onClick={(e) => {
+                                    e.stopPropagation(); // 阻止事件冒泡
                                     const productToAdd = {
                                       ...item,
-                                      quantity: 1 // 每次点击+按钮增加1个数量
+                                      quantity: 1 
                                     }
                                     handleAddItemWithConflictCheck(productToAdd)
                                   }}
                                 >
-                                  +
+                                   <img src="/add.svg" className="" alt="加号" />
                                 </div>
                               </div>
                             </div>

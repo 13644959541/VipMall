@@ -18,8 +18,7 @@ export default function Select({
 }: SelectProps) {
   const [open, setOpen] = useState(false);
   const { t } = useTranslation('common'); // 这里指定命名空间
-  defaultLabel = t('product.memberZone')
-  const [selected, setSelected] = useState(defaultLabel);
+   const [selected, setSelected] = useState(options.length > 0 ? options[0].label : t('product.memberZone'));
   const dropdownRef = useRef<HTMLDivElement>(null);
   const handleSelect = (value: string) => {
     const item = options.find((opt) => opt.value === value)!;
