@@ -41,7 +41,7 @@ const GiftContent: React.FC<GiftContentProps> = ({ products, sortOptions, checkb
     if (level && level !== 'all') {
       result = result.filter(product => {
         if (product.membershipLevel === undefined) return false;
-        return parseInt(product.membershipLevel) <= parseInt(level);
+        return product.membershipLevel.includes(level);
       });
     }
     const userPoints = user?.points || 0;
@@ -56,12 +56,12 @@ const GiftContent: React.FC<GiftContentProps> = ({ products, sortOptions, checkb
     }
     // 计算每个商品的禁用状态
     const productsWithDisabled = result.map(product => {
-      // Gift类型：看isAvailable和库存
-      const disabled = !!product.isExpired ||
-        (product.stockQuantity !== undefined && product.stockQuantity === 0) ||
-        (level && level !== 'all'
-          && product.membershipLevel?.includes(currentUserLevel)
-          || userPoints < Number(product.pointsRequired));
+     const disabled = !!product.isExpired ||
+        // 检查商品是否支持筛选等级或当前用户等级
+        (level && level !== 'all' && !product.membershipLevel?.includes(level)) ||
+        (!product.membershipLevel?.includes(currentUserLevel)) ||
+        userPoints < Number(product.pointsRequired) ||
+        (product.stockQuantity !== undefined && product.stockQuantity <= 0);
       return {
         ...product,
         disabled: !!disabled // 确保是boolean类型

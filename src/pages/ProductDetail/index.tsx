@@ -302,7 +302,27 @@ const ProductDetail: React.FC = () => {
       return result;
     }, {} as Record<string, number>);
   };
-  
+
+  // 格式化兑换时间显示
+  const formatExchangeTime = (startTime: string, endTime: string) => {
+    const format = (dateString: string) => {
+      const date = new Date(dateString);
+      return `${date.getFullYear()}/${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getDate().toString().padStart(2, '0')} ${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}:${date.getSeconds().toString().padStart(2, '0')}`;
+    };
+    return `${format(startTime)} - ${format(endTime)}`;
+  };
+
+  // 获取时间状态
+  const getTimeStatus = (startTime: string, endTime: string) => {
+    const now = new Date();
+    const start = new Date(startTime);
+    
+    if (now < start) {
+      return t('productDetail.notYetAvailable');
+    } else {
+      return t('productDetail.redeemableTime'); // 默认为 ;
+    }
+  };
   if (!product) {
     return null;
   }
@@ -344,21 +364,19 @@ const ProductDetail: React.FC = () => {
               />
               <div className={`${styles['point']} mr-2`}>{product.currentLevelPoints ?? 0}</div>
               <div className={`${styles['originalPrice']} mr-2`}>¥{product.productValue}</div>
-              {/* <div className={`${styles['levelTap']} mr-2`}>{`${product.nextMemberLevel}仅需${product.nextLevelPoints}捞币`} </div> */}
-
-               {/* 修改这里 - 显示会员等级名称 */}
               {(() => {
                 const nextLevelInfo = product?.nextMemberLevel !== undefined 
                   ? memberLevels.find(item => item.level === parseInt(product.nextMemberLevel || "1"))
                   : null;
                 
-                return nextLevelInfo ? (
+                // 检查条件：1. nextLevelPoints 和当前积分一致不显示 2. 当前会员不在限购等级里不显示
+                const shouldShowNextLevelInfo = nextLevelInfo && 
+                  product.nextLevelPoints !== product.currentLevelPoints && // 条件1：nextLevelPoints不等于当前用户积分
+                  product.membershipLevel?.includes(currentUserLevel.toString()); // 条件2：当前用户在限购等级中
+                
+                return shouldShowNextLevelInfo ? (
                   <div className={`${styles['levelTap']} mr-2`}>
-                    {`${nextLevelInfo.name}仅需${product.nextLevelPoints}捞币`}
-                  </div>
-                ) : product?.nextMemberLevel ? (
-                  <div className={`${styles['levelTap']} mr-2`}>
-                    {`等级${product.nextMemberLevel}仅需${product.nextLevelPoints}捞币`}
+                    {`${nextLevelInfo.name} ${product.nextLevelPoints} `}{t('product.points')}
                   </div>
                 ) : null;
               })()}
@@ -401,23 +419,29 @@ const ProductDetail: React.FC = () => {
           <div className={`relative`}>
             <div className="absolute right-0 -top-[50px] flex items-center gap-1">
               <div
-                className={`w-[22px] h-[22px] rounded-full ${ !product.disabled ? 'bg-gray-200 text-black cursor-pointer hover:bg-gray-300' : 'bg-gray-100 text-gray-400 cursor-not-allowed'} flex items-center justify-center transition-colors select-none active:scale-95 touch-manipulation`}
-                onClick={product.disabled ? () => setQuantity(Math.max(1, quantity - 1)) : undefined}
+                className={`w-[22px] h-[22px] rounded-full ${ !product.disabled ? 'bg-gray-200 text-black cursor-pointer hover:bg-gray-300' : 'bg-gray-100 text-[#6F6F72] cursor-not-allowed'} flex items-center justify-center transition-colors select-none active:scale-95 touch-manipulation`}
+                onClick={!product.disabled ? () => setQuantity(Math.max(1, quantity - 1)) : undefined}
               >
                 -
               </div>
               <div className="text-xxxs">{quantity}</div>
               <div
-                className={`w-[22px] h-[22px] rounded-full ${!product.disabled  ? 'bg-[#E60012] text-white cursor-pointer hover:bg-[#ff0018]' : 'bg-gray-100 text-gray-400 cursor-not-allowed'} flex items-center justify-center transition-colors select-none active:scale-95 touch-manipulation`}
-                onClick={product.disabled  ? () => setQuantity(quantity + 1) : undefined}
+                className={`w-[22px] h-[22px] rounded-full ${!product.disabled  ? 'bg-[#E60012] text-white cursor-pointer hover:bg-[#ff0018]' : 'bg-gray-100 text-[#6F6F72] cursor-not-allowed'} flex items-center justify-center transition-colors select-none active:scale-95 touch-manipulation`}
+                onClick={!product.disabled  ? () => setQuantity(quantity + 1) : undefined}
               >
                 +
               </div>
             </div>
           </div>
-          <div className={`${styles['font']}`} >{product.availableTime} </div>
-          <div className={`${styles['font']} ${styles['rule']}`} >* {product.exclusionText}</div>
-          <div className="flex items-end justify-end h-1 gap-1">
+            {product.exchangeStartTime && product.exchangeEndTime && (
+               <div className={`${styles['font']}`}>
+                [{getTimeStatus(product.exchangeStartTime, product.exchangeEndTime)}] {formatExchangeTime(product.exchangeStartTime, product.exchangeEndTime)}
+               </div>
+            )}
+          {product.exclusionText && (
+            <div className={`${styles['font']} ${styles['rule']}`} >* {product.exclusionText}</div>
+          )}
+          <div className="flex items-end justify-end h-1 gap-1 min-h-[50px]">
             <div
               className={`${styles['cartButton']} ${product.disabled ? styles['disabledButton'] : ''}`}
               //onClick={handleAddToCart}

@@ -41,7 +41,7 @@ const MealContent: React.FC<MealContentProps> = ({ products, sortOptions, checkb
     if (level && level !== 'all') {
       result = result.filter(product => {
         if (product.membershipLevel === undefined) return false;
-        return parseInt(product.membershipLevel) <= parseInt(level);
+         return product.membershipLevel.includes(level);
       });
     }
     const userPoints = user?.points || 0;
@@ -59,6 +59,8 @@ const MealContent: React.FC<MealContentProps> = ({ products, sortOptions, checkb
     const productsWithDisabled = result.map(product => {
       // Meal类型：只看isExpired
      const disabled = !!product.isExpired ||
+        // 检查商品是否支持筛选等级或当前用户等级
+        (level && level !== 'all' && !product.membershipLevel?.includes(level)) ||
         (!product.membershipLevel?.includes(currentUserLevel) || userPoints < Number(product.pointsRequired))
         || (product.stockQuantity !== undefined && product.stockQuantity <= 0);
       return {

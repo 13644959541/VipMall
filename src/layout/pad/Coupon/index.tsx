@@ -37,13 +37,7 @@ const CouponContent: React.FC<CouponContentProps> = ({ products, checkboxName, s
     // 先筛选
     let result = [...products];
 
-    // 先按会员等级筛选
-    if (level && level !== 'all') {
-      result = result.filter(product => {
-        if (product.membershipLevel === undefined) return false;
-        return parseInt(product.membershipLevel) <= parseInt(level);
-      });
-    }
+    // 不再按会员等级筛选移除商品，改为在禁用状态中处理显示
     const userPoints = user?.points || 0;
     // 如果"我可兑"复选框选中，再进行积分和会员等级筛选
     if (showRedeemableOnly) {
@@ -56,9 +50,12 @@ const CouponContent: React.FC<CouponContentProps> = ({ products, checkboxName, s
 
     // 计算每个商品的禁用状态
     const productsWithDisabled = result.map(product => {
-      const disabled = !!product.isExpired ||
-        (level && level !== 'all' && product.membershipLevel?.includes(currentUserLevel)
-          || userPoints < Number(product.pointsRequired));
+     const disabled = !!product.isExpired ||
+        // 检查商品是否支持筛选等级或当前用户等级
+        (level && level !== 'all' && !product.membershipLevel?.includes(level)) ||
+        (!product.membershipLevel?.includes(currentUserLevel)) ||
+        userPoints < Number(product.pointsRequired) ||
+        (product.stockQuantity !== undefined && product.stockQuantity <= 0);
       return {
         ...product,
         disabled: !!disabled // 确保是boolean类型

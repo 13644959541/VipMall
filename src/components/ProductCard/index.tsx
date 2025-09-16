@@ -60,20 +60,24 @@ const ProductCard: React.FC<ProductCardProps> = ({
               }
             </span>
             <div className="text-[14px] space-y-1 mt-1">
-              {showStock && <span className="text-gray-400 block truncate">
+              {showStock && <span className="text-[#6F6F72] block truncate">
                 {t('productDetail.itemsRemaining')}: {product.stockQuantity}
                   {product.stockQuantity || 0 <= 1 
                 ? t('productDetail.countType') 
                 : t('productDetail.countsType')
               }
                 </span>}
-              {product.exchangeTimeRange ? (
-               <span className="text-[#E60012] block truncate" title={product.exchangeTimeRange}>
-                   [{t('productDetail.notYetAvailable')}] {product.exchangeTimeRange}
-                </span>
-              ) : (
-                <span className="text-transparent">*</span>
-              )}
+                {product.exchangeTimeRange && (
+                  product.isExpired === 1 ? (
+                    <span className="text-[#E60012] block truncate" title={product.exchangeTimeRange}>
+                      [{t('productDetail.notYetAvailable')}] {product.exchangeTimeRange}
+                    </span>
+                  ) : (
+                    <span className="block text-[#6F6F72] truncate" title={product.exchangeTimeRange}>
+                      [{t('productDetail.redeemableTime')}] {product.exchangeTimeRange}
+                    </span>
+                  )
+                )}
               {product.exclusionText ? (
                 <span className="text-[#E60012] block truncate" title={product.exclusionText}>
                   * {product.exclusionText}

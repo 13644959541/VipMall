@@ -51,10 +51,10 @@
     "pointsHighToLow": "Points: High to Low"
   },
   "productDetail": {
-    "redMemberPoints": "Red Members: Only require {{points}} Coins",
-    "silverMemberPoints": "Silver Members: Only require {{points}} Coins",
-    "goldMemberPoints": "Gold Members: Only require {{points}} Coins",
-    "premiumMemberPoints": "Premium Members: Only require {{points}} Coins",
+    "redMemberPoints": "Red Members: Only require",
+    "silverMemberPoints": "Silver Members: Only require",
+    "goldMemberPoints": "Gold Members: Only require",
+    "premiumMemberPoints": "Premium Members: Only require",
     "purchaseRestrictionLevel": "Purchase Restriction Level",
     "itemsRedeemed": "redeemed",
     "countsType": "items",

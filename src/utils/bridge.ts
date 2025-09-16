@@ -98,7 +98,7 @@ export const NativeBridge = {
       unsubscribe: false,
       loginType: "1",//loginType	String	登录类型 1手机号，2邮箱
       loginStyle: "3", //loginStyle	String	登录方式 1:免密登录 2:账号密码 3:验证码登录
-      verifyType:"",	//	802参数 1 仅核销时验证 2 兑换、核销时验证 3 无需验证
+      verifyType:"2",	//	802参数 1 仅核销时验证 2 兑换、核销时验证 3 无需验证
       isRemoteLogin: "false",
       customerKey: "n-149405263605600",
       posPushFlag: "false",

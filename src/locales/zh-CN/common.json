@@ -43,10 +43,10 @@
     "pointsHighToLow": "积分从高到低"
   },
   "productDetail": {
-    "redMemberPoints": "红海会员仅需{{points}}捞币",
-    "silverMemberPoints": "银海会员仅需{{points}}捞币",
-    "goldMemberPoints": "金海会员仅需{{points}}捞币",
-    "premiumMemberPoints": "黑海会员仅需{{points}}捞币",
+    "redMemberPoints": "红海会员仅需",
+    "silverMemberPoints": "银海会员仅需",
+    "goldMemberPoints": "金海会员仅需",
+    "premiumMemberPoints": "黑海会员仅需",
     "purchaseRestrictionLevel": "限购等级",
     "itemsRedeemed": "已换购",
     "countsType": "份",
