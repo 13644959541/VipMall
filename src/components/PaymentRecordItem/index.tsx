@@ -1,7 +1,8 @@
 import React from 'react'
-import { Image as AntdImage } from 'antd-mobile'
+import { Image as AntdImage, Dialog, Button } from 'antd-mobile'
 import styles from './index.module.less'
 import { useTranslation } from 'react-i18next'
+import { RightOutline } from "antd-mobile-icons";
 
 interface PaymentRecordItemProps {
   record: {
@@ -16,6 +17,8 @@ interface PaymentRecordItemProps {
     orderRule: string
     orderChannel: string
     orderValidDate?: string
+    applicableStoresName?: string
+    applicableStoresNameList?: string[]
     type: 'gift' | 'coupon'
   }
   onRedeem?: (recordId: string, currentStatus: string) => void
@@ -48,11 +51,43 @@ const PaymentRecordItem: React.FC<PaymentRecordItemProps> = ({ record, onRedeem 
           {record.type === 'coupon' && record.orderValidDate && (
             <div className={`${styles['font']}`}>{t('redemptionRecord.validUntil')}: {record.orderValidDate}</div>
           )}
-          
           <div className={`${styles['font']}`}>{t('redemptionRecord.usageRules')}: {record.orderRule}</div>
           <div className={`${styles['font']}`}>{t('redemptionRecord.actualPayment')}: {record.points}</div>
           <div className={`${styles['font']}`}>{t('redemptionRecord.redemptionChannel')}: {record.orderChannel}</div>
-          
+          {/* 门店显示逻辑 - 只在数组为空时显示 */}
+          {record.applicableStoresNameList && record.applicableStoresNameList.length === 0 && (
+            <div className={`${styles['font']}`}>
+              {t('productDetail.availableStores')}: {t('product.all')}
+            </div>
+          )}
+          {/* 查看门店详情按钮 */}
+          {record.applicableStoresNameList && record.applicableStoresNameList.length > 0 && (
+             <div  className={`${styles['font']}`}
+              onClick={() => {
+                Modal.show({
+                  title: t('productDetail.availableStores'),
+                  content: (
+                    <div>
+                      {record.applicableStoresNameList!.map((store, index) => (
+                        <div key={index}  className={`${styles['font']}`} style={{ 
+                          marginBottom: '8px', 
+                          paddingBottom: '8px',
+                          borderBottom: '1px solid #e5e5e5'
+                        }}>
+                          {store}
+                        </div>
+                      ))}
+                    </div>
+                  ),
+                  closeOnMaskClick: true,
+                  showCloseButton: true,
+                  closeOnAction: true,
+                })
+              }}
+            >
+              {t('productDetail.availableStores')} <RightOutline />
+            </div>
+          )}
           {/* 周边商城类型显示核销按钮 */}
           {record.type === 'gift' && onRedeem && (
             <div className="flex items-end justify-end h-1 gap-1">
@@ -60,7 +95,7 @@ const PaymentRecordItem: React.FC<PaymentRecordItemProps> = ({ record, onRedeem 
                 className={`${styles['redeemButton']} ${record.status === 'completed' ? styles['disabled'] : ''}`}
                 onClick={() => record.status === 'processing' && onRedeem(record.id, record.status)}
               >
-                {record.status === 'processing' ? t('redemptionRecord.verifyNow'): t('redemptionRecord.verified')}
+                {record.status === 'processing' ? t('redemptionRecord.verifyNow') : t('redemptionRecord.verified')}
               </div>
             </div>
           )}

@@ -7,13 +7,13 @@ import GiftContent from '@/layout/pad/Gift'
 import MealContent from '@/layout/pad/Meal'
 import CouponContent from '@/layout/pad/Coupon'
 import { useTranslation } from 'react-i18next';
-import { getHotList, getHotProductList, getProductList, Product } from '../../services/productService';
+import { getHotList, getProductList, Product } from '../../services/productService';
 import { getCountryBanners, getCategoryTree, CategoryResponse } from '../../services/headerService';
 import LoadingView from '../../components/LoadingView';
 import { useAuthModel } from '@/model/useAuthModel';
 
 const HomePad = () => {
-  const { t, i18n } = useTranslation('common'); // 这里指定命名空间
+  const { t, i18n } = useTranslation('common'); 
   const { user } = useAuthModel();
   const [activeIndex, setActiveIndex] = useState(0)
   const [hot, setHotProducts] = useState<Product[]>([]);
@@ -60,7 +60,7 @@ const HomePad = () => {
         }
         
         setCarouselItems(banners.map((banner) => ({
-          image: banner.appImageUrl,
+          image: banner.padImageUrl,
           alt: banner.title || "banner",
         })));
       } catch (error) {

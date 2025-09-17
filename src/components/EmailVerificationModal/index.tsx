@@ -57,9 +57,12 @@ const EmailVerificationModal: React.FC<EmailVerificationModalProps> = ({
     let timer: NodeJS.Timeout;
     if (countdown > 0) {
       timer = setTimeout(() => setCountdown(countdown - 1), 1000);
+    } else if (countdown === 0 && hasSent && verificationType === 'email') {
+      // 倒计时结束且是邮箱验证时，设置 emailSent 为 true
+      setEmailSent(true);
     }
     return () => clearTimeout(timer);
-  }, [countdown]);
+  }, [countdown, hasSent, verificationType]);
 
   const formatUserInfo = () => {
     if (verificationType === 'email' && userInfo?.email) {
@@ -78,9 +81,9 @@ const EmailVerificationModal: React.FC<EmailVerificationModalProps> = ({
     setHasSent(true);
 
     // 如果是邮箱验证，标记邮箱验证码已发送
-    if (verificationType === 'email') {
-      setEmailSent(true);
-    }
+    // if (verificationType === 'email') {
+    //   setEmailSent(true);
+    // }
 
     try {
       const { user } = useAuthModel.getState();
@@ -181,7 +184,7 @@ const EmailVerificationModal: React.FC<EmailVerificationModalProps> = ({
               onClick={(sending || countdown > 0) ? undefined : handleSendCode}
               className={`${styles.sendCodeButton} ${(sending || countdown > 0) ? styles.disabled : ''}`}
             >
-              {countdown > 0 ? `${countdown}s` : (sending ? 'send...' : (hasSent ? 'send' : t('modal.getCode')))}
+              {countdown > 0 ? `${countdown}s` : (sending ? '...' : (hasSent ? t('modal.getCode') : t('modal.getCode')))}
             </a>
           </div>
           {/* Toggle button for switching verification type */}
@@ -189,7 +192,7 @@ const EmailVerificationModal: React.FC<EmailVerificationModalProps> = ({
             <div className={styles.toggleWrapper}>
               <a
                 onClick={(verificationType === 'email' && !emailSent) ? undefined : toggleVerificationType}
-                className={`${styles.toggleButton} ${(verificationType === 'email' && !emailSent) ? styles.disabled : ''}`}
+                className={` ${(verificationType === 'email' && !emailSent) ? styles.toggleButton : styles.toggleButtonActive}`}
               >
                 {verificationType === 'email' ? t('modal.sendSmsCode') : t('modal.sendEmailCode')}
               </a>

@@ -477,14 +477,6 @@ const ProductDetail: React.FC = () => {
               </div>
             )}
             <div className="flex space-y-1 flex-col text-xxxs">
-              <div className={styles['font']}>{TEXT.REDEMPTION_purchaseRestrictionLevel}</div>
-              <div className={styles['value']}>
-                {getMemberLevelNames(product.membershipLevel).map((levelName, index) => (
-                  <div key={index}>{levelName}</div>
-                ))}
-              </div>
-            </div>
-            <div className="flex space-y-1 flex-col text-xxxs">
               <div className={styles['font']}>{TEXT.REDEMPTION_availableStores}</div>
               <div className={styles['value']}>
                 {!product.applicableStoresNameList || product.applicableStoresNameList.length === 0 ? (
@@ -532,7 +524,7 @@ const ProductDetail: React.FC = () => {
             </div>
             <div className="flex space-y-1 flex-col text-xxxs">
               <div className={styles['font']}>{TEXT.REDEMPTION_usageInstructions}</div>
-              <div className={styles['value']}>{product.exchangeDescription}</div>
+              <TextArea className={styles['value']} defaultValue={product.exchangeDescription} showCount />
             </div>
           </div>
         </div>

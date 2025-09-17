@@ -27,7 +27,6 @@ const Carousel = ({ items, height, className = '' }: CarouselProps) => {
         backgroundColor: '#f5f5f5',
         borderRadius: '10px'
       }}>
-       
       </div>
     )
   }
@@ -48,7 +47,6 @@ const Carousel = ({ items, height, className = '' }: CarouselProps) => {
             width="100%"  
             style={{ borderRadius: '10px', margin: '0 auto' }} // 添加margin实现居中
             height={`${height}px`}
-            fit="cover"
             fallback={item.fallback}
           />
 

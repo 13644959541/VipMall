@@ -24,6 +24,8 @@ interface PaymentRecordItem {
   orderRule: string
   orderChannel: string
   orderValidDate?: string
+  applicableStoresName?: string,
+  applicableStoresNameList?: string[],
   type: 'gift' | 'coupon' // 添加类型字段区分礼品和优惠券
 }
 
@@ -97,6 +99,8 @@ const PaymentRecordPage = () => {
     orderRule: item.exclusionText || '',
     orderChannel: item.terminalType || 'App',
     orderValidDate: item.validityPeriod,
+    applicableStoresName: item.applicableStoresName || '',
+    applicableStoresNameList: item.applicableStoresNameList || [],
     type: item.productType === '1' ? 'coupon' : 'gift'
   });
 

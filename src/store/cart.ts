@@ -126,7 +126,7 @@ export const useCartStore = create<CartState>()(
             const newItem = {
               ...product,
               quantity: product.quantity || 1,
-              isSelected: true
+              isSelected: product.isSelected ?? true
             }
             console.log('Creating new item:', newItem)
             return { items: [...state.items, newItem] }

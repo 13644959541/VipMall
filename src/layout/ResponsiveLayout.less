@@ -7,11 +7,11 @@
   overflow: hidden;
 
   // 全局控制tab-bar显示
-  .responsive-layout .tab-bar {
-    @media (width >= 768px) {
-      display: none !important;
-    }
-  }
+  // .responsive-layout .tab-bar {
+  //   @media (width >= 768px) {
+  //     display: none !important;
+  //   }
+  // }
 
   .header-container {
     position: fixed;
@@ -65,36 +65,36 @@
   }
 
   // 手机布局 (<768px)
-  @media (max-width: 767px) {
-    .pad-only {
-      display: none !important;
-    }
+  // @media (max-width: 767px) {
+  //   .pad-only {
+  //     display: none !important;
+  //   }
 
-    .mobile-only {
-      display: block;
-    }
-  }
+  //   .mobile-only {
+  //     display: block;
+  //   }
+  // }
 
-  // Pad布局 (≥768px)
-  @media (min-width: 768px) {
-    flex-direction: row;
-    width: 100%;
-    margin: 0;
-    padding: 0;
+  // // Pad布局 (≥768px)
+  // @media (min-width: 768px) {
+  //   flex-direction: row;
+  //   width: 100%;
+  //   margin: 0;
+  //   padding: 0;
 
-    .mobile-only {
-      display: none !important;
-    }
+  //   .mobile-only {
+  //     display: none !important;
+  //   }
 
-    .pad-only {
-      display: block;
-    }
+  //   .pad-only {
+  //     display: block;
+  //   }
 
-    .desktop-layout {
-      width: 100%;
-      min-width: 100%;
-      margin-left: 0;
-      margin-top: 65px;
-    }
-  }
+  //   .desktop-layout {
+  //     width: 100%;
+  //     min-width: 100%;
+  //     margin-left: 0;
+  //     margin-top: 65px;
+  //   }
+  // }
 }
