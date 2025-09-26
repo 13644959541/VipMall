@@ -62,7 +62,7 @@
     "availableStores": "可用門店",
     "validityPeriod": "有效日期",
     "availableTime": "可用時間",
-    "coinRedemption": "撈幣兌換",
+    "coinRedemption": "積分兌換",
     "transferable": "是否可轉增",
     "usageInstructions": "使用說明"
   },
@@ -144,5 +144,24 @@
     "cancel": "取消",
     "back": "返回",
     "next": "下一步"
+  },
+  "supplementary":{
+    "redemptionCoupon":"兌換券",
+    "daily":"每天",
+    "allDay":"全天",
+    "monday":"星期一",
+    "tuesday":"星期二",
+    "wednesday":"星期三",
+    "thursday":"星期四",
+    "friday":"星期五",
+    "saturday":"星期六",
+    "sunday":"星期日",
+    "tomorrow":"次日",
+    "transferable":"可轉增",
+    "noTransferable":"不可轉增",
+    "sent":"再次發送",
+    "selectProduct":"請選擇要兌換的商品",
+    "noProduct":"商品已下架",
+    "allStores" : "全部門店"
   }
 }

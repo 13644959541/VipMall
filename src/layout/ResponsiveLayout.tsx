@@ -14,11 +14,9 @@ export default function ResponsiveLayout({ children }: ResponsiveLayoutProps) {
   useEffect(() => {
     const handleResize = () => {
       const newIsPad = window.innerWidth >= 768 
-      console.log('Window resized - isPad:', newIsPad, 'Width:', window.innerWidth);
       setIsPad(newIsPad);
     };
 
-    // 初始执行一次
     handleResize();
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
@@ -33,7 +31,7 @@ export default function ResponsiveLayout({ children }: ResponsiveLayoutProps) {
           </div>
           <div className="desktop-layout">
             <Sidebar key="desktop-sidebar" className="sidebar bg-white" />
-            <div className="main-content rounded-lg">{children}</div>
+            <div className="main-content rounded-[16px]">{children}</div>
           </div>
         </>
       ) : (

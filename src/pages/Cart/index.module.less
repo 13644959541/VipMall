@@ -1,12 +1,12 @@
 .cart-msg {
   width: auto;
   height: 20px;
-  font-family: "SF Pro";
+ 
   font-weight: 590;
   font-size: 16px;
   line-height: 20px;
   letter-spacing: 0;
-  color: black;
+  color: #9B9B9E;
   margin-top: 10px;
 }
 
@@ -22,25 +22,31 @@
 
   .font {
     color: #FFF;
-    font-family: "SF Pro";
+   
     font-weight: 860;
     font-size: 20px;
     line-height: 24px;
     letter-spacing: 0;
     vertical-align: middle;
     text-align: left !important;
+    padding-bottom: 12px;
   }
 
   :global(.adm-checkbox.adm-checkbox-checked .adm-checkbox-icon) {
-    border-color: #FFF;
-    background-color: inherit !important;
+    border-color: #FFFFFF;
+    background-color: #E60012;
+  }
+  :global(.adm-checkbox .adm-checkbox-icon) {
+    background-color: #E60012;
+    border: 3px solid #FFFFFF;
   }
 }
 
 .name {
   height: 20px;
+  width: 616px;
   opacity: 1;
-  font-family: "SF Pro";
+ 
   font-weight: 590;
   font-size: 16px;
   line-height: 20px;
@@ -49,7 +55,7 @@
 
 
 .span {
-  margin-top: 10px;
+  margin-top: 18px;
   font-weight: 400;
   font-size: 12px;
   line-height: 16px;
@@ -64,12 +70,11 @@
 }
 
 .point {
-  width: 71px;
-  height: 30px;
-  font-family: "SF Pro";
+ 
+ 
   font-weight: 860;
   font-size: 18px;
-  line-height: 30px;
+  line-height: 22px;
   letter-spacing: 0;
   color: #E60012;
 }
@@ -77,8 +82,7 @@
 .originalPrice {
   width: 27px;
   height: 19px;
-  padding-top: 9px;
-  font-family: "SF Pro";
+ 
   font-weight: 400;
   font-size: 14px;
   line-height: 19px;
@@ -90,7 +94,7 @@
 
 .font {
   color: #6F6F72;
-  font-family: "SF Pro";
+ 
   font-weight: 400;
   font-size: 14px;
   line-height: 18px;
@@ -147,4 +151,10 @@
 :global(.adm-checkbox.adm-checkbox-checked .adm-checkbox-icon) {
   border-color: #FFF;
   background-color: #E60012;
+}
+
+:global(.adm-checkbox-icon) {
+    width: 20px;
+    height: 20px;
+    background-color: #FFFFFF;
 }

@@ -26,7 +26,10 @@ interface PaymentRecordItem {
   orderValidDate?: string
   applicableStoresName?: string,
   applicableStoresNameList?: string[],
-  type: 'gift' | 'coupon' // 添加类型字段区分礼品和优惠券
+  storeName?: string,
+  type?:string
+  categoryType?: number,
+  validityPeriod?: string
 }
 
 const PaymentRecordPage = () => {
@@ -45,7 +48,6 @@ const PaymentRecordPage = () => {
     { key: 'coupon', title: t('redemptionRecord.coupon') }
   ]
 
-  const [records, setRecords] = useState<PaymentRecordItem[]>([])
   const [giftRecords, setGiftRecords] = useState<OrderItemRecordResponse[]>([])
   const [couponRecords, setCouponRecords] = useState<OrderItemRecordResponse[]>([])
   const [loading, setLoading] = useState(true)
@@ -61,23 +63,29 @@ const PaymentRecordPage = () => {
         const giftData = await getOrderRequest({
           language: i18n.language,
           memberId: user.customerKey || '',
-          productType: 0, // 0-周边礼品
-          storeId: user.shopNo || ''
+          categoryType: 0, // 0-周边礼品
+          storeId: user.shopNo || '',
+          countryCode: user.country || ''
         });
         setGiftRecords(giftData);
-
+        
         // 加载优惠券订单
         const couponData = await getOrderRequest({
           language: i18n.language,
           memberId: user.customerKey || '',
-          productType: 1, // 1-代金券
-          storeId: user.shopNo || ''
+          categoryType: 1, // 1-代金券
+          storeId: user.shopNo || '',
+          countryCode: user.country || ''
         });
         setCouponRecords(couponData);
 
       } catch (error) {
         console.error('加载订单数据失败:', error);
-        Toast.show({ icon: 'fail', content: t('modal.requestFailed') });
+        Toast.show({
+          content: t('modal.requestFailed'),
+          position: 'center',
+          duration: 3000
+        })
       } finally {
         setLoading(false);
       }
@@ -101,20 +109,21 @@ const PaymentRecordPage = () => {
     orderValidDate: item.validityPeriod,
     applicableStoresName: item.applicableStoresName || '',
     applicableStoresNameList: item.applicableStoresNameList || [],
-    type: item.productType === '1' ? 'coupon' : 'gift'
+    storeName: item.storeName || '',
+    type: item.productType  || "0",
+    categoryType: item.categoryType || 0,
+    validityPeriod: item.validityPeriod || ''
   });
 
   const convertedGiftRecords = giftRecords.map(convertToPaymentRecord);
   const convertedCouponRecords = couponRecords.map(convertToPaymentRecord);
 
   const handleChangeStatus = (recordId: string, currentStatus: string) => {
-    if (currentStatus === 'completed') return; // 已核销的不再处理
+    if (currentStatus === 'completed') return;
 
-    // 保存当前记录信息
     setCurrentRecordId(recordId)
     setCurrentRecordStatus(currentStatus)
 
-    // 显示确认核销的AlertModal
     setAlertContent({
       title: t('modal.confirmVerification') ,
       message:  t('modal.confirmMerchandiseVerification') 
@@ -123,10 +132,8 @@ const PaymentRecordPage = () => {
   }
 
   const handleConfirmVerification = () => {
-    // 关闭AlertModal
     setShowAlertModal(false)
     
-    // 检查是否需要验证
     if (user && shouldShowVerification(user.loginStyle, user.verifyType, 'verification')) {
       setShowEmailModal(true)
     } else {
@@ -138,21 +145,22 @@ const PaymentRecordPage = () => {
   const exchange = async (email: string, code: string, skipCodeCheck = false) => {
     try {
       if (!skipCodeCheck && (!code || !code.trim())) {
-        Toast.show({ icon: 'fail', content: t('modal.enterVerificationCode') });
+        Toast.show({ content: t('modal.enterVerificationCode') });
         return;
       }
 
-      // 调用核销API - 使用短信验证码核销
       const requestData = {
-        itemId: parseInt(currentRecordId), // 订单商品ID
+        itemId: parseInt(currentRecordId),
       };
       await submitOrderRequest(requestData);
 
-      // 更新记录状态为已核销
-      const updatedRecord = records.find(record => record.id === currentRecordId)!
-      updatedRecord!.status = 'completed'
-      setRecords([...records])
-      
+      const updatedGiftRecords = giftRecords.map(record => 
+        record.itemId?.toString() === currentRecordId 
+          ? { ...record, verificationStatus: '1' }
+          : record
+      );
+      setGiftRecords(updatedGiftRecords);
+        
       Toast.show({
         content: t('modal.verificationSuccessful'),
         position: 'center',
@@ -162,7 +170,6 @@ const PaymentRecordPage = () => {
     } catch (error) {
       console.error('核销失败:', error);
       Toast.show({
-        icon: 'fail',
         content: t('modal.requestFailed'),
         position: 'center',
         duration: 3000
@@ -172,7 +179,7 @@ const PaymentRecordPage = () => {
 
   return (
     <div className="flex flex-col h-screen">
-      <div className="flex-1 w-full h-full overflow-y-auto bg-gray-50">
+      <div className="flex-1 w-full h-full overflow-y-auto bg-[#F4F4F5]">
         <SwipeTabs
           activeIndex={activeIndex}
           setActiveIndex={setActiveIndex}
@@ -181,7 +188,6 @@ const PaymentRecordPage = () => {
           {/* 周边礼品标签页 */}
           <Swiper.Item key="gift">
             {loading ? (
-              // 加载中状态
               <div className="flex justify-center items-center h-40">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
               </div>
@@ -189,11 +195,10 @@ const PaymentRecordPage = () => {
               // 空状态
               <EmptyState message={t('redemptionRecord.noItemsRedeemed')} />
             ) : (
-              // 礼品记录列表
               <div className="p-1 space-y-1 pb-10">
-                {convertedGiftRecords.map(record => (
+                {convertedGiftRecords.map((record ,index) => (
                   <PaymentRecordItem
-                    key={record.id}
+                    key={`${index}`}
                     record={record}
                     onRedeem={handleChangeStatus}
                   />
@@ -202,10 +207,8 @@ const PaymentRecordPage = () => {
             )}
           </Swiper.Item>
 
-          {/* 优惠券标签页 */}
           <Swiper.Item key="coupon">
             {loading ? (
-              // 加载中状态
               <div className="flex justify-center items-center h-40">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
               </div>
@@ -215,9 +218,9 @@ const PaymentRecordPage = () => {
             ) : (
               // 优惠券记录列表
               <div className="p-1 space-y-1 pb-10">
-                {convertedCouponRecords.map(record => (
+                {convertedCouponRecords.map((record ,index) => (
                   <PaymentRecordItem
-                    key={record.id}
+                    key={`${index}`}
                     record={record}
                   />
                 ))}
@@ -236,7 +239,7 @@ const PaymentRecordPage = () => {
         confirmText= {t('modal.continueVerification')}
         cancelText= {t('modal.cancel')}
         userInfo={user || { email: undefined, mobile: undefined }}
-        verifyType="9" // 9表示核销
+        verifyType="9" // 9核销
       />
       <AlertModal
         visible={showAlertModal}

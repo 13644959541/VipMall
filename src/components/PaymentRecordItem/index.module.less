@@ -1,19 +1,20 @@
 .font {
   color: #6F6F72;
-  font-family: "SF Pro";
+ 
   font-weight: 400;
   font-size: 14px;
   line-height: 18px;
   letter-spacing: 0;
+  margin-bottom: 5px;
 }
 
 .name {
   width: 100%;
   height: 20px;
   opacity: 1;
-  font-family: "SF Pro";
+ 
   font-weight: 590;
-  font-size: 16px;
+  font-size: 14px;
   line-height: 20px;
   letter-spacing: 0;
   margin-bottom: 8px;
@@ -26,7 +27,11 @@
   right: 0;
   font-size: 14px;
   padding: 2px 6px;
-  font-weight: 590;
+  font-weight: 700;
+  font-family: SF Pro;
+  line-height: 18px;
+  letter-spacing: 0px;
+  text-align: right;
 }
 
 .name-container {
@@ -38,7 +43,7 @@
 .redeemButton {
   width: 160px;
   height: 56px;
-  font-family: "SF Pro";
+ 
   font-weight: 700;
   font-size: 16px;
   line-height: 24px;
@@ -46,7 +51,6 @@
   text-align: center;
   vertical-align: middle;
   color: #FFF;
-  border: 1px solid #F33434;
   background-color: #F33434;
   display: flex;
   justify-content: center;
@@ -55,17 +59,19 @@
   align-items: center;
 
   /* 在交叉轴上居中 */
-  border-radius: 12px;
+  border-radius: 16px;
   cursor: pointer;
 }
 
 .redeemButton.disabled {
-  opacity: 0.5;
   cursor: not-allowed;
   pointer-events: none;
-  background: #CCC;
-  border-color: #CCC;
+  background: #CCCCCC;
+  border-color: #CCCCCC;
 }
+
+
+
 
 :global(.adm-button-fill-none) {
   color: #101820;

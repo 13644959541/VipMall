@@ -144,5 +144,24 @@
     "cancel": "Annuler",
     "back": "Retour",
     "next": "Suivant"
+  },
+  "supplementary":{
+    "redemptionCoupon":"Coupon d’échange",
+    "daily":"Chaque jour",
+    "allDay":"Toute la journée",
+    "monday":"Lundi",
+    "tuesday":"Mardi",
+    "wednesday":"Mercredi",
+    "thursday":"Jeudi",
+    "friday":"Vendredi",
+    "saturday":"Samedi",
+    "sunday":"Dimanche",
+    "tomorrow":"Le lendemain",
+    "transferable":"Transférable",
+    "noTransferable":"Non transférable",
+    "sent":"Renvoyer",
+    "selectProduct":"Veuillez sélectionner l’article à échanger",
+    "noProduct":"Article retiré",
+    "allStores" : "Tous les magasins"
   }
 }

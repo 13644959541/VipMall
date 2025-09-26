@@ -24,6 +24,14 @@ const config: Config = {
           '"SF Mono"',
           '"PingFang SC"',
           'monospace'
+        ],
+        gilroy: [
+          'Gilroy',
+          '"SF Pro Text"',
+          '"SF Pro Display"',
+          '"PingFang SC"',
+          '"Microsoft YaHei"',
+          'sans-serif'
         ]
       },
       colors: {

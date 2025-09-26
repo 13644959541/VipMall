@@ -6,39 +6,43 @@ import { useAuthModel } from '@/model/useAuthModel';
 import { NativeBridge } from '@/utils/bridge';
 import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next';
+
+// 创建使用 store.svg 图片的组件
+const StoreIcon = React.forwardRef<HTMLImageElement, { size?: number; className?: string }>(
+  ({ size = 24, className = '' }, ref) => (
+    <img 
+      ref={ref}
+      src="/store.svg" 
+      alt="store" 
+      style={{ width: size, height: size }}
+      className={className}
+    />
+  )
+);
+StoreIcon.displayName = 'StoreIcon';
+
 interface SidebarProps {
   className?: string;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({
-   className }) => {
+const Sidebar: React.FC<SidebarProps> = ({ className }) => {
   const { user, loading } = useAuthModel();
   const navigate = useNavigate();
   const { t } = useTranslation('common');
 
-  useEffect(() => {
-    console.log('Sidebar useEffect - user:', user, 'loading:', loading);
-    if (!loading && !user) {
-      console.log('用户信息获取失败，跳转到 /notfound 页面');
-      navigate('/notfound');
-    }
-  }, [user, loading, navigate]);
-
-  if (loading) {
-    return null;
-  }
-
-  if (!user) {
-    return null;
-  }
-
-  // 获取用户信息用于显示
-  const displayUserInfo = {
+  // 用户信息为空时显示未知用户
+  const displayUserInfo = user ? {
     avatar: user.avatar === '' ? '/user.svg' : user.avatar || '/user.svg',
     name: user.nickname === '' ? t('home.unknownUser') : user.nickname || t('home.unknownUser'),
     localLevel: user.localLevel === '' ? '1' : user.localLevel || '1',
-    points: user.points || 0
+    points: user.Points || 0
+  } : {
+    avatar: '/user.svg',
+    name: t('home.unknownUser'),
+    localLevel: '1',
+    points: 0
   };
+
   return (
     <div className={className + " relative"}>
       {/* 用户信息 */}
@@ -51,16 +55,27 @@ const Sidebar: React.FC<SidebarProps> = ({
 
       {/* 功能菜单 */}
       <NavMenu items={[
-        { to: '/', icon: Gift, text: t('home.redeemInMall') },
-        { to: '/record', icon: Clock, text: t('home.redemptionHistory') },
-        { to: '/cart', icon: ShoppingCart, text: t('home.shoppingCart') }
+        { 
+          to: '/', 
+          icon: { normal: '/store.svg', active: '/store-l.svg' }, 
+          text: t('home.redeemInMall') 
+        },
+        { 
+          to: '/record', 
+          icon: { normal: '/record.svg', active: '/record-l.svg' }, 
+          text: t('home.redemptionHistory') 
+        },
+        { 
+          to: '/cart', 
+          icon: { normal: '/cart.svg', active: '/cart-l.svg' }, 
+          text: t('home.shoppingCart') 
+        }
       ]} />
 
-
-      {/*退出功能 - 绝对定位在底部 */}
+      {/* 退出功能 */}
       <div className="absolute bottom-9 left-0 right-0 flex flex-row justify-center text-[#6F6F72] items-center" onClick={() => NativeBridge.closePage()}>
-        <LogOut className="icon-logout text-[#6F6F72]" size={16} />
-        {t('home.exitPointsMall')}
+        <LogOut className="icon-logout text-[#6F6F72]" size={24} />
+        <span className="text-[14px] ml-[4px]">{t('home.exitPointsMall')}</span>
       </div>
     </div>
   );

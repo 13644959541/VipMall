@@ -2,66 +2,80 @@ import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 
 export type CartItem = {
+  /**
+    * 可用门店
+    */
+   applicableStores?: string[];
    /**
-     * 可用门店
-     */
-    applicableStores?: string[];
-    /**
      * 券类型
      */
-    couponType?: string;
-    /**
+   couponType?: string;
+   /**
      * 使用规则
      */
-    exclusionText?: string;
-    /**
+   exclusionText?: string;
+   /**
      * 是否选中
      */
-    isSelected: boolean;
-    /**
+   isSelected: boolean;
+   /**
      * 商品编码
      */
-    productCode: string;
-    /**
+   productCode: string;
+   /**
      * 商品productId
      */
-    productId: string;
-    /**
+   productId: string;
+   /**
      * 商品图片
      */
-    productImage?: string;
-    /**
+   productImage?: string;
+   /**
      * 商品名称
      */
-    productName: string;
-    /**
+   productName: string;
+   /**
      * 商品价值（菜品券和周边礼品类型）
      */
-    productPrice?: number;
-    /**
+   productPrice?: number;
+   /**
      * 商品类型
      */
-    productType: number;
-    /**
+   productType: number;
+   /**
      * 数量
      */
-    quantity?: number;
-    /**
+   quantity?: number;
+   /**
      * 券模板productId
      */
-    templateId?: string;
-    /**
+   templateId?: string;
+   /**
      * 单价积分
      */
-    unitPoints?: number;
-    /**
+   unitPoints?: number;
+   /**
      * 是否用保底语言
      */
-    useBaseLanguage?: boolean;
+   useBaseLanguage?: boolean;
+   /**
+     * 剩余库存
+     */
+   remainingStock?: number;
+   /**
+     * 是否在兑换时间
+     * 0: 不在兑换时间, 1: 在可兑时间内
+     */
+   isInExchangeTime?: boolean;
 
-    categoryType:number;
+   categoryType:number;
 
-    categoryId:string;
+   categoryId:string;
+
+  totalExchangeCount?: number;
+
+  productStatus?: boolean;
+
 }
 
 type CartState = {
@@ -80,7 +94,6 @@ export const useCartStore = create<CartState>()(
     (set, get) => ({
       items: [],
       addItem: (product, skipConflictCheck = false) => {
-        // 检查互斥规则：如果购物车中已有同类券（exclusionText不为空且相同），则返回冲突状态
         const state = get()
         const hasConflictRule = product.exclusionText && product.exclusionText.trim() !== ''
         
@@ -88,33 +101,19 @@ export const useCartStore = create<CartState>()(
           const existingConflictItem = state.items.find(
             item => item.exclusionText && item.exclusionText.trim() !== '' && item.exclusionText === product.exclusionText
           )
-          
-          console.log('Conflict check - hasConflictRule:', hasConflictRule)
-          console.log('Conflict check - existingConflictItem:', existingConflictItem)
-          
           if (existingConflictItem) {
-            // 返回冲突状态，不实际添加商品
-            console.log('Conflict detected, not adding item')
             return { hasConflict: true, item: undefined }
           }
         }
-        
-        console.log('No conflict, proceeding to add item')
         
         set((state) => {
           const existingItemIndex = state.items.findIndex(
             (item) => item.productId === product.productId
           )
           
-          console.log('Existing item index:', existingItemIndex)
-          console.log('Current items:', state.items)
-          console.log('Adding product:', product)
-          
           if (existingItemIndex !== -1) {
-            // 商品已存在，增加数量
             const updatedItems = [...state.items]
             const newQuantity = (updatedItems[existingItemIndex].quantity || 0) + (product.quantity || 1)
-            console.log('Updating quantity from', updatedItems[existingItemIndex].quantity, 'to', newQuantity)
             
             updatedItems[existingItemIndex] = {
               ...updatedItems[existingItemIndex],
@@ -122,18 +121,15 @@ export const useCartStore = create<CartState>()(
             }
             return { items: updatedItems }
           } else {
-            // 商品不存在，创建新项
             const newItem = {
               ...product,
               quantity: product.quantity || 1,
               isSelected: product.isSelected ?? true
             }
-            console.log('Creating new item:', newItem)
             return { items: [...state.items, newItem] }
           }
         })
         
-        // 返回成功状态，这里需要重新获取状态来返回正确的item
         const updatedState = get()
         const updatedItem = updatedState.items.find(item => item.productId === product.productId )
         return { hasConflict: false, item: updatedItem }

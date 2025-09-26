@@ -15,7 +15,7 @@ export interface getOrderQuery {
     /**
      * 商品类型 商品类型：0-周边礼品 1-代金券 2-菜品券（必传，且只能是0/1/2）
      */
-    productType: number;
+    categoryType: number;
     /**
      * 每页数量（可选，不传则查询所有数据） 每页数量（可选，不传则查询所有数据）
      */
@@ -24,6 +24,8 @@ export interface getOrderQuery {
      * 门店ID（必传）
      */
     storeId: string;
+
+    countryCode?: string;
 }
 
 export interface submitOrderData {
@@ -102,6 +104,10 @@ export interface OrderItemRecordResponse {
      */
     productType?: string;
     /**
+     * 商品父分类类型
+     */
+    categoryType?: number;
+    /**
      * 数量
      */
     quantity?: number;
@@ -163,12 +169,11 @@ export const getOrderRequest= async (data:getOrderQuery): Promise<any[]> => {
 
 export const submitOrderRequest = async (data:submitOrderData): Promise<any[]> => {
   try {
-   const response = await post('/front/order/verify-coupon', data, {
-      headers: {
-        'Content-Type': 'multipart/form-data'
-      }
-   });
-    return response.items || [];
+   const response = await post('/front/order/verify-coupon', data);
+     if (response.success !== true) {
+        throw new Error(response.msg || '兑换失败');
+     }
+    return response;
   } catch (error) {
     throw error;
   }

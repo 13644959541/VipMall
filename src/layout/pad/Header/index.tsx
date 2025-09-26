@@ -38,6 +38,11 @@ const Header: React.FC<HeaderProps> = ({ className }) => {
         }
         setLanguageOptions(languages);
       } catch (error) {
+        Toast.show({
+          content: t('modal.requestFailed'),
+          position: 'center',
+          duration: 3000
+        })
         console.error('获取语言选项失败:', error);
       }
     };
@@ -64,19 +69,21 @@ const Header: React.FC<HeaderProps> = ({ className }) => {
         <div className={`${styles['lang']} flex items-center`}>
           <AntdImage
             src='/Language.svg'
-            width={10}
-            height={10}
+            width={16}
+            height={16}
             fit="cover"
           />
-          <DropdownSort
-            options={languageOptions}
-            onChange={languageChange}
-            defaultLabel={getCurrentLanguageLabel()}
-          />
+           {languageOptions.length > 0 && (
+            <DropdownSort
+              options={languageOptions}
+              onChange={languageChange}
+              defaultLabel={getCurrentLanguageLabel()}
+            />
+          )}
         </div>
       }
       left={
-        <div className={`${styles['header']} flex items-center justify-between `}>
+          <div className={`${styles['header']} flex items-center justify-between `}>
           <div className={`${styles['table']} `}>{t('home.tableNumber')}: {user?.tableNo}</div>
         </div>
       }>

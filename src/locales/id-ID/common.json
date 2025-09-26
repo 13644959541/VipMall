@@ -144,5 +144,24 @@
     "cancel": "Batal",
     "back": "Kembali",
     "next": "Berikutnya"
+  },
+  "supplementary":{
+    "redemptionCoupon":"Kupon Penukaran",
+    "daily":"Setiap Hari",
+    "allDay":"Sepanjang Hari",
+    "monday":"Senin",
+    "tuesday":"Selasa",
+    "wednesday":"Rabu",
+    "thursday":"Kamis",
+    "friday":"Jumat",
+    "saturday":"Sabtu",
+    "sunday":"Minggu",
+    "tomorrow":"Hari berikutnya",
+    "transferable":"Dapat Ditransfer",
+    "noTransferable":"Tidak Bisa Ditransfer",
+    "sent":"Kirim Ulang",
+    "selectProduct":"Silakan pilih produk untuk ditukar",
+    "noProduct":"Produk Tidak Tersedia",
+    "allStores" : "Semua Toko"
   }
 }

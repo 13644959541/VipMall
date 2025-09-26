@@ -68,3 +68,32 @@ export const setWindowHeight = () => {
     .getElementsByTagName('body')[0]
     .style.setProperty('--height-primary', `${windowHeight}px`);
 };
+
+/**
+ * 格式化日期时间
+ * @param dateString ISO 格式日期字符串，如 "2025-09-23T02:15:36"
+ * @returns 格式化后的日期时间字符串，如 "2025/09/23 02:15:36"
+ */
+export const formatDateTime = (dateString: string): string => {
+  const date = new Date(dateString);
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  const hours = String(date.getHours()).padStart(2, '0');
+  const minutes = String(date.getMinutes()).padStart(2, '0');
+  const seconds = String(date.getSeconds()).padStart(2, '0');
+  
+  return `${year}/${month}/${day} ${hours}:${minutes}:${seconds}`;
+};
+
+// 在现有的工具文件中添加千位分隔符格式化函数
+export const formatNumberWithCommas = (num: number): string => {
+  if (num === null || num === undefined) return '0';
+  return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+};
+
+// 另一种格式化数字为千位分隔符的函数，使用本地化的方式
+export const formatNumber = (num: number): string => {
+  if (num === null || num === undefined) return '0';
+  return num.toLocaleString('zh-CN');
+};

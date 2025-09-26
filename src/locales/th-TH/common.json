@@ -144,5 +144,24 @@
     "cancel": "ยกเลิก",
     "back": "กลับ",
     "next": "ต่อไป"
+  },
+  "supplementary":{
+    "redemptionCoupon":"คูปองแลก",
+    "daily":"ทุกวัน",
+    "allDay":"ตลอดทั้งวัน",
+    "monday":"วันจันทร์",
+    "tuesday":"วันอังคาร",
+    "wednesday":"วันพุธ",
+    "thursday":"วันพฤหัสบดี",
+    "friday":"วันศุกร์",
+    "saturday":"วันเสาร์",
+    "sunday":"วันอาทิตย์",
+    "tomorrow":"วันถัดไป",
+    "transferable":"โอนได้",
+    "noTransferable":"โอนไม่ได้",
+    "sent":"ส่งอีกครั้ง",
+    "selectProduct":"กรุณาเลือกสินค้าที่ต้องการแลก",
+    "noProduct":"สินค้าถูกถอดออก",
+    "allStores" : "ทุกสาขา"
   }
 }

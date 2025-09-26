@@ -88,6 +88,9 @@ export const sendVerifyCodeRequest = async (data:sendVerifyCodeRequest): Promise
 export const checkVerifyCodeRequest = async (data:checkVerifyCodeRequest): Promise<any[]> => {
   try {
     const response = await post('/front/sms-email/check-verify-code', data);
+    if (response.code !== "ok" && response.success !== true) {
+      throw new Error(response.msg || '验证码验证失败');
+    }
     return response.items || [];
   } catch (error) {
    

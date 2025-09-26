@@ -75,6 +75,10 @@ export interface CategoryResponse {
      */
     categoryName?: string;
     /**
+     * 分类类型
+     */
+    categoryType?: number;
+    /**
      * 子分类列表
      */
     children?: CategoryResponse[];

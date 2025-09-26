@@ -144,5 +144,24 @@
     "cancel": "Hủy",
     "back": "Quay lại",
     "next": "Tiếp theo"
+  },
+  "supplementary":{
+    "redemptionCoupon":"Phiếu đổi",
+    "daily":"Mỗi ngày",
+    "allDay":"Cả ngày",
+    "monday":"Thứ Hai",
+    "tuesday":"Thứ Ba",
+    "wednesday":"Thứ Tư",
+    "thursday":"Thứ Năm",
+    "friday":"Thứ Sáu",
+    "saturday":"Thứ Bảy",
+    "sunday":"Chủ Nhật",
+    "tomorrow":"Ngày hôm sau",
+    "transferable":"Có thể chuyển nhượng",
+    "noTransferable":"Không thể chuyển nhượng",
+    "sent":"Gửi lại",
+    "selectProduct":"Vui lòng chọn sản phẩm để đổi",
+    "noProduct":"Sản phẩm đã ngừng bán",
+    "allStores" : "Tất cả cửa hàng"
   }
 }

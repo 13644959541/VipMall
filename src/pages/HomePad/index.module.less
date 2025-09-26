@@ -38,7 +38,7 @@
   -ms-overflow-style: none !important; /* IE 10+ */
   touch-action: pan-y !important; /* 启用垂直滑动 */
   overscroll-behavior: contain !important; /* 防止滚动传播 */
-  padding: 10px;
+  padding: 0.25rem;
 
   &::-webkit-scrollbar {
     display: none !important;
@@ -123,4 +123,8 @@ button {
 }
 :global(.adm-page-indicator-dot-active) {
     background-color: #cccccc !important;
+}
+
+:global(.adm-page-indicator-dot){
+    border-radius: 10px !important
 }

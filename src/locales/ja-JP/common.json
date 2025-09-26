@@ -144,5 +144,24 @@
     "cancel": "キャンセル",
     "back": "戻る",
     "next": "次へ"
+  },
+  "supplementary":{
+    "redemptionCoupon":"交換券",
+    "daily":"毎日",
+    "allDay":"終日",
+    "monday":"月曜日",
+    "tuesday":"火曜日",
+    "wednesday":"水曜日",
+    "thursday":"木曜日",
+    "friday":"金曜日",
+    "saturday":"土曜日",
+    "sunday":"日曜日",
+    "tomorrow":"翌日",
+    "transferable":"譲渡可能",
+    "noTransferable":"譲渡不可",
+    "sent":"再送",
+    "selectProduct":"交換する商品を選択してください",
+    "noProduct":"商品は販売終了",
+    "allStores" : "全店舗"
   }
 }

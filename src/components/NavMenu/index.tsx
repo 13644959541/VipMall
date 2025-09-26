@@ -1,9 +1,10 @@
 import { NavLink, useLocation } from 'react-router-dom';
 import { LucideIcon } from 'lucide-react';
 
+// 修改类型定义，支持亮色图标配置
 interface NavItem {
   to: string;
-  icon: LucideIcon;
+  icon: string | { normal: string; active: string }; // 支持单图标或亮暗双图标
   text: string;
 }
 
@@ -22,16 +23,36 @@ const NavMenu: React.FC<NavMenuProps> = ({ items, className = '' }) => {
           <NavLink
             key={item.to}
             to={item.to}
-            className={({isActive}) => {
+            className={({ isActive }) => {
               const shouldHighlight = isActive || 
                 (item.to === '/' && location.pathname.startsWith('/product/'));
-             return `rounded-sm pt-[8px] pb-[8px] pl-[8px] pr-[8px] gap-1 flex items-center transition-colors h-[24px]  w-[170px]
+              
+              return `rounded-[8px] pt-[8px] pb-[8px] pl-[8px] pr-[8px] gap-1 flex items-center transition-colors  w-[170px]
                  ${shouldHighlight ? 'bg-[#E60012] text-white' : 'text-[#6F6F72]'}`;
-
             }}
           >
-            <item.icon className="h-[24px] w-[24px] flex-shrink-0" />
-            <span className="flex-grow text-left text-[16px] no-underline">{item.text}</span>
+            {({ isActive }) => {
+              const shouldHighlight = isActive || 
+                (item.to === '/' && location.pathname.startsWith('/product/'));
+              
+              let iconSrc: string;
+              if (typeof item.icon === 'string') {
+                iconSrc = item.icon;
+              } else {
+                iconSrc = shouldHighlight ? item.icon.active : item.icon.normal;
+              }
+              
+              return (
+                <>
+                  <img 
+                    src={iconSrc} 
+                    alt="icon" 
+                    className="h-[24px] w-[24px] flex-shrink-0"
+                  />
+                  <span className="flex-grow text-left text-[16px] no-underline">{item.text}</span>
+                </>
+              );
+            }}
           </NavLink>
         ))}
       </div>

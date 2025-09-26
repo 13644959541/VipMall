@@ -123,5 +123,24 @@
     "merchandiseContactStaff": "សម្រាប់អំណោយ សូមទាក់ទងបុគ្គលិកដើម្បីទទួល",
     "gotIt": "យល់ហើយ",
     "addedToCart": "បញ្ចូលក្នុងរទេះ"
+  },
+  "supplementary":{
+    "redemptionCoupon":"សំបុត្រផ្លាស់ប្តូរ",
+    "daily":"រាល់ថ្ងៃ",
+    "allDay":"ពេញមួយថ្ងៃ",
+    "monday":"ថ្ងៃចន្ទ",
+    "tuesday":"ថ្ងៃអង្គារ",
+    "wednesday":"ថ្ងៃពុធ",
+    "thursday":"ថ្ងៃព្រហស្បតិ៍",
+    "friday":"ថ្ងៃសុក្រ",
+    "saturday":"ថ្ងៃសៅរ៍",
+    "sunday":"ថ្ងៃអាទិត្យ",
+    "tomorrow":"ងៃបន្ទាប់",
+    "transferable":"អាចផ្ទេរបាន",
+    "noTransferable":"មិនអាចផ្ទេរបាន",
+    "sent":"ផ្ញើម្ដងទៀត",
+    "selectProduct":"សូមជ្រើសរើសទំនិញដើម្បីផ្លាស់ប្តូរ",
+    "noProduct":"ទំនិញត្រូវបានដកចេញ",
+    "allStores" : "គ្រប់ហាងទាំងអស់"
   }
 }

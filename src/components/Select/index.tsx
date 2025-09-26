@@ -7,22 +7,28 @@ interface SelectProps {
   options?: Array<{ label: string, value: string }>;
   defaultValue?: string;
   defaultLabel?: string;
-  // title?: string;
   onChange?: (value: string) => void;
 }
 export default function Select({
   options = [],
-  defaultLabel ,
-  // title = '推荐',
+  defaultLabel = '' ,
   onChange
 }: SelectProps) {
   const [open, setOpen] = useState(false);
   const { t } = useTranslation('common'); // 这里指定命名空间
-   const [selected, setSelected] = useState(options.length > 0 ? options[0].label : t('product.memberZone'));
+  const [selectedValue, setSelectedValue] = useState('');
   const dropdownRef = useRef<HTMLDivElement>(null);
+
+
+  // 设置默认选中第一个选项
+  useEffect(() => {
+    if (!selectedValue && options.length > 0) {
+      setSelectedValue(options[0].value);
+    }
+  }, [options, selectedValue]);
+
   const handleSelect = (value: string) => {
-    const item = options.find((opt) => opt.value === value)!;
-    setSelected(item.label);
+    setSelectedValue(value);
     setOpen(false);
     onChange?.(value);
   };
@@ -46,7 +52,7 @@ export default function Select({
         className={styles['dropdown-header']}
         onClick={() => setOpen(!open)}
       >
-        <span>{selected}</span>
+        <span>{defaultLabel}</span>
         {open ? <UpOutline /> : <DownOutline />}
       </div>
 
@@ -56,7 +62,7 @@ export default function Select({
             {options.map((opt) => (
               <div
                 key={opt.value}
-                className={styles['dropdown-item']}
+                className={`${styles['dropdown-item']} ${opt.value === selectedValue ? styles['dropdown-item-selected'] : ''}`}
                 onClick={() => handleSelect(opt.value)}
               >
                 <span>{opt.label}</span>

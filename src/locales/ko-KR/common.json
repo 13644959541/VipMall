@@ -54,7 +54,7 @@
     "itemsRemaining": "남은 수량",
     "redeemableTime": "교환 가능 시간",
     "notYetAvailable": "아직 교환 불가",
-    "addToCart": "장바구니에 추가",
+    "addToCart": "장바구니에 담기",
     "redeemNow": "지금 교환",
     "productDetails": "상품 상세 정보",
     "redemptionInstructions": "교환 안내",
@@ -144,5 +144,24 @@
     "cancel": "취소",
     "back": "뒤로",
     "next": "다음"
+  },
+  "supplementary":{
+    "redemptionCoupon":"교환권",
+    "daily":"매일",
+    "allDay":"하루 종일",
+    "monday":"월요일",
+    "tuesday":"화요일",
+    "wednesday":"수요일",
+    "thursday":"목요일",
+    "friday":"금요일",
+    "saturday":"토요일",
+    "sunday":"일요일",
+    "tomorrow":"익일",
+    "transferable":"양도 가능",
+    "noTransferable":"양도 불가",
+    "sent":"다시 보내기",
+    "selectProduct":"교환할 상품을 선택하세요",
+    "noProduct":"상품이 판매 중단됨",
+    "allStores" : "전체 매장"
   }
 }

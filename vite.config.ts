@@ -12,10 +12,6 @@ export default async ({ command, mode }: ConfigEnv): Promise<UserConfig> => {
   const { VITE_PORT, VITE_HTTP_API } = env;
   const { default: proxy } = await import('./config/proxy');
 
-  // 检查环境变量是否正常加载
-  // console.log('所有环境变量:', env);
-  // console.log('VITE_HTTP_API:', VITE_HTTP_API);
-
   return {
     root: process.cwd(),
     publicDir: 'public',

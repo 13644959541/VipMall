@@ -152,5 +152,24 @@
     "cancel": "Cancel",
     "back": "Back",
     "next": "Next"
+  },
+  "supplementary":{
+    "redemptionCoupon":"Redemption Coupon",
+    "daily":"Daily",
+    "allDay":"All Day",
+    "monday":"Monday",
+    "tuesday":"Tuesday",
+    "wednesday":"Wednesday",
+    "thursday":"Thursday",
+    "friday":"Friday",
+    "saturday":"Saturday",
+    "sunday":"Sunday",
+    "tomorrow":"Next Day",
+    "transferable":"Transferable",
+    "noTransferable":"Non-transferable",
+    "sent":"Resend",
+    "selectProduct":"Please select the items to redeem",
+    "noProduct":"Item Unavailable",
+    "allStores" : "All Stores"
   }
 }

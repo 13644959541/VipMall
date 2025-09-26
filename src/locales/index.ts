@@ -164,6 +164,25 @@ export interface Resources {
     back: string;
     next: string;
   };
+  supplementary: {
+    sent: string;
+    noTransferable: string;
+    transferable: string;
+    sunday: string;
+    monday: string;
+    tuesday: string;
+    wednesday: string;
+    thursday: string;
+    friday: string;
+    saturday: string;
+    tomorrow: string;
+    allDay: string;
+    daily: string;
+    redemptionCoupon: string;
+    selectProduct: string;
+    noProduct: string;
+    allStores : string;
+  };
 }
 
 // 声明资源类型
@@ -192,28 +211,28 @@ i18n
       },
       'ja-JP': {
         common: jaJPCommon
-      }, 
+      },
       'fr-FR': {
         common: frFRCommon
-      }, 
+      },
       'vi-VN': {
         common: viVNCommon
-      }, 
+      },
       'id-ID': {
         common: idIDCommon
-      }, 
+      },
       'th-TH': {
         common: thTHCommon
-      }, 
+      },
       'ar-AE': {
         common: arAECommon
-      }, 
+      },
       'km-KH': {
         common: kmKHCommon
-      }, 
+      },
       'zh-HK': {
         common: zhHKCommon
-      }, 
+      },
       'zh-TW': {
         common: zhTWCommon
       }

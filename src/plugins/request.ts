@@ -1,5 +1,4 @@
-import { Toast } from 'antd-mobile';
-import { getAuth, setAuth } from './../utils/index';
+import { getAuth} from './../utils/index';
 
 const API_BASE_URL = import.meta.env.VITE_HTTP_API;
 
@@ -45,10 +44,8 @@ const handleResponse = async (response: Response): Promise<any> => {
 let baseRequest = async (config: RequestConfig): Promise<any> => {
   const { method, url, data, params, headers = {} } = config;
 
-  // 构建完整URL
   let fullUrl = `${API_BASE_URL ? API_BASE_URL : ''}/api${url}`;
   
-  // 处理查询参数
   if (params && Object.keys(params).length > 0) {
     const searchParams = new URLSearchParams();
     Object.entries(params).forEach(([key, value]) => {
@@ -59,14 +56,12 @@ let baseRequest = async (config: RequestConfig): Promise<any> => {
     fullUrl += `?${searchParams.toString()}`;
   }
 
-  // 设置请求头
   const requestHeaders: HeadersInit = {
     'Content-Type': 'application/json',
     Authorization: `Bearer ${getAuth()}`,
     ...headers,
   };
 
-  // 准备请求体
   const body = data ? JSON.stringify(data) : undefined;
 
   try {
@@ -89,7 +84,6 @@ let baseRequest = async (config: RequestConfig): Promise<any> => {
   }
 };
 
-// 请求拦截器
 const requestInterceptor = {
   use: (onFulfilled?: (config: RequestConfig) => RequestConfig) => {
     if (onFulfilled) {
@@ -99,13 +93,11 @@ const requestInterceptor = {
   },
 };
 
-// 响应拦截器
 const responseInterceptor = {
   use: (
     onFulfilled?: (response: any) => any,
     onRejected?: (error: RequestError) => any
   ) => {
-    // 全局错误处理
     if (onRejected) {
       const originalRequest = baseRequest;
       baseRequest = async (config: RequestConfig) => {
@@ -121,7 +113,6 @@ const responseInterceptor = {
   },
 };
 
-// 设置全局拦截器
 responseInterceptor.use(
   (response) => response,
   (error: RequestError) => {

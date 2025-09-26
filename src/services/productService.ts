@@ -33,7 +33,7 @@ export interface Product{
     /**
      * 是否过期：0-否 1-是
      */
-    isExpired?: number;
+    isExpired?: boolean;
     /**
      * 是否热销：0-否 1-是
      */
@@ -113,7 +113,7 @@ export interface ProductDetails{
     /**
      * 可用时间
      */
-    availableTime?: string;
+    availableTime?: UseTime[];
     /**
      * 优惠券类商品专属信息（仅优惠券展示，从营销系统获取）对象
      * 优惠券类商品专属信息（仅优惠券展示，从营销系统获取）
@@ -451,6 +451,7 @@ export interface ProductQueryParams {
   templateId?:string;
   productType?:number;
   terminalType?:string;      //终端类型（APP和PAD
+  countryCode?:string;        //国家代码
 }
 
 /**
@@ -485,6 +486,9 @@ const buildQueryString = (params?: ProductQueryParams): string => {
   if (params.terminalType !== undefined) {
     queryParams.append('terminalType', params.terminalType.toString());
   }
+  if (params.countryCode !== undefined) {
+    queryParams.append('countryCode', params.countryCode.toString());
+  }
   return queryParams.toString();
 };
 
@@ -495,30 +499,15 @@ export const getProductList = async (params?: ProductQueryParams): Promise<any[]
   try {
      const queryParams: ProductQueryParams = {
       ...params,
-      isHot: false
+      isHot: false,
     };
     const queryString = buildQueryString(queryParams);
+    
     const url = `/front/product/store/list${queryString ? `?${queryString}` : ''}`;
     const response = await get(url);
     return response.records || [];
   } catch (error) {
     console.error('获取商品列表失败:', error);
-    throw error;
-  }
-};
-
-export const getHotProductList = async (params?: ProductQueryParams): Promise<any[]> => {
-  try {
-    const queryParams: ProductQueryParams = {
-      ...params,
-      isHot: true
-    };
-    const queryString = buildQueryString(queryParams);
-    const url = `/front/product/store/list${queryString ? `?${queryString}` : ''}`;
-    const response = await get(url);
-    return response.records || [];
-  } catch (error) {
-    console.error('获取热销商品列表失败:', error);
     throw error;
   }
 };

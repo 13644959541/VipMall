@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useRef, useEffect } from 'react';
 import DropdownSort from '@/components/Select';
 import ProductCard from '@/components/ProductCard';
 import { Checkbox } from 'antd-mobile';
@@ -7,6 +7,7 @@ import { useAuthModel } from '@/model/useAuthModel';
 import { useTranslation } from 'react-i18next';
 import Sort from '@/components/Sort';
 import { Product } from '../../../services/productService';
+import { getScrollPosition } from '@/utils/scrollStorage';
 interface MealContentProps {
   carouselItems: Array<{
     image: string;
@@ -21,15 +22,19 @@ interface MealContentProps {
     value: string;
   }>;
   loading?: boolean;
+  activeIndex: number;
+  tabIndex: number;
+  onScroll: (scrollTop: number) => void;
 }
 
-const MealContent: React.FC<MealContentProps> = ({ products, sortOptions, checkboxName }) => {
+const MealContent: React.FC<MealContentProps> = ({ products, sortOptions, checkboxName, activeIndex,tabIndex, onScroll }) => {
   const [level, setLevel] = useState<string | null>(null);
   const [sortOption, setSortOption] = useState<string>('default');
   const [showRedeemableOnly, setShowRedeemableOnly] = useState(false);
   const { user } = useAuthModel()
   const currentUserLevel = user?.localLevel || "1"
   const { t } = useTranslation('common');
+  const contentRef = useRef<HTMLDivElement>(null);
 
   const filteredAndSortedProducts = useMemo(() => {
     if (!products) return [];
@@ -38,31 +43,38 @@ const MealContent: React.FC<MealContentProps> = ({ products, sortOptions, checkb
     let result = [...products];
     
     // 先按会员等级筛选
-    if (level && level !== 'all') {
+    if (level && level !== "0") {
       result = result.filter(product => {
         if (product.membershipLevel === undefined) return false;
          return product.membershipLevel.includes(level);
       });
     }
-    const userPoints = user?.points || 0;
+    const userPoints = user?.Points || 0;
     // 如果"我可兑"复选框选中，再进行积分和会员等级筛选
     if (showRedeemableOnly) {
-       result = result.filter(product => {
-        const userPoints = user?.points || 0;
-        return userPoints >= parseInt(product.pointsRequired ||  "0") && 
-               product.membershipLevel?.includes(currentUserLevel) &&
-               product.isExpired !== 1 &&
-               (product.stockQuantity !== undefined && product.stockQuantity > 0);
-      });              
+        result = result.filter(product => {
+        // 只有周边礼品（productType=0）才检查库存
+        const isOutOfStock = product.productType === 0 && 
+                            product.stockQuantity !== undefined && 
+                            product.stockQuantity <= 0;
+        
+        // 排除库存为0的周边礼品，其他商品正常检查
+        return userPoints >= parseInt(product.pointsRequired || "0") &&
+          product.membershipLevel?.includes(currentUserLevel) &&
+          product.isExpired !== true &&
+          !isOutOfStock;
+      });
     }
     // 计算每个商品的禁用状态
     const productsWithDisabled = result.map(product => {
       // Meal类型：只看isExpired
      const disabled = !!product.isExpired ||
         // 检查商品是否支持筛选等级或当前用户等级
-        (level && level !== 'all' && !product.membershipLevel?.includes(level)) ||
-        (!product.membershipLevel?.includes(currentUserLevel) || userPoints < Number(product.pointsRequired))
-        || (product.stockQuantity !== undefined && product.stockQuantity <= 0);
+        (level && level !== "0" && !product.membershipLevel?.includes(level)) ||
+        (!product.membershipLevel?.includes(currentUserLevel) || 
+        userPoints < Number(product.pointsRequired))||
+         //只有周边礼品（productType=0）才检查库存
+        (product.productType === 0 && product.stockQuantity !== undefined && product.stockQuantity <= 0);
       return {
         ...product,
         disabled: !!disabled // 确保是boolean类型
@@ -100,7 +112,7 @@ const MealContent: React.FC<MealContentProps> = ({ products, sortOptions, checkb
     }
 
     return sortedProducts;
-  }, [products, level, sortOption, currentUserLevel, showRedeemableOnly, user?.points]);
+  }, [products, level, sortOption, currentUserLevel, showRedeemableOnly, user?.Points]);
 
   const handleSortChange = (value: string) => {
     setSortOption(value);
@@ -110,35 +122,83 @@ const MealContent: React.FC<MealContentProps> = ({ products, sortOptions, checkb
     setLevel(value);
   };
 
+  // 保存滚动位置
+  useEffect(() => {
+    const scrollContainer = contentRef.current;
+    if (!scrollContainer) return;
+
+    // 防抖函数
+    const debounce = (func: Function, delay: number) => {
+      let timeoutId: NodeJS.Timeout;
+      return (...args: any[]) => {
+        clearTimeout(timeoutId);
+        timeoutId = setTimeout(() => func.apply(null, args), delay);
+      };
+    };
+
+    // 保存滚动位置的函数（防抖处理）
+    const handleScrollSave = debounce(() => {
+      // 只有当当前组件是激活的tab并且scrollContainer仍然在DOM中时才保存位置
+      if (activeIndex === tabIndex && scrollContainer && document.contains(scrollContainer)) {
+        onScroll(scrollContainer.scrollTop);
+      }
+    }, 200);
+
+
+    // 添加滚动事件监听
+    scrollContainer.addEventListener('scroll', handleScrollSave);
+    // 组件卸载时只移除事件监听，不保存位置
+    return () => {
+      scrollContainer.removeEventListener('scroll', handleScrollSave);
+    };
+  }, [activeIndex, onScroll]);
+
+  // 恢复滚动位置 - 在products数据加载完成后执行
+  useEffect(() => {
+    const scrollContainer = contentRef.current;
+    if (!scrollContainer || !products || products.length === 0) return;
+
+    const savedScrollTop = getScrollPosition();
+    if (savedScrollTop && savedScrollTop > 0) {
+      // 确保内容已经渲染
+      setTimeout(() => {
+        if (scrollContainer.scrollHeight > savedScrollTop) {
+          scrollContainer.scrollTop = savedScrollTop;
+        }
+      }, 200);
+    }
+  }, [products]); // 依赖products数据
+
   return (
-    <div className={styles.contentWrapper}
+    <div ref={contentRef} className={styles.contentWrapper}
       style={{
         WebkitOverflowScrolling: 'touch',
-        overscrollBehavior: 'contain'
+        overscrollBehavior: 'contain',
+        overflowY: 'auto',
+        height: '100%'
       }}>
-
       <div className="flex items-center justify-between ml-1 mr-1">
-        <DropdownSort
-          options={sortOptions}
-          onChange={handleLevelChange}
-        />
-         <Sort 
-            defaultLabel= {t("filter.default")}
-            pointsLabel= {t("product.requiredPoints")} 
-            salesLabel= {t("product.sales")} 
+        <div className="flex items-center gap-1">
+          <DropdownSort
+            options={sortOptions}
+            onChange={handleLevelChange}
+            defaultLabel={t("product.memberZone")}
+          />
+          <Sort
+            defaultLabel={t("product.defaultSort")}
+            pointsLabel={t("product.requiredPoints")}
+            salesLabel={t("product.sales")}
             onChange={handleSortChange}
           />
-        <div className="flex items-center gap-4">
-           <Checkbox 
-             className={styles.check}
-             checked={showRedeemableOnly}
-             onChange={(checked) => setShowRedeemableOnly(checked)}
-           >
-             {checkboxName}
-           </Checkbox>
         </div>
+        <Checkbox
+          className={styles.check}
+          checked={showRedeemableOnly}
+          onChange={(checked) => setShowRedeemableOnly(checked)}
+        >
+          {checkboxName}
+        </Checkbox>
       </div>
-
       <div className="grid grid-cols-2">
         {filteredAndSortedProducts.map(product => (
           <ProductCard

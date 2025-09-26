@@ -1,7 +1,6 @@
 .name {
-  height: 30px;
   opacity: 1;
-  font-family: "SF Pro";
+ 
   font-weight: 590;
   font-size: 16px;
   line-height: 20px;
@@ -9,12 +8,9 @@
 }
 
 .point {
-  width: 71px;
-  height: 30px;
-  font-family: "SF Pro";
   font-weight: 860;
   font-size: 24px;
-  line-height: 30px;
+  line-height: 22px;
   letter-spacing: 0;
   color: #E60012;
 }
@@ -22,8 +18,8 @@
 .originalPrice {
   width: 27px;
   height: 19px;
-  padding-top: 9px;
-  font-family: "SF Pro";
+  
+ 
   font-weight: 400;
   font-size: 14px;
   line-height: 19px;
@@ -34,26 +30,28 @@
 }
 
 .levelTap {
-  min-width: 195px;
-  height: 30px;
-  font-family: "SF Pro";
+ 
   font-weight: 400;
   font-size: 12px;
   line-height: 0.21333rem;
   letter-spacing: 0;
   color: #3B3936;
   border: 1px solid #3B3936;
-  padding: 2px;
+  padding: 8px 12px;
   border-radius: 8px;
-  text-align: center; // 水平居中
-  display: flex; // 启用flex布局
-  align-items: center; // 垂直居中
-  justify-content: center; // 水平居中(flex方式)
+  text-align: center;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .font {
   color: #6F6F72;
-  font-family: "SF Pro";
+ 
   font-weight: 400;
   font-size: 14px;
   line-height: 18px;
@@ -61,7 +59,7 @@
 }
 
 .value {
-  font-family: "SF Pro";
+ 
   font-weight: 400;
   font-size: 14px;
   line-height: 18px;
@@ -79,9 +77,9 @@
 }
 
 .cartButton {
-  width: 160px;
-  height: 56px;
-  font-family: "SF Pro";
+  width: 158px;
+  height: 54px;
+ 
   font-weight: 700;
   font-size: 16px;
   line-height: 24px;
@@ -98,13 +96,13 @@
   align-items: center;
 
   /* 在交叉轴上居中 */
-  border-radius: 12px;
+  border-radius: 16px;
 }
 
 .redeemButton {
   width: 160px;
   height: 56px;
-  font-family: "SF Pro";
+ 
   font-weight: 700;
   font-size: 16px;
   line-height: 24px;
@@ -112,7 +110,6 @@
   text-align: center;
   vertical-align: middle;
   color: #FFF;
-  border: 1px solid #F33434;
   background-color: #F33434;
   display: flex;
   justify-content: center;
@@ -121,7 +118,7 @@
   align-items: center;
 
   /* 在交叉轴上居中 */
-  border-radius: 12px;
+  border-radius: 16px;
 }
 
 .disabledButton {
@@ -132,21 +129,41 @@
 .redeem {
   margin-top: -15px !important;
   color: #6F6F72;
-  font-family: "SF Pro";
+ 
   font-weight: 400;
   font-size: 14px;
   line-height: 18px;
   letter-spacing: 0;
 }
 
+.quantityDisplay {
+  font-family: 'SF Pro';
+  font-weight: 590;
+  font-size: 14px;
+  line-height: 18px;
+  color: #101820;
+}
+
+.adaptive-badge {
+  height: 16px;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0 8px;
+  white-space: nowrap;
+}
+
 .detail-badge {
   :global(.adm-badge-content) {
     font-size: 12px;
+   
+    font-weight: 400;
   }
 
   :global(.adm-badge) {
-    width: 80px;
-    height: 25px;
+    height: 24px;
     align-items: center;
+    border-radius: 8px;
+
   }
 }

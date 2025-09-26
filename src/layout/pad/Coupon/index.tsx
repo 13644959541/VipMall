@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useRef, useEffect } from 'react';
 import ProductCard from '@/components/ProductCard';
 import { Checkbox } from 'antd-mobile';
 import DropdownSort from '@/components/Select';
@@ -7,6 +7,7 @@ import Sort from '@/components/Sort';
 import { useAuthModel } from '@/model/useAuthModel';
 import { useTranslation } from 'react-i18next';
 import { Product } from '../../../services/productService';
+import { getScrollPosition } from '@/utils/scrollStorage';
 interface CouponContentProps {
   carouselItems: Array<{
     image: string;
@@ -21,8 +22,11 @@ interface CouponContentProps {
     value: string;
   }>;
   loading?: boolean;
+  activeIndex: number;
+  tabIndex: number;
+  onScroll: (scrollTop: number) => void;
 }
-const CouponContent: React.FC<CouponContentProps> = ({ products, checkboxName, sortOptions }) => {
+const CouponContent: React.FC<CouponContentProps> = ({ products, checkboxName, sortOptions, activeIndex, tabIndex,onScroll }) => {
   const [level, setLevel] = useState<string | null>(null);
   const [sortOption, setSortOption] = useState<string>('default');
   const [showRedeemableOnly, setShowRedeemableOnly] = useState(false);
@@ -30,58 +34,56 @@ const CouponContent: React.FC<CouponContentProps> = ({ products, checkboxName, s
   const { user } = useAuthModel()
   const currentUserLevel = user?.localLevel || "1"
   const { t } = useTranslation('common');
+  const contentRef = useRef<HTMLDivElement>(null);
 
   const filteredAndSortedProducts = useMemo(() => {
     if (!products) return [];
-
-    // 先筛选
     let result = [...products];
-
-    // 不再按会员等级筛选移除商品，改为在禁用状态中处理显示
-    const userPoints = user?.points || 0;
-    // 如果"我可兑"复选框选中，再进行积分和会员等级筛选
-    if (showRedeemableOnly) {
+    if (level && level !== "0") {
       result = result.filter(product => {
-        return userPoints >= parseInt(product.pointsRequired || "0") &&
-          product.membershipLevel?.includes(currentUserLevel) &&
-          product.isExpired !== 1;
+        if (product.membershipLevel === undefined) return false;
+        return product.membershipLevel.includes(level);
       });
     }
-
-    // 计算每个商品的禁用状态
+    
+    const userPoints = user?.Points || 0;
+    if (showRedeemableOnly) {
+        result = result.filter(product => {
+        const isOutOfStock = product.productType === 0 && 
+                            product.stockQuantity !== undefined && 
+                            product.stockQuantity <= 0;
+        
+        return userPoints >= parseInt(product.pointsRequired || "0") &&
+          product.membershipLevel?.includes(currentUserLevel) &&
+          product.isExpired !== true &&
+          !isOutOfStock;
+      });
+    }
     const productsWithDisabled = result.map(product => {
      const disabled = !!product.isExpired ||
-        // 检查商品是否支持筛选等级或当前用户等级
-        (level && level !== 'all' && !product.membershipLevel?.includes(level)) ||
+        (level && level !== "0" && !product.membershipLevel?.includes(level)) ||
         (!product.membershipLevel?.includes(currentUserLevel)) ||
         userPoints < Number(product.pointsRequired) ||
-        (product.stockQuantity !== undefined && product.stockQuantity <= 0);
+        (product.productType === 0 && product.stockQuantity !== undefined && product.stockQuantity <= 0);
       return {
         ...product,
-        disabled: !!disabled // 确保是boolean类型
+        disabled: !!disabled 
       };
     });
 
-    // 再排序 - 先将禁用的商品放在后面，再按指定字段排序
     const [field, order] = sortOption.split('-');
-
     let sortedProducts = [...productsWithDisabled];
-
-    // 首先按禁用状态排序（不禁用的在前，禁用的在后）
     sortedProducts.sort((a, b) => {
-      if (a.disabled && !b.disabled) return 1; // a禁用，b不禁用，a排在后面
-      if (!a.disabled && b.disabled) return -1; // a不禁用，b禁用，a排在前面
+      if (a.disabled && !b.disabled) return 1; 
+      if (!a.disabled && b.disabled) return -1;
       return 0; // 禁用状态相同，保持原顺序
     });
 
-    // 然后按指定字段排序（只对不禁用的商品排序）
     if (field !== 'default') {
       sortedProducts.sort((a, b) => {
-        // 如果有一个商品是禁用的，保持禁用商品在后面的顺序
         if (a.disabled && !b.disabled) return 1;
         if (!a.disabled && b.disabled) return -1;
 
-        // 两个商品都不禁用，按指定字段排序
         if (field === 'points') {
           return order === 'asc' ? parseInt(a.pointsRequired || "0") - parseInt(b.pointsRequired || "0") : parseInt(b.pointsRequired || "0") - parseInt(a.pointsRequired || "0");
         } else if (field === 'sales') {
@@ -94,7 +96,7 @@ const CouponContent: React.FC<CouponContentProps> = ({ products, checkboxName, s
     }
 
     return sortedProducts;
-  }, [products, level, sortOption, currentUserLevel, showRedeemableOnly, user?.points]);
+  }, [products, level, sortOption, currentUserLevel, showRedeemableOnly, user?.Points]);
 
   const handleSortChange = (value: string) => {
     setSortOption(value);
@@ -102,24 +104,66 @@ const CouponContent: React.FC<CouponContentProps> = ({ products, checkboxName, s
   const handleLevelChange = (value: string) => {
     setLevel(value);
   };
-  console.log(products)
+
+  useEffect(() => {
+    const scrollContainer = contentRef.current;
+    if (!scrollContainer) return;
+
+    const debounce = (func: Function, delay: number) => {
+      let timeoutId: NodeJS.Timeout;
+      return (...args: any[]) => {
+        clearTimeout(timeoutId);
+        timeoutId = setTimeout(() => func.apply(null, args), delay);
+      };
+    };
+    const handleScrollSave = debounce(() => {
+      if (activeIndex === tabIndex && scrollContainer && document.contains(scrollContainer)) {
+        onScroll(scrollContainer.scrollTop);
+      }
+    }, 200);
+    scrollContainer.addEventListener('scroll', handleScrollSave);
+    return () => {
+      scrollContainer.removeEventListener('scroll', handleScrollSave);
+    };
+
+  }, [activeIndex, onScroll]);
+
+  useEffect(() => {
+    const scrollContainer = contentRef.current;
+    if (!scrollContainer || !products || products.length === 0) return;
+
+    const savedScrollTop = getScrollPosition();
+    if (savedScrollTop && savedScrollTop > 0) {
+      setTimeout(() => {
+        if (scrollContainer.scrollHeight > savedScrollTop) {
+          scrollContainer.scrollTop = savedScrollTop;
+        }
+      }, 200);
+    }
+  }, [products]); // 依赖products数据
+
   return (
-    <div className={styles.contentWrapper}
+    <div ref={contentRef} className={styles.contentWrapper}
       style={{
         WebkitOverflowScrolling: 'touch',
-        overscrollBehavior: 'contain'
+        overscrollBehavior: 'contain',
+        overflowY: 'auto',
+        height: '100%'
       }}>
       <div className="flex items-center justify-between ml-1 mr-1">
-        <DropdownSort
-          options={sortOptions}
-          onChange={handleLevelChange}
-        />
-        <Sort
-          defaultLabel={t("filter.default")}
-          pointsLabel={t("product.requiredPoints")}
-          salesLabel={t("product.sales")}
-          onChange={handleSortChange}
-        />
+        <div className="flex items-center gap-1">
+          <DropdownSort
+            options={sortOptions}
+            onChange={handleLevelChange}
+            defaultLabel={t("product.memberZone")}
+          />
+          <Sort
+            defaultLabel={t("product.defaultSort")}
+            pointsLabel={t("product.requiredPoints")}
+            salesLabel={t("product.sales")}
+            onChange={handleSortChange}
+          />
+        </div>
         <Checkbox
           className={styles.check}
           checked={showRedeemableOnly}
@@ -128,7 +172,6 @@ const CouponContent: React.FC<CouponContentProps> = ({ products, checkboxName, s
           {checkboxName}
         </Checkbox>
       </div>
-
       <div className="grid grid-cols-2">
         {filteredAndSortedProducts.map(product => (
           <ProductCard

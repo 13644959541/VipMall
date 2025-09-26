@@ -144,5 +144,24 @@
     "cancel": "إلغاء",
     "back": "رجوع",
     "next": "التالي"
+  },
+  "supplementary":{
+    "redemptionCoupon":"قسيمة استبدال",
+    "daily":"يوميًا",
+    "allDay":"طوال اليوم",
+    "monday":"الاثنين",
+    "tuesday":"الثلاثاء",
+    "wednesday":"الأربعاء",
+    "thursday":"الخميس",
+    "friday":"الجمعة",
+    "saturday":"السبت",
+    "sunday":"الأحد",
+    "tomorrow":"اليوم التالي",
+    "transferable":"قابل للتحويل",
+    "noTransferable":"غير قابل للتحويل",
+    "sent":"إعادة الإرسال",
+    "selectProduct" :"يرجى اختيار المنتج المراد استبداله",
+    "noProduct": "اليوم التالي",
+    "allStores" : "جميع المتاجر"
   }
 }
